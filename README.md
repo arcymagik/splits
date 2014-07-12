@@ -1,4 +1,7 @@
 splits
 ======
 
-Praca magisterska; implementacja AI do Splits
+Praca magisterska
+Implementacja AI do Splits
+
+Damian Hałas
