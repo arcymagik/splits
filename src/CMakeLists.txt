@@ -27,3 +27,5 @@ message(STATUS "common libraries " ${COMMON_LIBRARIES})
 add_executable(sanity tests/sanity.cpp)
 target_link_libraries(sanity ${COMMON_LIBRARIES})
 
+
+add_definitions(-Wall)
