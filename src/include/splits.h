@@ -11,8 +11,6 @@
 class SplitsGame;
 class Move;
 
-//typedef Move Move;
-
 class Move
 {
 public:

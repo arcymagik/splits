@@ -235,6 +235,7 @@ void SplitsGame::makeNormal(NormalMove* move)
     int quantity = move->quantity;
     int target = move->target;
     unsigned int cp = curPlayer();
+    
     board[source].stack -= quantity;
     board[target].stack = quantity; // zamiast +=, bo przeciez tu musialo byc 0
 
@@ -248,7 +249,7 @@ void SplitsGame::makeNormal(NormalMove* move)
         }
         else
         {
-            stacks[cp][index] = stacks[cp][fields.size()-1];
+            stacks[cp][index] = stacks[cp][stacks[cp].size()-1];
             stacks[cp].pop_back();
         }
     }
@@ -438,17 +439,34 @@ vector<Move*> SplitsGame::getPossibleNormalMoves()
     return result;
 }
 
-void SplitsGame::addPossibleBuildingMovesForField(int pos, std::vector<Move*>* moves)
+void SplitsGame::addPossibleBuildingMovesForField(int pos, std::vector<Move*>* moves) // TODO: nie zwraca wszystkich ruchow
 {
     BuildingMove* move;
+    int dr, mdir;
+    int touching_pos, mpos;
+
     for (int i = 0; i < 6; ++i)
     {
-        for (int j = 1; j <= 3; ++j)
+        touching_pos = shift_unit_field(pos, i);
+        for (int j = 0; j < 6; ++j) // przypadek, gdy sasiad jest jednym z srodkowych heksow plytki
         {
-            move = new BuildingMove(shift_unit_field(pos, i), j);
+            move = new BuildingMove(touching_pos, j);
             if (canMoveBuilding(move))
             {
-                moves->push_back((Move*) move);
+                moves->push_back(move);
+            }
+            else delete(move);
+        }
+
+        for (int j = 0; j < 4; ++j)
+        {
+            dr = quick_mod( quick_mod(i+4, 6)+j, 6);
+            mpos = shift_unit_field(touching_pos, dr);
+            mdir = quick_mod(i+j, 6);
+            move = new BuildingMove(mpos, mdir);
+            if (canMoveBuilding(move))
+            {
+                moves->push_back(move);
             }
             else delete(move);
         }
@@ -476,8 +494,16 @@ vector<Move*> SplitsGame::getPossibleInitialMoves()
 
 BuildingMove::BuildingMove(int pos, int dir)
 {
-    this->pos = pos;
-    this->dir = dir;
+    if (dir > 0 && dir < 4)
+    {
+        this->pos = pos;
+        this->dir = dir;
+    }
+    else // trzeba znormalizowac - dir \in {1,2,3}
+    {
+        this->pos = shift_unit_field(pos, dir);
+        this->dir = quick_mod(dir+3, 6);
+    }
 }
 
 InitialMove::InitialMove(int pos)

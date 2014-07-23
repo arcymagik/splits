@@ -6,6 +6,8 @@
 #include <random>
 #include <iostream>
 
+#include <string>
+
 using namespace std;
 
 #define SEED 19
@@ -17,16 +19,23 @@ int choose_move_random(vector<Move*>* moves);
 
 mt19937 generator;
 
+int run_test(int (*test)(), string name);
+
 int main(int argc, char** argv)
 {
     argc = argc; argv = argv;
     generator.seed(SEED);
 
-    printf("basic\n");
-    if (basic_sanity()) printf("basic_sanity test failed\n"); else printf("basic_sanity test passed\n");
-    printf("random\n");
-    if (random_sanity()) printf("random_sanity test failed\n"); else printf("random_sanity test passed\n");
+    run_test(basic_sanity, "basic_sanity");
+    run_test(random_sanity, "random_sanity");
 
+    return 0;
+}
+
+int run_test(int (*test)(), string name)
+{
+    printf("%s\n", name.c_str());
+    if (test()) printf("%s test failed\n", name.c_str()); else printf("%s test passed\n", name.c_str());
     return 0;
 }
 
@@ -36,18 +45,22 @@ int sanity_template(int (*function)(vector<Move*>* moves))
     vector<Move*> moves;
     Move* move;
     int mindex;
+    unsigned int size;
 
     while(!game.isFinished())
     {
-        {
-            printf("%s\n", game.getPrettyHistory().c_str());
+        // {
+        //     //printf("%s\n", game.getPrettyHistory().c_str());
 
-            printf("plansza: %s\n", game.getDesc().c_str());
-            fflush(stdout);
-        }
+        //     printf("plansza: %s\n", game.getDesc().c_str());
+        //     fflush(stdout);
+        // }
 
         moves = game.getPossibleMoves();
+        size = moves.size();
         mindex = function(&moves);
+        // printf("chose %d of %u\n", mindex, size);
+        // printf("move: %s\n", moves[mindex]->prettyDesc().c_str());
         move = moves[mindex];
         if (game.canMove(move))
             game.makeMove(move);
@@ -58,7 +71,8 @@ int sanity_template(int (*function)(vector<Move*>* moves))
             printf("plansza: %s\n", game.getDesc().c_str());
             return -1;
         }
-        for (unsigned int i = 0; i < moves.size(); ++i) delete(moves[i]);
+        for (unsigned int i = 0; i < size; ++i)
+            delete(moves[i]);
     }
 
     printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
@@ -90,6 +104,6 @@ int choose_move_basic(vector<Move*>* moves)
 
 int choose_move_random(vector<Move*>* moves)
 {
-    std::uniform_int_distribution<> dis(0, moves->size()-1);
+    uniform_int_distribution<> dis(0, moves->size()-1);
     return dis(generator);
 }
