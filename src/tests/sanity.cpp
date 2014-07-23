@@ -1,4 +1,5 @@
 #include "splits.h"
+#include "random_game_algorithm.h"
 
 #include <cstdio>
 
@@ -14,8 +15,10 @@ using namespace std;
 
 int basic_sanity();
 int random_sanity();
-int choose_move_basic(vector<Move*>* moves);
-int choose_move_random(vector<Move*>* moves);
+Move* choose_move_basic(vector<Move*>* moves);
+Move* choose_move_random(vector<Move*>* moves);
+
+int random_alg_test();
 
 mt19937 generator;
 
@@ -28,6 +31,7 @@ int main(int argc, char** argv)
 
     run_test(basic_sanity, "basic_sanity");
     run_test(random_sanity, "random_sanity");
+    run_test(random_alg_test, "random_alg_test");
 
     return 0;
 }
@@ -39,12 +43,12 @@ int run_test(int (*test)(), string name)
     return 0;
 }
 
-int sanity_template(int (*function)(vector<Move*>* moves))
+int sanity_template(Move* (*function)(vector<Move*>* moves))
 {
     SplitsGame game;
     vector<Move*> moves;
     Move* move;
-    int mindex;
+    //int mindex;
     unsigned int size;
 
     while(!game.isFinished())
@@ -58,10 +62,11 @@ int sanity_template(int (*function)(vector<Move*>* moves))
 
         moves = game.getPossibleMoves();
         size = moves.size();
-        mindex = function(&moves);
+        //mindex = function(&moves);
         // printf("chose %d of %u\n", mindex, size);
         // printf("move: %s\n", moves[mindex]->prettyDesc().c_str());
-        move = moves[mindex];
+        //move = moves[mindex];
+        move = function(&moves);
         if (game.canMove(move))
             game.makeMove(move);
         else
@@ -71,6 +76,7 @@ int sanity_template(int (*function)(vector<Move*>* moves))
             printf("plansza: %s\n", game.getDesc().c_str());
             return -1;
         }
+        delete move;
         for (unsigned int i = 0; i < size; ++i)
             delete(moves[i]);
     }
@@ -97,13 +103,28 @@ int random_sanity()
     return sanity_template(choose_move_random);
 }
 
-int choose_move_basic(vector<Move*>* moves)
+Move* choose_move_basic(vector<Move*>* moves)
 {
-    return 0;
+    return (*moves)[0]->copy();
 }
 
-int choose_move_random(vector<Move*>* moves)
+Move* choose_move_random(vector<Move*>* moves)
 {
     uniform_int_distribution<> dis(0, moves->size()-1);
-    return dis(generator);
+    int index = dis(generator);
+    return (*moves)[index]->copy();
+}
+
+Move* random_alg_test_choose(vector<Move*>* moves)
+{
+    static RandomGameAlg alg(54);
+
+    Move* move = alg.decideMove();
+    alg.makeMove(move);
+    return move;
+}
+
+int random_alg_test()
+{
+    return sanity_template(random_alg_test_choose);
 }
