@@ -178,6 +178,18 @@ bool SplitsGame::touchesInOneOf4(int pos, int dir1, int dir2)
     return false;
 }
 
+bool SplitsGame::stackBlocked(int pos)
+{
+    bool result = false;
+    int next;
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        next = shift_unit_field(pos, i);
+        if (board[next].stack == 0) return true;
+    }
+    return result;
+}
+
 bool SplitsGame::tileTouchesOlderFields(int pos, int dir)
 {
     return
@@ -686,3 +698,14 @@ Move::~Move() {}
 NormalMove::~NormalMove() {}
 BuildingMove::~BuildingMove() {}
 InitialMove::~InitialMove() {}
+
+
+vector<int>* Grader::getStacks(SplitsGame* game)
+{
+    return game->stacks;
+}
+
+Field* Grader::board(SplitsGame* game, int pos)
+{
+    return game->board + pos;
+}

@@ -1,5 +1,6 @@
 #include "splits.h"
 #include "random_game_algorithm.h"
+#include "simple_grader.h"
 
 #include <cstdio>
 
@@ -50,6 +51,7 @@ int sanity_template(Move* (*function)(vector<Move*>* moves))
     Move* move;
     //int mindex;
     unsigned int size;
+    SimpleGrader grader;
 
     while(!game.isFinished())
     {
@@ -62,13 +64,15 @@ int sanity_template(Move* (*function)(vector<Move*>* moves))
 
         moves = game.getPossibleMoves();
         size = moves.size();
-        //mindex = function(&moves);
         // printf("chose %d of %u\n", mindex, size);
-        // printf("move: %s\n", moves[mindex]->prettyDesc().c_str());
         //move = moves[mindex];
         move = function(&moves);
         if (game.canMove(move))
+        {
             game.makeMove(move);
+            printf("move: %s\n", move->prettyDesc().c_str());
+            printf("ocena ruchu: %d\n", grader.grade(&game));
+        }
         else
         {
             printf("Nastapil bardzo powazny problem. Ten ruch nie powinien sie tu znalezc!!!\n");

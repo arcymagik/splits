@@ -10,6 +10,16 @@
 
 class SplitsGame;
 class Move;
+class Field;
+
+class Grader
+{
+public:
+    virtual int grade(SplitsGame* game) = 0;
+protected:
+    std::vector<int>* getStacks(SplitsGame* game);
+    Field* board(SplitsGame* game, int pos);
+};
 
 class Move
 {
@@ -88,6 +98,8 @@ private:
     std::vector<int> stacks[2];
     std::vector<int> fields; // vector pol dodanych do planszy TODO jw.
 
+    friend class Grader;
+
 public:
     SplitsGame();
     ~SplitsGame();
@@ -129,6 +141,8 @@ public:
     int lastEmptyField(int pos, int dir);
 
     void buildStructuresAfterBoardIsBuilt();
+
+    bool stackBlocked(int pos);
 
     static int calcDir(int source, int target, int* dist);
     static bool fieldOutOfBoard(int pos, int dir);
