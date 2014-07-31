@@ -1,5 +1,6 @@
 #include "splits.h"
 #include "random_game_algorithm.h"
+#include "minimax.h"
 #include "simple_grader.h"
 
 #include <cstdio>
@@ -20,6 +21,7 @@ Move* choose_move_basic(vector<Move*>* moves);
 Move* choose_move_random(vector<Move*>* moves);
 
 int random_alg_test();
+int minimax_alg_test();
 
 mt19937 generator;
 
@@ -33,6 +35,7 @@ int main(int argc, char** argv)
     run_test(basic_sanity, "basic_sanity");
     run_test(random_sanity, "random_sanity");
     run_test(random_alg_test, "random_alg_test");
+    run_test(minimax_alg_test, "minimax_alg_test");
 
     return 0;
 }
@@ -128,7 +131,22 @@ Move* random_alg_test_choose(vector<Move*>* moves)
     return move;
 }
 
+Move* minimax_alg_test_choose(vector<Move*>* moves)
+{
+    static MiniMaxAlg alg;
+
+    Move* move = alg.decideMove();
+    alg.makeMove(move);
+    return move;
+}
+
 int random_alg_test()
 {
     return sanity_template(random_alg_test_choose);
+}
+
+
+int minimax_alg_test()
+{
+    return sanity_template(minimax_alg_test_choose);
 }

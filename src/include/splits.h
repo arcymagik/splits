@@ -15,7 +15,11 @@ class Field;
 class Grader
 {
 public:
+    Grader();
+    virtual ~Grader();
     virtual int grade(SplitsGame* game) = 0;
+    virtual int gradeMove(SplitsGame* game, Move* move);
+    bool better(SplitsGame* game, int gradeA, int gradeB);
 protected:
     std::vector<int>* getStacks(SplitsGame* game);
     Field* board(SplitsGame* game, int pos);
@@ -112,6 +116,7 @@ public:
     bool isFinished();
 
     int curPlayer();
+    int curPlayerSign();
 
     // metody do ogladania wnetrza
 

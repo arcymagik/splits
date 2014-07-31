@@ -400,6 +400,12 @@ int SplitsGame::curPlayer()
     return (history.size() & 1);
 }
 
+int SplitsGame::curPlayerSign()
+{
+    int cp = curPlayer();
+    return cp*2-1;
+}
+
 int SplitsGame::lastEmptyField(int pos, int dir)
 {
     int result = -1;
@@ -699,6 +705,9 @@ NormalMove::~NormalMove() {}
 BuildingMove::~BuildingMove() {}
 InitialMove::~InitialMove() {}
 
+Grader::Grader() {}
+Grader::~Grader() {}
+
 
 vector<int>* Grader::getStacks(SplitsGame* game)
 {
@@ -708,4 +717,18 @@ vector<int>* Grader::getStacks(SplitsGame* game)
 Field* Grader::board(SplitsGame* game, int pos)
 {
     return game->board + pos;
+}
+
+int Grader::gradeMove(SplitsGame* game, Move* move)
+{
+    game->makeMove(move);
+    int result = grade(game);
+    game->undoMove();
+    return result;
+}
+
+bool Grader::better(SplitsGame* game, int gradeA, int gradeB)
+{
+    int cps = game->curPlayerSign();
+    return cps*(gradeA-gradeB) > 0;
 }
