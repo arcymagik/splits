@@ -17,10 +17,11 @@ using namespace std;
 
 int basic_sanity();
 int random_sanity();
-unsigned int choose_move_basic(void* moves, unsigned int size, GamePhase phase);
-unsigned int choose_move_random(void* moves, unsigned int size, GamePhase phase);
+Move* choose_move_basic(vector<Move*>* moves);
+Move* choose_move_random(vector<Move*>* moves);
 
 int random_alg_test();
+int minimax_alg_test();
 
 mt19937 generator;
 
@@ -33,6 +34,8 @@ int main(int argc, char** argv)
 
     run_test(basic_sanity, "basic_sanity");
     run_test(random_sanity, "random_sanity");
+    run_test(random_alg_test, "random_alg_test");
+    run_test(minimax_alg_test, "minimax_alg_test");
 
     return 0;
 }
@@ -44,23 +47,32 @@ int run_test(int (*test)(), string name)
     return 0;
 }
 
-int sanity_template(unsigned int (*function)(void* moves, unsigned int size, GamePhase phase))
+int sanity_template(Move* (*function)(vector<Move*>* moves))
 {
     SplitsGame game;
-    void* moves;
-    unsigned int index;
+    vector<Move*> moves;
     Move* move;
+    //int mindex;
     unsigned int size;
     SimpleGrader grader;
 
     while(!game.isFinished())
     {
-        moves = game.getPossibleMoves(&size);
-        index = function(moves, size, game.gamePhase());
-        move = SplitsGame::possibleMoveOfIndex(moves, index, game.gamePhase());
+        // {
+        //     //printf("%s\n", game.getPrettyHistory().c_str());
+
+        //     printf("plansza: %s\n", game.getDesc().c_str());
+        //     fflush(stdout);
+        // }
+
+        moves = game.getPossibleMoves();
+        size = moves.size();
+        // printf("chose %d of %u\n", mindex, size);
+        //move = moves[mindex];
+        move = function(&moves);
         if (game.canMove(move))
         {
-            game.makeMove(index);
+            game.makeMove(move);
             printf("move: %s\n", move->prettyDesc().c_str());
             printf("ocena ruchu: %d\n", grader.grade(&game));
         }
@@ -72,6 +84,8 @@ int sanity_template(unsigned int (*function)(void* moves, unsigned int size, Gam
             return -1;
         }
         delete move;
+        for (unsigned int i = 0; i < size; ++i)
+            delete(moves[i]);
     }
 
     printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
@@ -96,14 +110,43 @@ int random_sanity()
     return sanity_template(choose_move_random);
 }
 
-unsigned int choose_move_basic(void* moves, unsigned int size, GamePhase phase)
+Move* choose_move_basic(vector<Move*>* moves)
 {
-    return 0;
+    return (*moves)[0]->copy();
 }
 
-unsigned int choose_move_random(void* moves, unsigned int size, GamePhase phase)
+Move* choose_move_random(vector<Move*>* moves)
 {
-    uniform_int_distribution<> dis(0, size-1);
+    uniform_int_distribution<> dis(0, moves->size()-1);
     int index = dis(generator);
-    return index;
+    return (*moves)[index]->copy();
+}
+
+Move* random_alg_test_choose(vector<Move*>* moves)
+{
+    static RandomGameAlg alg(54);
+
+    Move* move = alg.decideMove();
+    alg.makeMove(move);
+    return move;
+}
+
+Move* minimax_alg_test_choose(vector<Move*>* moves)
+{
+    static MiniMaxAlg alg;
+
+    Move* move = alg.decideMove();
+    alg.makeMove(move);
+    return move;
+}
+
+int random_alg_test()
+{
+    return sanity_template(random_alg_test_choose);
+}
+
+
+int minimax_alg_test()
+{
+    return sanity_template(minimax_alg_test_choose);
 }

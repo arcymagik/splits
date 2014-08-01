@@ -53,18 +53,53 @@ SplitsGame::SplitsGame()
             board[pos].stack = 0;
             fields.push_back(pos);
         }
+    possibleMovesUpToDate = false;
+    possibleMoves = malloc(sizeof(NormalMove) * 200); // NormalMove jest najwiekszy; 200 > 120 to przeczucie;
 }
 
 SplitsGame::~SplitsGame()
 {
+    free(possibleMoves);
     free(outerBorder);
     free(board);
 }
 
 void SplitsGame::makeMove(Move* move)
 {
+    possibleMovesUpToDate = false;
     move->makeHere(this);
     history.push_back(move->copy());
+}
+
+void SplitsGame::makeMove(unsigned int index)
+{
+    GamePhase phase = gamePhase();
+    Move* move = possibleMoveOfIndex(possibleMoves, index, phase);
+    possibleMovesUpToDate = false;
+    switch (phase)
+    {
+    case Building:
+    {
+        BuildingMove* bmove = (BuildingMove*) move;
+        bmove->makeHere(this);
+        history.push_back(bmove);
+        break;
+    }
+    case Initial:
+    {
+        InitialMove* imove = (InitialMove*) move;
+        imove->makeHere(this);
+        history.push_back(imove);
+        break;
+    }
+    case Normal:
+    {
+        NormalMove* nmove = (NormalMove*) move;
+        nmove->makeHere(this);
+        history.push_back(nmove);
+        break;
+    }
+    };
 }
 
 bool SplitsGame::canMove(Move* move)
@@ -74,6 +109,7 @@ bool SplitsGame::canMove(Move* move)
 
 int SplitsGame::undoMove()
 {
+    possibleMovesUpToDate = false;
     if(history.size() == 0) return -1;
 
     Move* unmove = history.back();
@@ -145,6 +181,29 @@ bool SplitsGame::fieldOutOfBoard(int pos, int dir)
 
     //dir == 4
     return (pos-1) % MAX_BOARD_SIZE == 0;
+}
+
+Move* SplitsGame::possibleMoveOfIndex(void* voidMoves, unsigned int index, GamePhase phase)
+{
+    switch (phase)
+    {
+    case Building:
+    {
+        BuildingMove* moves = (BuildingMove*) voidMoves;
+        return BuildingMove::copy(moves+index);
+    }
+    case Initial:
+    {
+        InitialMove* moves = (InitialMove*) voidMoves;
+        return InitialMove::copy(moves+index);
+    }
+    case Normal:
+    {
+        NormalMove* moves = (NormalMove*) voidMoves;
+        return NormalMove::copy(moves+index);
+    }
+    };
+    return NULL;
 }
 
 //-----------------------------------------------------
@@ -395,6 +454,14 @@ bool SplitsGame::isFinished()
     return size == 0;
 }
 
+GamePhase SplitsGame::gamePhase()
+{
+    unsigned int hsize = history.size();
+    if (hsize >= NO_NONNORMAL_MOVES) return Normal;
+    else if (hsize < NO_BUILDING_MOVES) return Building;
+    else return Initial;
+}
+
 int SplitsGame::curPlayer()
 {
     return (history.size() & 1);
@@ -417,6 +484,13 @@ int SplitsGame::lastEmptyField(int pos, int dir)
     return result;
 }
 
+void* SplitsGame::getPossibleMoves(unsigned int* size)
+{
+    if (!possibleMovesUpToDate) updatePossibleMoves();
+    *size = possibleMovesSize;
+    return possibleMoves;
+}
+
 vector<Move*> SplitsGame::getPossibleMoves()
 {    
     int historySize = history.size();
@@ -424,6 +498,39 @@ vector<Move*> SplitsGame::getPossibleMoves()
     else if (historySize < NO_BUILDING_MOVES) return getPossibleBuildingMoves();
     else // if (historySize == NO_BUILDING_MOVES(lub +1))
         return getPossibleInitialMoves();
+}
+
+void SplitsGame::updatePossibleMoves()
+{
+    possibleMovesSize = 0;
+    possibleMovesUpToDate = true;
+    switch (gamePhase())
+    {
+    case Building: updateBuildingMoves(); break;
+    case Initial: updateInitialMoves(); break;
+    case Normal: updateNormalMoves(); break;
+    };
+}
+
+void SplitsGame::updateBuildingMoves()
+{
+    for (unsigned int i = 0; i < fields.size(); ++i)
+        addPossibleBuildingMovesForField(fields[i]);
+}
+
+void SplitsGame::addPossibleNormalMovesForStackInDir(int stackPos, int dir)
+{
+    NormalMove* moves = (NormalMove*) possibleMoves;
+    int dist = lastEmptyField(stackPos, dir);
+
+    if (dist == 0) return;
+
+    for(int i = 1; i <= board[stackPos].stack-1; ++i)
+    {
+        //moves->push_back((Move*) new NormalMove(stackPos, i, shift_field(stackPos, dir, dist)));
+        moves[possibleMovesSize] = NormalMove(stackPos, i, shift_field(stackPos, dir, dist));
+        ++possibleMovesSize;
+    }
 }
 
 void SplitsGame::addPossibleNormalMovesForStackInDir(int stackPos, vector<Move*>* moves, int dir)
@@ -435,6 +542,14 @@ void SplitsGame::addPossibleNormalMovesForStackInDir(int stackPos, vector<Move*>
     for(int i = 1; i <= board[stackPos].stack-1; ++i)
     {
         moves->push_back((Move*) new NormalMove(stackPos, i, shift_field(stackPos, dir, dist)));
+    }
+}
+
+void SplitsGame::addPossibleNormalMovesForStack(int stackPos)
+{
+    for (int i = 0; i < 6; ++i)
+    {
+        addPossibleNormalMovesForStackInDir(stackPos, i);
     }
 }
 
@@ -457,7 +572,57 @@ vector<Move*> SplitsGame::getPossibleNormalMoves()
     return result;
 }
 
-void SplitsGame::addPossibleBuildingMovesForField(int pos, std::vector<Move*>* moves) // TODO: nie zwraca wszystkich ruchow
+
+void SplitsGame::updateNormalMoves()
+{
+    int cp = curPlayer();
+    for (unsigned int i = 0; i < stacks[cp].size(); ++i)
+    {
+        addPossibleNormalMovesForStack(stacks[cp][i]);
+    }
+}
+
+void SplitsGame::addPossibleBuildingMovesForField(int pos)
+{
+    int dr, mdir;
+    int touching_pos, mpos;
+
+    BuildingMove move;
+    BuildingMove* moves = (BuildingMove*) possibleMoves;
+
+    for (int i = 0; i < 6; ++i)
+    {
+        touching_pos = shift_unit_field(pos, i);
+        for (int j = 0; j < 6; ++j) // przypadek, gdy sasiad jest jednym z srodkowych heksow plytki
+        {
+            move = BuildingMove(touching_pos, j);
+            if (canMoveBuilding(&move))
+            {
+                //moves->push_back(move);
+                moves[possibleMovesSize] = move;
+                ++possibleMovesSize;
+            }
+            //else delete(move);
+        }
+
+        for (int j = 0; j < 4; ++j)
+        {
+            dr = quick_mod( quick_mod(i+4, 6)+j, 6);
+            mpos = shift_unit_field(touching_pos, dr);
+            mdir = quick_mod(i+j, 6);
+            move = BuildingMove(mpos, mdir);
+            if (canMoveBuilding(&move))
+            {
+                //moves->push_back(move);
+                moves[possibleMovesSize] = move;
+                ++possibleMovesSize;
+            }
+            //else delete(move);
+        }
+    }   
+}
+
+void SplitsGame::addPossibleBuildingMovesForField(int pos, std::vector<Move*>* moves)
 {
     BuildingMove* move;
     int dr, mdir;
@@ -497,6 +662,20 @@ vector<Move*> SplitsGame::getPossibleBuildingMoves()
     for (unsigned int i = 0; i < fields.size(); ++i)
         addPossibleBuildingMovesForField(fields[i], &result);
     return result;
+}
+
+void SplitsGame::updateInitialMoves()
+{
+    InitialMove* moves = (InitialMove*) possibleMoves;
+    for (unsigned int i = 0; i < fields.size(); ++i)
+    {
+        if (board[fields[i]].stack == 0 && fieldTouchesOuterBorder(fields[i]))
+        {
+            //result.push_back(new InitialMove(fields[i]));
+            moves[possibleMovesSize] = InitialMove(fields[i]);
+            ++possibleMovesSize;
+        }
+    }
 }
 
 vector<Move*> SplitsGame::getPossibleInitialMoves()
@@ -639,6 +818,21 @@ string NormalMove::prettyDesc()
     return result;
 }
 
+Move* BuildingMove::copy(BuildingMove* move)
+{
+    return new BuildingMove(move->pos, move->dir);
+}
+
+Move* InitialMove::copy(InitialMove* move)
+{
+    return new InitialMove(move->pos);
+}
+
+Move* NormalMove::copy(NormalMove* move)
+{
+    return new NormalMove(move->source, move->quantity, move->target);
+}
+
 Move* BuildingMove::copy()
 {
     return new BuildingMove(pos, dir);
@@ -701,8 +895,11 @@ string SplitsGame::getPrettyHistory()
 }
 
 Move::~Move() {}
+NormalMove::NormalMove() {}
 NormalMove::~NormalMove() {}
+BuildingMove::BuildingMove() {}
 BuildingMove::~BuildingMove() {}
+InitialMove::InitialMove() {}
 InitialMove::~InitialMove() {}
 
 Grader::Grader() {}

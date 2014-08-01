@@ -35,5 +35,7 @@ message(STATUS "graders " ${GRADER_LIBRARIES})
 add_executable(sanity tests/sanity.cpp)
 target_link_libraries(sanity ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
+add_executable(sanity_with_constant_mallocing tests/sanity_with_constant_mallocing.cpp)
+target_link_libraries(sanity_with_constant_mallocing ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
 add_definitions(-Wall)

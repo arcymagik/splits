@@ -8,6 +8,8 @@
 
 #define TOKEN_QUANTITY 16
 
+enum GamePhase {Building, Initial, Normal};
+
 class SplitsGame;
 class Move;
 class Field;
@@ -40,6 +42,7 @@ public:
 class BuildingMove : public Move // 7 pierwszych ruchow w grze jest tego typu
 {
 public:
+    BuildingMove();
     BuildingMove(int pos, int dir);
     virtual ~BuildingMove();
     virtual Move* copy();
@@ -47,6 +50,8 @@ public:
     virtual void makeHere(SplitsGame* game);
     virtual bool canMove(SplitsGame* game);
     virtual void undo(SplitsGame* game);
+
+    static Move* copy(BuildingMove* move);
 
     int pos; // pozycja pierwszego konca
 
@@ -56,6 +61,7 @@ public:
 class NormalMove : public Move // 10+ ruchy sa tego typu
 {
 public:
+    NormalMove();
     NormalMove(int source, int quantity, int target);
     virtual ~NormalMove();
     virtual Move* copy();
@@ -63,6 +69,8 @@ public:
     virtual void makeHere(SplitsGame* game);
     virtual bool canMove(SplitsGame* game);
     virtual void undo(SplitsGame* game);
+
+    static Move* copy(NormalMove* move);
 
     int source;
     int quantity;
@@ -72,6 +80,7 @@ public:
 class InitialMove : public Move // 8. i 9. ruch jest tego typu
 {
 public:
+    InitialMove();
     InitialMove(int pos);
     virtual ~InitialMove();
     virtual Move* copy();
@@ -79,6 +88,8 @@ public:
     virtual void makeHere(SplitsGame* game);
     virtual bool canMove(SplitsGame* game);
     virtual void undo(SplitsGame* game);
+
+    static Move* copy(InitialMove* move);
     
     int pos;
 };
@@ -100,7 +111,11 @@ private:
     bool structuresAfterBoardIsBuiltAreBuilt;
 
     std::vector<int> stacks[2];
-    std::vector<int> fields; // vector pol dodanych do planszy TODO jw.
+    std::vector<int> fields;
+
+    void* possibleMoves;
+    unsigned int possibleMovesSize;
+    bool possibleMovesUpToDate;
 
     friend class Grader;
 
@@ -109,11 +124,14 @@ public:
     ~SplitsGame();
 
     void makeMove(Move* move);
+    void makeMove(unsigned int index); // index z tablicy possibleMoves
     bool canMove(Move* move);
     int undoMove();
 
     std::vector<Move*> getPossibleMoves();
+    void* getPossibleMoves(unsigned int* size);
     bool isFinished();
+    GamePhase gamePhase();
 
     int curPlayer();
     int curPlayerSign();
@@ -151,12 +169,23 @@ public:
 
     static int calcDir(int source, int target, int* dist);
     static bool fieldOutOfBoard(int pos, int dir);
+    static Move* possibleMoveOfIndex(void* moves, unsigned int index, GamePhase phase);
+
 private:
     bool touchesInOneOf4(int pos, int dir1, int dir2);
 
     void addPossibleNormalMovesForStack(int stackPos, std::vector<Move*>* moves);
     void addPossibleNormalMovesForStackInDir(int stackPos, std::vector<Move*>* moves, int dir);
     void addPossibleBuildingMovesForField(int pos, std::vector<Move*>* moves);
+
+    void updatePossibleMoves();
+    void updateBuildingMoves();
+    void updateInitialMoves();
+    void updateNormalMoves();
+
+    void addPossibleNormalMovesForStack(int stackPos);
+    void addPossibleNormalMovesForStackInDir(int stackPos, int dir);
+    void addPossibleBuildingMovesForField(int pos);    
 };
 
 #endif
