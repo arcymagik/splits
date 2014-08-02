@@ -26,7 +26,7 @@ add_subdirectory(rules)
 add_subdirectory(tests)
 add_subdirectory(algorithms)
 
-set(COMMON_LIBRARIES splits game_algorithm random_game_algorithm minimax)
+set(COMMON_LIBRARIES splits random_game_algorithm minimax game_algorithm)
 set(GRADER_LIBRARIES simple_grader)
 
 message(STATUS "common libraries " ${COMMON_LIBRARIES})

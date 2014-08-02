@@ -11,16 +11,20 @@
 
 #include <string>
 
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+
 using namespace std;
 
 #define SEED 19
+
+int random_alg_sanity();
+int minimax_alg_sanity();
+int alg_sanity_template(Algorithm* alg);
 
 int basic_sanity();
 int random_sanity();
 unsigned int choose_move_basic(void* moves, unsigned int size, GamePhase phase);
 unsigned int choose_move_random(void* moves, unsigned int size, GamePhase phase);
-
-int random_alg_test();
 
 mt19937 generator;
 
@@ -31,8 +35,10 @@ int main(int argc, char** argv)
     argc = argc; argv = argv;
     generator.seed(SEED);
 
-    run_test(basic_sanity, "basic_sanity");
-    run_test(random_sanity, "random_sanity");
+    //run_test(basic_sanity, "basic_sanity");
+    //run_test(random_sanity, "random_sanity");
+    //run_test(random_alg_sanity, "random_alg_sanity");
+    run_test(minimax_alg_sanity, "minimax_alg_sanity");
 
     return 0;
 }
@@ -106,4 +112,61 @@ unsigned int choose_move_random(void* moves, unsigned int size, GamePhase phase)
     uniform_int_distribution<> dis(0, size-1);
     int index = dis(generator);
     return index;
+}
+
+int random_alg_sanity()
+{
+    RandomGameAlg alg(19);
+    return alg_sanity_template(&alg);
+}
+
+int minimax_alg_sanity()
+{
+    MiniMaxAlg alg(new SimpleGrader(), 2);
+    return alg_sanity_template(&alg);
+}
+
+int alg_sanity_template(Algorithm* alg)
+{
+    SplitsGame game;
+    SimpleGrader grader;
+    Move* move;
+    boost::posix_time::ptime start_time;
+    int time_passed;
+
+    while (!game.isFinished())
+    {
+        start_time = boost::posix_time::microsec_clock::local_time();
+        alg->decideMove(&move);
+        auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
+        time_passed = current_time.total_milliseconds();
+        
+        if (game.canMove(move))
+        {
+            printf("move: %s\n", game.getPrettyDescMove(move).c_str());;
+            printf("ocena ruchu: %d\n", grader.grade(&game));
+            printf("staty algorytmu: %s\n", alg->stats().c_str());
+            printf("krok algorytmu zajal: %d\n", time_passed);
+            game.makeMove(move);
+            alg->makeMove(move);
+        }
+        else
+        {
+            printf("Nastapil bardzo powazny problem. Ten ruch nie powinien sie tu znalezc!!!\n");
+            printf("%s\n", game.getPrettyHistory().c_str());
+            printf("plansza: %s\n", game.getDesc().c_str());
+            return -1;
+        }
+    }
+
+    printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
+
+
+    printf("%s\n", game.getPrettyHistory().c_str());
+
+    printf("plansza: %s\n", game.getDesc().c_str());
+
+    while(game.undoMove() == 0);
+    
+    return 0;
 }

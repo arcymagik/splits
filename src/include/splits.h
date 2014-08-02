@@ -141,6 +141,7 @@ public:
     std::vector<Move*> getHistory();
     std::string getPrettyHistory();
     std::string getDesc();
+    std::string getPrettyDescMove(Move* move);
 
     // pomocnicze
     void makeNormal(NormalMove* move);
@@ -170,6 +171,7 @@ public:
     static int calcDir(int source, int target, int* dist);
     static bool fieldOutOfBoard(int pos, int dir);
     static Move* possibleMoveOfIndex(void* moves, unsigned int index, GamePhase phase);
+    static Move* rawPossibleMoveOfIndex(void* moves, unsigned int index, GamePhase phase);
 
 private:
     bool touchesInOneOf4(int pos, int dir1, int dir2);

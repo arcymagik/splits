@@ -9,10 +9,13 @@ class RandomGameAlg : public Algorithm
 public:
     RandomGameAlg();
     RandomGameAlg(unsigned int seed);
-    ~RandomGameAlg();
+    virtual ~RandomGameAlg();
     virtual Move* decideMove();
+    virtual void decideMove(Move** move);
+    virtual std::string stats();
 private:
     std::mt19937 generator;
+    unsigned int moves_size;
 };
 
 #endif

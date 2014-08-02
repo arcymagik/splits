@@ -54,7 +54,7 @@ SplitsGame::SplitsGame()
             fields.push_back(pos);
         }
     possibleMovesUpToDate = false;
-    possibleMoves = malloc(sizeof(NormalMove) * 200); // NormalMove jest najwiekszy; 200 > 120 to przeczucie;
+    possibleMoves = malloc(sizeof(NormalMove) * 500); // NormalMove jest najwiekszy; 500 > 120 to przeczucie;
 }
 
 SplitsGame::~SplitsGame()
@@ -64,11 +64,40 @@ SplitsGame::~SplitsGame()
     free(board);
 }
 
+// void SplitsGame::makeMove(Move* move)
+// {
+//     possibleMovesUpToDate = false;
+//     move->makeHere(this);
+//     history.push_back(move->copy());
+// }
+
 void SplitsGame::makeMove(Move* move)
 {
     possibleMovesUpToDate = false;
-    move->makeHere(this);
-    history.push_back(move->copy());
+    switch (gamePhase())
+    {
+    case Building:
+    {
+        BuildingMove bmove = *((BuildingMove*) move);
+        bmove.makeHere(this);
+        history.push_back(bmove.copy());
+        break;
+    }
+    case Initial:
+    {
+        InitialMove imove = *((InitialMove*) move);
+        imove.makeHere(this);
+        history.push_back(imove.copy());
+        break;
+    }
+    case Normal:
+    {
+        NormalMove nmove = *((NormalMove*) move);
+        nmove.makeHere(this);
+        history.push_back(nmove.copy());
+        break;
+    }
+    };
 }
 
 void SplitsGame::makeMove(unsigned int index)
@@ -104,7 +133,14 @@ void SplitsGame::makeMove(unsigned int index)
 
 bool SplitsGame::canMove(Move* move)
 {
-    return move->canMove(this);
+    //return move->canMove(this);
+    switch (gamePhase())
+    {
+    case Building: return canMoveBuilding((BuildingMove*) move);
+    case Initial: return canMoveInitial((InitialMove*) move);
+    case Normal: return canMoveNormal((NormalMove*) move);
+    };
+    return false;
 }
 
 int SplitsGame::undoMove()
@@ -181,6 +217,29 @@ bool SplitsGame::fieldOutOfBoard(int pos, int dir)
 
     //dir == 4
     return (pos-1) % MAX_BOARD_SIZE == 0;
+}
+
+Move* SplitsGame::rawPossibleMoveOfIndex(void* voidMoves, unsigned int index, GamePhase phase)
+{
+    switch (phase)
+    {
+    case Building:
+    {
+        BuildingMove* moves = (BuildingMove*) voidMoves;
+        return moves+index;
+    }
+    case Initial:
+    {
+        InitialMove* moves = (InitialMove*) voidMoves;
+        return moves+index;
+    }
+    case Normal:
+    {
+        NormalMove* moves = (NormalMove*) voidMoves;
+        return moves+index;
+    }
+    };
+    return NULL;
 }
 
 Move* SplitsGame::possibleMoveOfIndex(void* voidMoves, unsigned int index, GamePhase phase)
@@ -443,14 +502,21 @@ void SplitsGame::undoInitial(InitialMove* move)
     stacks[curPlayer()].pop_back();
 }
 
+// bool SplitsGame::isFinished()
+// {
+//     vector<Move*> moves = getPossibleMoves();
+//     unsigned int size = moves.size();
+
+//     for(unsigned int i = 0; i < size; ++i)
+//         delete(moves[i]);
+
+//     return size == 0;
+// }
+
 bool SplitsGame::isFinished()
 {
-    vector<Move*> moves = getPossibleMoves();
-    unsigned int size = moves.size();
-
-    for(unsigned int i = 0; i < size; ++i)
-        delete(moves[i]);
-
+    unsigned int size;
+    getPossibleMoves(&size); // discarding the result; only size important
     return size == 0;
 }
 
@@ -527,7 +593,6 @@ void SplitsGame::addPossibleNormalMovesForStackInDir(int stackPos, int dir)
 
     for(int i = 1; i <= board[stackPos].stack-1; ++i)
     {
-        //moves->push_back((Move*) new NormalMove(stackPos, i, shift_field(stackPos, dir, dist)));
         moves[possibleMovesSize] = NormalMove(stackPos, i, shift_field(stackPos, dir, dist));
         ++possibleMovesSize;
     }
@@ -541,7 +606,7 @@ void SplitsGame::addPossibleNormalMovesForStackInDir(int stackPos, vector<Move*>
 
     for(int i = 1; i <= board[stackPos].stack-1; ++i)
     {
-        moves->push_back((Move*) new NormalMove(stackPos, i, shift_field(stackPos, dir, dist)));
+        moves->push_back((Move*) new NormalMove(stackPos, i, shift_field(stackPos, dir, dist))); // 'new' ok here
     }
 }
 
@@ -633,7 +698,7 @@ void SplitsGame::addPossibleBuildingMovesForField(int pos, std::vector<Move*>* m
         touching_pos = shift_unit_field(pos, i);
         for (int j = 0; j < 6; ++j) // przypadek, gdy sasiad jest jednym z srodkowych heksow plytki
         {
-            move = new BuildingMove(touching_pos, j);
+            move = new BuildingMove(touching_pos, j); // 'new' ok here
             if (canMoveBuilding(move))
             {
                 moves->push_back(move);
@@ -646,7 +711,7 @@ void SplitsGame::addPossibleBuildingMovesForField(int pos, std::vector<Move*>* m
             dr = quick_mod( quick_mod(i+4, 6)+j, 6);
             mpos = shift_unit_field(touching_pos, dr);
             mdir = quick_mod(i+j, 6);
-            move = new BuildingMove(mpos, mdir);
+            move = new BuildingMove(mpos, mdir); // 'new' ok here
             if (canMoveBuilding(move))
             {
                 moves->push_back(move);
@@ -671,7 +736,6 @@ void SplitsGame::updateInitialMoves()
     {
         if (board[fields[i]].stack == 0 && fieldTouchesOuterBorder(fields[i]))
         {
-            //result.push_back(new InitialMove(fields[i]));
             moves[possibleMovesSize] = InitialMove(fields[i]);
             ++possibleMovesSize;
         }
@@ -684,7 +748,7 @@ vector<Move*> SplitsGame::getPossibleInitialMoves()
     for (unsigned int i = 0; i < fields.size(); ++i)
     {
         if (board[fields[i]].stack == 0 && fieldTouchesOuterBorder(fields[i]))
-            result.push_back(new InitialMove(fields[i]));
+            result.push_back(new InitialMove(fields[i])); //'new' ok here
     }
     return result;
 }
@@ -820,32 +884,32 @@ string NormalMove::prettyDesc()
 
 Move* BuildingMove::copy(BuildingMove* move)
 {
-    return new BuildingMove(move->pos, move->dir);
+    return new BuildingMove(move->pos, move->dir); // 'new' ok here
 }
 
 Move* InitialMove::copy(InitialMove* move)
 {
-    return new InitialMove(move->pos);
+    return new InitialMove(move->pos); // 'new' ok here
 }
 
 Move* NormalMove::copy(NormalMove* move)
 {
-    return new NormalMove(move->source, move->quantity, move->target);
+    return new NormalMove(move->source, move->quantity, move->target); // 'new' ok here
 }
 
 Move* BuildingMove::copy()
 {
-    return new BuildingMove(pos, dir);
+    return new BuildingMove(pos, dir); // 'new' ok here
 }
 
 Move* InitialMove::copy()
 {
-    return new InitialMove(pos);
+    return new InitialMove(pos); // 'new' ok here
 }
 
 Move* NormalMove::copy()
 {
-    return new NormalMove(source, quantity, target);
+    return new NormalMove(source, quantity, target); // 'new' ok here
 }
 
 vector<Move*> SplitsGame::getHistory()
@@ -879,6 +943,71 @@ string SplitsGame::getDesc()
     //     result += "\n";
     // }
 
+    return result;
+}
+
+string SplitsGame::getPrettyDescMove(Move* move)
+{
+    string result;
+    switch (gamePhase())
+    {
+    case Building:
+    {
+        int pos = ((BuildingMove*) move)->pos;
+        int dir = ((BuildingMove*) move)->dir;
+        result = "building\t(";
+        int x,y;
+        double_coord(pos, x, y);
+
+        result += boost::lexical_cast<string>(x);
+        result += ", ";
+        result += boost::lexical_cast<string>(y);
+
+        result += ")-->";
+        result += boost::lexical_cast<string>(dir);
+        break;
+    }
+    case Initial:
+    {
+        int pos = ((InitialMove*) move)->pos;
+        result = "initial\t(";
+        int x,y;
+        double_coord(pos, x, y);
+
+        result += boost::lexical_cast<string>(x);
+        result += ", ";
+        result += boost::lexical_cast<string>(y);
+        result += ")";
+        break;
+    }
+    case Normal:
+    {
+        int source = ((NormalMove*) move)->source;
+        int target = ((NormalMove*) move)->target;
+        int quantity = ((NormalMove*) move)->quantity;
+        result = "normal\t(";
+        int sx, sy, tx, ty;
+        double_coord(source, sx, sy);
+        double_coord(target, tx, ty);
+
+        result += boost::lexical_cast<string>(sx);
+        result += ", ";
+        result += boost::lexical_cast<string>(sy);
+
+        result += ")--";
+        result += boost::lexical_cast<string>(quantity);
+        result += "-->(";
+
+        result += boost::lexical_cast<string>(tx);
+        result += ", ";
+        result += boost::lexical_cast<string>(ty);
+
+        result += ") dir: ";
+        result += boost::lexical_cast<string>(SplitsGame::calcDir(source, target, NULL));
+        result += "|";
+        break;
+    }
+    };
     return result;
 }
 

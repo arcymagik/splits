@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+
 using namespace std;
 
 #define SEED 19
@@ -134,8 +136,15 @@ Move* random_alg_test_choose(vector<Move*>* moves)
 Move* minimax_alg_test_choose(vector<Move*>* moves)
 {
     static MiniMaxAlg alg;
+    boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
+    int time_passed;
 
     Move* move = alg.decideMove();
+
+    auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
+    time_passed = current_time.total_milliseconds();
+    printf("krok algorytmu zajal: %d\n", time_passed);
+
     alg.makeMove(move);
     return move;
 }
