@@ -61,6 +61,7 @@ SplitsGame::~SplitsGame()
 {
     free(possibleMoves);
     free(outerBorder);
+    //printf("board: %s\n", getBoardDesc().c_str());
     free(board);
 }
 
@@ -100,9 +101,10 @@ void SplitsGame::makeMove(Move* move)
     };
 }
 
-void SplitsGame::makeMove(unsigned int index)
+void SplitsGame::makeIndexedMove(unsigned int index)
 {
     GamePhase phase = gamePhase();
+    if (!possibleMovesUpToDate) updatePossibleMoves();
     Move* move = possibleMoveOfIndex(possibleMoves, index, phase);
     possibleMovesUpToDate = false;
     switch (phase)
@@ -283,6 +285,14 @@ bool SplitsGame::fieldBehindUnavailable(int field, int dir)
     return board[shift_unit_field(field, dir)].stack != 0;
 }
 
+bool SplitsGame::sourceInStacks(int source)
+{
+    int cp = curPlayer();
+    for (unsigned int i = 0; i < stacks[cp].size(); ++i)
+        if (stacks[cp][i] == source) return true;
+    return false;
+}
+
 // byc moze to wywalic i sprawdzac razem z polami na dir1 i dir2?
 bool SplitsGame::touchesInOneOf4(int pos, int dir1, int dir2)
 {
@@ -359,12 +369,21 @@ bool SplitsGame::fieldTouchesOuterBorder(int pos)
     return false;
 }
 
+bool SplitsGame::stacksWrong()
+{
+    return
+        stacks[0].size() > 0
+        && stacks[1].size() > 0
+        && stacks[0][0] == stacks[1][0];
+}
+
 void SplitsGame::makeNormal(NormalMove* move)
 {
     int source = move->source;
     int quantity = move->quantity;
     int target = move->target;
     unsigned int cp = curPlayer();
+    //for (unsigned int i = 0; i < history.size(); ++i) printf(" "); printf("m%u\n", cp);
     
     board[source].stack -= quantity;
     board[target].stack = quantity; // zamiast +=, bo przeciez tu musialo byc 0
@@ -380,11 +399,13 @@ void SplitsGame::makeNormal(NormalMove* move)
         else
         {
             stacks[cp][index] = stacks[cp][stacks[cp].size()-1];
+            board[stacks[cp][index]].stacksIndex = index;
             stacks[cp].pop_back();
         }
     }
     else if (quantity > 1)
     {
+        board[target].stacksIndex = stacks[cp].size();
         stacks[cp].push_back(target);
     }
 }
@@ -402,7 +423,8 @@ bool SplitsGame::canMoveNormal(NormalMove* move)
         && dir != INCORRECT_DIR
         && board[source].stack > quantity
         && pathIsEmpty(source, dir, dist)
-        && fieldBehindUnavailable(target, dir);
+        && fieldBehindUnavailable(target, dir)
+        && sourceInStacks(source);
 }
 
 void SplitsGame::undoNormal(NormalMove* move)
@@ -411,6 +433,7 @@ void SplitsGame::undoNormal(NormalMove* move)
     int quantity = move->quantity;
     int target = move->target;
     unsigned int cp = curPlayer();
+    //for (unsigned int i = 0; i < history.size(); ++i) printf(" "); printf("u%u\n", cp);
     if (board[source].stack == 1) // update stacks[cp] vector
     {
         int index = board[source].stacksIndex;
@@ -420,7 +443,9 @@ void SplitsGame::undoNormal(NormalMove* move)
         }
         else
         {
-            stacks[cp].push_back(stacks[cp][index]);
+            stacks[cp].push_back(-1);
+            stacks[cp][stacks[cp].size()-1] = stacks[cp][index];
+            board[stacks[cp][index]].stacksIndex = stacks[cp].size()-1;
             stacks[cp][index] = source;
         }
     }
@@ -430,7 +455,7 @@ void SplitsGame::undoNormal(NormalMove* move)
     }
 
     board[source].stack += quantity;
-    board[target].stack -= quantity;
+    board[target].stack = 0; // bo przeciez musialo byc 0
 }
 
 // building ma zawsze kierunki dir + (0, 1, 5), co byc moze moznaby zapisac
@@ -576,6 +601,7 @@ void SplitsGame::updatePossibleMoves()
     case Initial: updateInitialMoves(); break;
     case Normal: updateNormalMoves(); break;
     };
+    if (possibleMovesSize >= 200) printf("------------------------------something terrible happened\n");
 }
 
 void SplitsGame::updateBuildingMoves()
@@ -920,8 +946,42 @@ vector<Move*> SplitsGame::getHistory()
 
 string SplitsGame::getDesc()
 {
-    string result = "fields: ";
-    result += boost::lexical_cast<string>(fields.size());
+    string result = "possible moves:\n";
+    if (!possibleMovesUpToDate) updatePossibleMoves();
+
+    for (unsigned int i = 0; i < possibleMovesSize; ++i)
+    {
+        result += boost::lexical_cast<string>(i);
+        result += ":\t";
+        result += getPrettyDescMove(rawPossibleMoveOfIndex(possibleMoves, i, gamePhase()));
+        result += "\n";
+    }
+
+    result += getPrettyHistory();
+    result += "\n";
+
+    int cp = curPlayer();
+    result += "cp = ";
+    result += boost::lexical_cast<string>(cp);
+    result += "\n";
+    for (cp = 0; cp < 2; ++cp)
+    {
+        result += "stacks[cp]: ";
+        for (unsigned int i = 0; i < stacks[cp].size(); ++i)
+        {
+            int pos = stacks[cp][i];
+            int x,y;
+            double_coord(pos, x, y);
+            result += "(";
+            result += boost::lexical_cast<string>(x);
+            result += ", ";
+            result += boost::lexical_cast<string>(y);
+            result += ") ";
+        }
+        result += "\n";
+    }
+    //string result = "fields: ";
+    //result += boost::lexical_cast<string>(fields.size());
     // for (unsigned int i = 0; i < fields.size(); ++i)
     // {
         
@@ -943,6 +1003,27 @@ string SplitsGame::getDesc()
     //     result += "\n";
     // }
 
+    return result;
+}
+
+string SplitsGame::getBoardDesc()
+{
+    string result;
+    result += "board:\n";
+    for (int i = 0; i < MAX_BOARD_SIZE; ++i)
+    {
+        result += boost::lexical_cast<string>(i);
+        result += ":\t";
+        for (int j = 0; j < MAX_BOARD_SIZE; ++j)
+        {
+            result += "(";
+            result += boost::lexical_cast<string>(j);
+            result += ":";
+            result += boost::lexical_cast<string>(board[i*MAX_BOARD_SIZE+j].stack);
+            result += ") ";
+        }
+        result += "\n";
+    }
     return result;
 }
 
@@ -1017,6 +1098,8 @@ string SplitsGame::getPrettyHistory()
     for (unsigned int i = 0; i < history.size(); ++i)
     {
         Move* move = history[i];
+        result += boost::lexical_cast<string>(i);
+        result += ": ";
         result += move->prettyDesc();
         result += "\n";
     }

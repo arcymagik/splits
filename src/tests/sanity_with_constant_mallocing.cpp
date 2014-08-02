@@ -143,6 +143,7 @@ Move* minimax_alg_test_choose(vector<Move*>* moves)
 
     auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
     time_passed = current_time.total_milliseconds();
+    printf("staty algorytmu: %s\n", alg.stats().c_str());
     printf("krok algorytmu zajal: %d\n", time_passed);
 
     alg.makeMove(move);

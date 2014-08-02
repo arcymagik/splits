@@ -28,3 +28,7 @@ int SimpleGrader::grade(SplitsGame* game)
 
     return result;
 }
+
+SimpleGrader::SimpleGrader() {}
+SimpleGrader::~SimpleGrader() {}
+

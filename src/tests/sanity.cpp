@@ -21,6 +21,7 @@ int random_alg_sanity();
 int minimax_alg_sanity();
 int alg_sanity_template(Algorithm* alg);
 
+int undo_sanity();
 int basic_sanity();
 int random_sanity();
 unsigned int choose_move_basic(void* moves, unsigned int size, GamePhase phase);
@@ -35,9 +36,10 @@ int main(int argc, char** argv)
     argc = argc; argv = argv;
     generator.seed(SEED);
 
-    //run_test(basic_sanity, "basic_sanity");
-    //run_test(random_sanity, "random_sanity");
-    //run_test(random_alg_sanity, "random_alg_sanity");
+    run_test(basic_sanity, "basic_sanity");
+    run_test(random_sanity, "random_sanity");
+    run_test(undo_sanity, "undo_sanity");
+    run_test(random_alg_sanity, "random_alg_sanity");
     run_test(minimax_alg_sanity, "minimax_alg_sanity");
 
     return 0;
@@ -47,6 +49,22 @@ int run_test(int (*test)(), string name)
 {
     printf("%s\n", name.c_str());
     if (test()) printf("%s test failed\n", name.c_str()); else printf("%s test passed\n", name.c_str());
+    return 0;
+}
+
+int undo_sanity()
+{
+    SplitsGame game;
+
+    for (int i = 0; i < 9; ++i)
+    {
+        game.makeIndexedMove(0);
+    }
+    printf("first: %s\n", game.getDesc().c_str());
+    game.makeIndexedMove(0);
+    game.undoMove();
+    printf("second: %s\n", game.getDesc().c_str());
+
     return 0;
 }
 
@@ -66,7 +84,7 @@ int sanity_template(unsigned int (*function)(void* moves, unsigned int size, Gam
         move = SplitsGame::possibleMoveOfIndex(moves, index, game.gamePhase());
         if (game.canMove(move))
         {
-            game.makeMove(index);
+            game.makeIndexedMove(index);
             printf("move: %s\n", move->prettyDesc().c_str());
             printf("ocena ruchu: %d\n", grader.grade(&game));
         }
@@ -122,7 +140,7 @@ int random_alg_sanity()
 
 int minimax_alg_sanity()
 {
-    MiniMaxAlg alg(new SimpleGrader(), 2);
+    MiniMaxAlg alg(new SimpleGrader(), 1, 0);
     return alg_sanity_template(&alg);
 }
 
@@ -136,6 +154,7 @@ int alg_sanity_template(Algorithm* alg)
 
     while (!game.isFinished())
     {
+        //printf("staty algorytmu przed: %s\n", alg->stats().c_str());
         start_time = boost::posix_time::microsec_clock::local_time();
         alg->decideMove(&move);
         auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
@@ -145,7 +164,8 @@ int alg_sanity_template(Algorithm* alg)
         {
             printf("move: %s\n", game.getPrettyDescMove(move).c_str());;
             printf("ocena ruchu: %d\n", grader.grade(&game));
-            printf("staty algorytmu: %s\n", alg->stats().c_str());
+            //printf("staty algorytmu: %s\n", alg->stats().c_str());
+            //printf("opis gry: %s\n", game.getDesc().c_str());
             printf("krok algorytmu zajal: %d\n", time_passed);
             game.makeMove(move);
             alg->makeMove(move);
@@ -153,8 +173,10 @@ int alg_sanity_template(Algorithm* alg)
         else
         {
             printf("Nastapil bardzo powazny problem. Ten ruch nie powinien sie tu znalezc!!!\n");
+            printf("move: %s\n", game.getPrettyDescMove(move).c_str());
             printf("%s\n", game.getPrettyHistory().c_str());
             printf("plansza: %s\n", game.getDesc().c_str());
+            printf("ostatnie staty algorytmu: %s\n", alg->stats().c_str());
             return -1;
         }
     }

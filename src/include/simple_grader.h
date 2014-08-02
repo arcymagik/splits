@@ -6,6 +6,8 @@
 class SimpleGrader : public Grader
 {
 public:
+    SimpleGrader();
+    ~SimpleGrader();
     virtual int grade(SplitsGame* game);
 };
 

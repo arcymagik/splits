@@ -124,7 +124,7 @@ public:
     ~SplitsGame();
 
     void makeMove(Move* move);
-    void makeMove(unsigned int index); // index z tablicy possibleMoves
+    void makeIndexedMove(unsigned int index); // index z tablicy possibleMoves
     bool canMove(Move* move);
     int undoMove();
 
@@ -142,6 +142,9 @@ public:
     std::string getPrettyHistory();
     std::string getDesc();
     std::string getPrettyDescMove(Move* move);
+    bool stacksWrong();
+
+    std::string getBoardDesc();
 
     // pomocnicze
     void makeNormal(NormalMove* move);
@@ -163,6 +166,7 @@ public:
     bool tileTouchesOlderFields(int pos, int dir);
     bool fieldTouchesOuterBorder(int pos);
     int lastEmptyField(int pos, int dir);
+    bool sourceInStacks(int source);
 
     void buildStructuresAfterBoardIsBuilt();
 
