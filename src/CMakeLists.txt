@@ -17,8 +17,10 @@ include_directories(${root_SOURCE_DIR}/include)
 
 add_library(splits rules/splits.cpp)
 add_library(game_algorithm algorithms/game_algorithm)
+
 add_library(random_game_algorithm algorithms/random_game_algorithm.cpp)
 add_library(minimax algorithms/minimax.cpp)
+add_library(alpha_beta algorithms/alpha_beta.cpp)
 
 add_library(simple_grader algorithms/simple_grader.cpp)
 
@@ -26,7 +28,7 @@ add_subdirectory(rules)
 add_subdirectory(tests)
 add_subdirectory(algorithms)
 
-set(COMMON_LIBRARIES splits random_game_algorithm minimax game_algorithm)
+set(COMMON_LIBRARIES splits random_game_algorithm minimax alpha_beta game_algorithm)
 set(GRADER_LIBRARIES simple_grader)
 
 message(STATUS "common libraries " ${COMMON_LIBRARIES})
@@ -37,5 +39,8 @@ target_link_libraries(sanity ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
 add_executable(sanity_with_constant_mallocing tests/sanity_with_constant_mallocing.cpp)
 target_link_libraries(sanity_with_constant_mallocing ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+add_executable(alg_sanity tests/alg_sanity)
+target_link_libraries(alg_sanity ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
 add_definitions(-Wall)

@@ -38,7 +38,7 @@ void MiniMaxAlg::decideMove(Move** best_move)
     Move* move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
     int best = minimax_opt(move, h);
     int grade;
-    string shouldBe = game.getDesc();
+    //string shouldBe = game.getDesc();
     for (unsigned int i = 1; i < size; ++i)
     {
         moves = game.getPossibleMoves(&an_size);
@@ -125,7 +125,7 @@ int MiniMaxAlg::minimax_opt(Move* move, unsigned int h)
     int result;
     ++visited_nodes;
     game.makeMove(move);
-    string shouldBe = game.getDesc();
+    //string shouldBe = game.getDesc();
     {
         if (h == 0 || game.isFinished())
         {
