@@ -2,6 +2,7 @@
 #include "random_game_algorithm.h"
 #include "minimax.h"
 #include "simple_grader.h"
+#include "zobrist_hasher.h"
 
 #include <cstdio>
 
@@ -76,6 +77,7 @@ int sanity_template(unsigned int (*function)(void* moves, unsigned int size, Gam
     Move* move;
     unsigned int size;
     SimpleGrader grader;
+    ZobristHasher hasher(19);
 
     while(!game.isFinished())
     {
@@ -84,9 +86,11 @@ int sanity_template(unsigned int (*function)(void* moves, unsigned int size, Gam
         move = SplitsGame::possibleMoveOfIndex(moves, index, game.gamePhase());
         if (game.canMove(move))
         {
+            hasher.makeMove(move, &game, game.gamePhase());
             game.makeIndexedMove(index);
             printf("move: %s\n", move->prettyDesc().c_str());
             printf("ocena ruchu: %d\n", grader.grade(&game));
+            printf("hash: %llu\n", hasher.getHash());
         }
         else
         {
@@ -140,7 +144,7 @@ int random_alg_sanity()
 
 int minimax_alg_sanity()
 {
-    MiniMaxAlg alg(new SimpleGrader(), 1, 0);
+    MiniMaxAlg alg(new SimpleGrader(), 2, 0);
     return alg_sanity_template(&alg);
 }
 

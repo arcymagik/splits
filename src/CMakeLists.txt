@@ -23,12 +23,13 @@ add_library(minimax algorithms/minimax.cpp)
 add_library(alpha_beta algorithms/alpha_beta.cpp)
 
 add_library(simple_grader algorithms/simple_grader.cpp)
+add_library(zobrist_hasher algorithms/zobrist_hasher.cpp)
 
 add_subdirectory(rules)
 add_subdirectory(tests)
 add_subdirectory(algorithms)
 
-set(COMMON_LIBRARIES splits random_game_algorithm minimax alpha_beta game_algorithm)
+set(COMMON_LIBRARIES splits random_game_algorithm minimax alpha_beta zobrist_hasher game_algorithm)
 set(GRADER_LIBRARIES simple_grader)
 
 message(STATUS "common libraries " ${COMMON_LIBRARIES})

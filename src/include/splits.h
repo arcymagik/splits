@@ -27,6 +27,19 @@ protected:
     Field* board(SplitsGame* game, int pos);
 };
 
+class Hasher
+{
+public:
+    Hasher();
+    virtual ~Hasher();
+    virtual unsigned long long getHash();
+    virtual unsigned long long getHashMove(Move* move, SplitsGame* game, GamePhase phase);
+    virtual void makeMove(Move* move, SplitsGame* game, GamePhase phase) = 0;
+    virtual void undoMove(Move* move, SplitsGame* game, GamePhase phase) = 0;
+protected:
+    unsigned long long hash;
+};
+
 class Move
 {
 public:
@@ -137,6 +150,7 @@ public:
     int curPlayerSign();
 
     // metody do ogladania wnetrza
+    Field* getField(int pos);
 
     std::vector<Move*> getHistory();
     std::string getPrettyHistory();

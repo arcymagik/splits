@@ -1092,6 +1092,11 @@ string SplitsGame::getPrettyDescMove(Move* move)
     return result;
 }
 
+Field* SplitsGame::getField(int pos)
+{
+    return board+pos;
+}
+
 string SplitsGame::getPrettyHistory()
 {
     string result = "history:\n";
@@ -1140,4 +1145,21 @@ bool Grader::better(SplitsGame* game, int gradeA, int gradeB)
 {
     int cps = game->curPlayerSign();
     return cps*(gradeA-gradeB) > 0;
+}
+
+Hasher::Hasher() {}
+Hasher::~Hasher() {}
+
+unsigned long long Hasher::getHash()
+{
+    return hash;
+}
+
+unsigned long long Hasher::getHashMove(Move* move, SplitsGame* game, GamePhase phase)
+{
+    unsigned long oldHash = hash;
+    makeMove(move, game, phase);
+    unsigned long result = hash;
+    hash = oldHash;
+    return result;
 }
