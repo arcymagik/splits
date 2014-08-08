@@ -41,7 +41,7 @@ int main(int argc, char** argv)
     run_test(random_sanity, "random_sanity");
     run_test(undo_sanity, "undo_sanity");
     run_test(random_alg_sanity, "random_alg_sanity");
-    run_test(minimax_alg_sanity, "minimax_alg_sanity");
+    //run_test(minimax_alg_sanity, "minimax_alg_sanity");
 
     return 0;
 }
@@ -154,6 +154,7 @@ int alg_sanity_template(Algorithm* alg)
     SimpleGrader grader;
     Move* move;
     boost::posix_time::ptime start_time;
+    boost::posix_time::ptime end_time;
     int time_passed;
 
     while (!game.isFinished())
@@ -161,8 +162,9 @@ int alg_sanity_template(Algorithm* alg)
         //printf("staty algorytmu przed: %s\n", alg->stats().c_str());
         start_time = boost::posix_time::microsec_clock::local_time();
         alg->decideMove(&move);
-        auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
-        time_passed = current_time.total_milliseconds();
+        end_time = boost::posix_time::microsec_clock::local_time();
+	boost::posix_time::time_duration duration = end_time - start_time;
+        time_passed = duration.total_milliseconds();
         
         if (game.canMove(move))
         {
