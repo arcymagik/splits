@@ -18,6 +18,7 @@
 using namespace std;
 
 int alpha_beta_sanity();
+int ab_transTable_sanity();
 int alg_sanity_template(Algorithm* alg);
 
 int run_test(int (*test)(), string name);
@@ -25,6 +26,7 @@ int run_test(int (*test)(), string name);
 int main(int argc, char** argv)
 {
     run_test(alpha_beta_sanity, "alpha_beta_sanity");
+    run_test(ab_transTable_sanity, "ab_transTable_sanity");
     return 0;
 }
 
@@ -38,6 +40,12 @@ int run_test(int (*test)(), string name)
 int alpha_beta_sanity()
 {
     AlphaBetaAlg alg(new SimpleGrader(), 2, 0);
+    return alg_sanity_template(&alg);
+}
+
+int ab_transTable_sanity()
+{
+    AlphaBetaAlg alg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
     return alg_sanity_template(&alg);
 }
 
