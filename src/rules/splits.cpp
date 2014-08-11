@@ -334,10 +334,17 @@ bool SplitsGame::tileTouchesOlderFields(int pos, int dir)
 void SplitsGame::buildStructuresAfterBoardIsBuilt()
 {
     for (int i = 0; i < WHOLE_MAX_BOARD_SIZE; ++i) outerBorder[i] = false;
+    for (int i = 0; i < MAX_BOARD_SIZE; ++i)
+    {
+	outerBorder[single_coord(i, 0)] = true;
+	outerBorder[single_coord(i, (MAX_BOARD_SIZE-1))] = true;
+	outerBorder[single_coord(0, i)] = true;
+	outerBorder[single_coord((MAX_BOARD_SIZE-1), i)] = true;
+    }
 
     queue<int> q;
-    outerBorder[0] = true; // to pole na pewno jest poza plansza
-    q.push(0);
+    outerBorder[single_coord(1,1)] = true; // to pole na pewno jest poza plansza
+    q.push(single_coord(1,1));
 
     int cur, another;
     while (!q.empty())
