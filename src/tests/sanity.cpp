@@ -41,7 +41,7 @@ int main(int argc, char** argv)
     run_test(random_sanity, "random_sanity");
     run_test(undo_sanity, "undo_sanity");
     run_test(random_alg_sanity, "random_alg_sanity");
-    //run_test(minimax_alg_sanity, "minimax_alg_sanity");
+    run_test(minimax_alg_sanity, "minimax_alg_sanity");
 
     return 0;
 }

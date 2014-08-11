@@ -443,7 +443,7 @@ void SplitsGame::undoNormal(NormalMove* move)
     //for (unsigned int i = 0; i < history.size(); ++i) printf(" "); printf("u%u\n", cp);
     if (board[source].stack == 1) // update stacks[cp] vector
     {
-        int index = board[source].stacksIndex;
+        unsigned int index = board[source].stacksIndex;
         if (quantity > 1)
         {
             stacks[cp][index] = source;
@@ -451,8 +451,11 @@ void SplitsGame::undoNormal(NormalMove* move)
         else
         {
             stacks[cp].push_back(-1);
-            stacks[cp][stacks[cp].size()-1] = stacks[cp][index];
-            board[stacks[cp][index]].stacksIndex = stacks[cp].size()-1;
+            if (index != stacks[cp].size()-1)
+            {
+                stacks[cp][stacks[cp].size()-1] = stacks[cp][index];
+                board[stacks[cp][index]].stacksIndex = stacks[cp].size()-1;
+            }
             stacks[cp][index] = source;
         }
     }
