@@ -29,6 +29,7 @@ add_library(transposition_table algorithms/transposition_table.cpp)
 add_subdirectory(rules)
 add_subdirectory(tests)
 add_subdirectory(algorithms)
+add_subdirectory(arena)
 
 set(COMMON_LIBRARIES splits random_game_algorithm minimax alpha_beta zobrist_hasher transposition_table game_algorithm)
 set(GRADER_LIBRARIES simple_grader)
@@ -44,5 +45,8 @@ target_link_libraries(sanity_with_constant_mallocing ${COMMON_LIBRARIES} ${GRADE
 
 add_executable(alg_sanity tests/alg_sanity)
 target_link_libraries(alg_sanity ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+add_executable(match arena/match.cpp)
+target_link_libraries(match ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
 add_definitions(-Wall)

@@ -248,7 +248,7 @@ void AlphaBetaAlg::setHashedValue(int grade, unsigned int height)
 
 void AlphaBetaAlg::makeMove(Move* move)
 {
-    game.makeMove(move);
     if (hasher != NULL) hasher->makeMove(move, &game, game.gamePhase());
+    game.makeMove(move);
 }
 
