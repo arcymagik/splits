@@ -20,3 +20,8 @@ void Algorithm::decideMove(Move** move, unsigned int time)
 {
     decideMove(move);
 }
+
+Move* Algorithm::decideMove()
+{
+    return NULL;
+}

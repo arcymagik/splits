@@ -555,6 +555,12 @@ bool SplitsGame::isFinished()
     return size == 0;
 }
 
+unsigned int SplitsGame::getWinner()
+{
+    return
+        curPlayer() ^ 1;
+}
+
 GamePhase SplitsGame::gamePhase()
 {
     unsigned int hsize = history.size();

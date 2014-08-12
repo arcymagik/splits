@@ -144,6 +144,7 @@ public:
     std::vector<Move*> getPossibleMoves();
     void* getPossibleMoves(unsigned int* size);
     bool isFinished();
+    unsigned int getWinner(); //oczywiscie to ma sens tylko gdy gra sie skonczyla
     GamePhase gamePhase();
 
     int curPlayer();

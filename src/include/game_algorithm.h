@@ -11,7 +11,7 @@ public:
     Algorithm();
     virtual ~Algorithm();
     virtual void makeMove(Move* move);
-    virtual Move* decideMove() = 0; // result tej metody nalezy do wolajacego
+    virtual Move* decideMove(); // result tej metody nalezy do wolajacego; bledna jesli nie zdefiniowana
     virtual void decideMove(Move** move) = 0;
     virtual void decideMove(Move** move, unsigned int time); // ta metoda jest zdefiniowana glownie dla istniejacych algorytmow przykladowych. raczej powinna byc overrideowana
     virtual std::string stats();

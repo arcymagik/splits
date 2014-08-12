@@ -21,17 +21,19 @@ add_library(game_algorithm algorithms/game_algorithm)
 add_library(random_game_algorithm algorithms/random_game_algorithm.cpp)
 add_library(minimax algorithms/minimax.cpp)
 add_library(alpha_beta algorithms/alpha_beta.cpp)
+add_library(monte_carlo algorithms/monte_carlo.cpp)
 
 add_library(simple_grader algorithms/simple_grader.cpp)
 add_library(zobrist_hasher algorithms/zobrist_hasher.cpp)
 add_library(transposition_table algorithms/transposition_table.cpp)
+add_library(mc_utils algorithms/mc_utils.cpp)
 
 add_subdirectory(rules)
 add_subdirectory(tests)
 add_subdirectory(algorithms)
 add_subdirectory(arena)
 
-set(COMMON_LIBRARIES splits random_game_algorithm minimax alpha_beta zobrist_hasher transposition_table game_algorithm)
+set(COMMON_LIBRARIES splits monte_carlo random_game_algorithm minimax alpha_beta zobrist_hasher transposition_table game_algorithm mc_utils)
 set(GRADER_LIBRARIES simple_grader)
 
 message(STATUS "common libraries " ${COMMON_LIBRARIES})
