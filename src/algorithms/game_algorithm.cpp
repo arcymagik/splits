@@ -15,3 +15,8 @@ string Algorithm::stats()
     string result = "";
     return result;
 }
+
+void Algorithm::decideMove(Move** move, unsigned int time)
+{
+    decideMove(move);
+}

@@ -1,11 +1,14 @@
 #include "alpha_beta.h"
 #include "simple_grader.h"
 
-#define INFINITY (1 << 20)
-#define INVALID_GRADE (INFINITY+1)
+#define GRADE_INFINITY (1 << 20)
+#define INVALID_GRADE (GRADE_INFINITY+1)
 
-#define GRADE_BIT_LENGTH 22
-#define HEIGHT_BIT_LENGTH 4
+#define GRADE_BIT_LENGTH (22)
+#define HEIGHT_BIT_LENGTH (4)
+
+#define MS_TO_ALERT (100)
+#define VISITED_NODES_TO_CHECK_MASK (0x3ff)
 
 using namespace std;
 
@@ -19,6 +22,7 @@ AlphaBetaAlg::AlphaBetaAlg()
     height_building = 0;
     transTable = NULL;
     hasher = NULL;
+    timeToMove = 0;
 }
 
 AlphaBetaAlg::AlphaBetaAlg(Grader* grader, unsigned int height, unsigned int height_building)
@@ -28,6 +32,7 @@ AlphaBetaAlg::AlphaBetaAlg(Grader* grader, unsigned int height, unsigned int hei
     this->height_building = height_building;
     transTable = NULL;
     hasher = NULL;
+    timeToMove = 0;
 }
 
 AlphaBetaAlg::AlphaBetaAlg(TranspositionTable* transTable, Hasher* hasher, Grader* grader, unsigned int height, unsigned int height_building)
@@ -37,6 +42,7 @@ AlphaBetaAlg::AlphaBetaAlg(TranspositionTable* transTable, Hasher* hasher, Grade
     this->height_building = height_building;
     this->transTable = transTable;
     this->hasher = hasher;
+    timeToMove = 0;
 }
 
 AlphaBetaAlg::~AlphaBetaAlg()
@@ -55,10 +61,10 @@ Move* AlphaBetaAlg::decideMove()
     int cp = game.curPlayer();
     unsigned int h = phase == Building ? height_building : height;
 
-    unsigned int bestIndex = INFINITY;
-    int alpha = -INFINITY;
-    int beta = INFINITY;
-    int best = -game.curPlayerSign()*INFINITY;
+    unsigned int bestIndex = GRADE_INFINITY;
+    int alpha = -GRADE_INFINITY;
+    int beta = GRADE_INFINITY;
+    int best = -game.curPlayerSign()*GRADE_INFINITY;
     int grade;
 
     for (unsigned int i = 0; i < size; ++i)
@@ -86,9 +92,9 @@ void AlphaBetaAlg::decideMove(Move** best_move)
     unsigned int h = phase == Building ? height_building : height;
 
     unsigned int bestIndex = 0;
-    int alpha = -INFINITY;
-    int beta = INFINITY;
-    int best = -game.curPlayerSign()*INFINITY;
+    int alpha = -GRADE_INFINITY;
+    int beta = GRADE_INFINITY;
+    int best = -game.curPlayerSign()*GRADE_INFINITY;
     int grade;
 
     for (unsigned int i = 1; i < size; ++i)
@@ -104,6 +110,31 @@ void AlphaBetaAlg::decideMove(Move** best_move)
     }
     moves = game.getPossibleMoves(&an_size);
     *best_move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
+}
+
+void AlphaBetaAlg::decideMove(Move** move, unsigned int time)
+{
+    alert = false;
+    start_time = boost::posix_time::microsec_clock::local_time();
+    timeToMove = time;
+    unsigned int time_passed;
+    Move* result;
+    unsigned int i = 0;
+    *move = NULL;
+    while (true)
+    {
+        height_building = height = i;
+        decideMove(&result);
+        auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
+        time_passed = current_time.total_milliseconds();
+        if (time_passed + MS_TO_ALERT > timeToMove) alert = true;
+        if (alert) break;
+        *move = result;
+        ++i;
+    }
+    if (*move == NULL) *move = result;
+    alert = false;
+    timeToMove = 0;
 }
 
 void AlphaBetaAlg::updateWindow(int best, int cp , int* alpha, int* beta)
@@ -146,9 +177,9 @@ int AlphaBetaAlg::alpha_beta(Move* move, int alpha, int beta, unsigned int h)
             unsigned int size = moves.size();
             int cp = game.curPlayer();
 
-            int alpha = -INFINITY;
-            int beta = INFINITY;
-            int best = -game.curPlayerSign()*INFINITY;
+            int alpha = -GRADE_INFINITY;
+            int beta = GRADE_INFINITY;
+            int best = -game.curPlayerSign()*GRADE_INFINITY;
             updateWindow(best, cp, &alpha, &beta);
             int grade;
 
@@ -175,6 +206,18 @@ int AlphaBetaAlg::alpha_beta(Move* move, int alpha, int beta, unsigned int h)
 int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsigned int h)
 {
     int result;
+    unsigned int time_passed = 0;
+    if (alert) return 0;
+    if (timeToMove > 0 && ((visited_nodes & VISITED_NODES_TO_CHECK_MASK) == 0))
+    {
+        auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
+        time_passed = current_time.total_milliseconds();
+        if (time_passed + MS_TO_ALERT > timeToMove)
+        {
+            alert = true;
+            return 0;
+        }
+    }
     ++visited_nodes;
     unsigned int ssize;
     void* moves = game.getPossibleMoves(&ssize);
@@ -191,9 +234,9 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
             game.getPossibleMoves(&size);
             int cp = game.curPlayer();
 
-            int alpha = -INFINITY;
-            int beta = INFINITY;
-            int best = -game.curPlayerSign()*INFINITY;
+            int alpha = -GRADE_INFINITY;
+            int beta = GRADE_INFINITY;
+            int best = -game.curPlayerSign()*GRADE_INFINITY;
             updateWindow(best, cp, &alpha, &beta);
             int grade;
 
@@ -229,7 +272,7 @@ int AlphaBetaAlg::getHashedValue(unsigned int height)
     unsigned long long hheight = entry.data >> GRADE_BIT_LENGTH;
     unsigned long long hgrade = entry.data & grade_mask;
 
-    if (height == hheight) return ((int) hgrade) - INFINITY;
+    if (height == hheight) return ((int) hgrade) - GRADE_INFINITY;
     else return INVALID_GRADE;
 }
 
@@ -242,7 +285,7 @@ void AlphaBetaAlg::setHashedValue(int grade, unsigned int height)
     entry.hash = hash;
     entry.data =
         (((unsigned long long)height) << HEIGHT_BIT_LENGTH)
-        | (unsigned long long) (grade + INFINITY);
+        | (unsigned long long) (grade + GRADE_INFINITY);
     transTable->push(entry);
 }
 
