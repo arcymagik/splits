@@ -28,8 +28,8 @@ int run_test(int (*test)(), string name);
 
 int main(int argc, char** argv)
 {
-    run_test(alpha_beta_sanity, "alpha_beta_sanity");
-    run_test(ab_transTable_sanity, "ab_transTable_sanity");
+    //run_test(alpha_beta_sanity, "alpha_beta_sanity");
+    //run_test(ab_transTable_sanity, "ab_transTable_sanity");
     run_test(mc_sanity, "mc_sanity");
     return 0;
 }
@@ -44,7 +44,9 @@ int run_test(int (*test)(), string name)
 int mc_sanity()
 {
     MonteCarloMethod alg(32);
-    return alg_sanity_template(&alg);
+    MonteCarloMethod alg_with_trustLimit(534, true);
+        //|| alg_sanity_template(&alg)
+    return alg_sanity_template(&alg_with_trustLimit);
 }
 
 int alpha_beta_sanity()
@@ -71,9 +73,13 @@ int alg_sanity_template(Algorithm* alg)
     {
         //printf("staty algorytmu przed: %s\n", alg->stats().c_str());
         start_time = boost::posix_time::microsec_clock::local_time();
-        alg->decideMove(&move);
+        printf("przed w sanity: %s\n", game.getStacksDesc().c_str());
+        alg->decideMove(&move, 400);
+        printf("po w sanity: %s\n", game.getStacksDesc().c_str());
         auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
         time_passed = current_time.total_milliseconds();
+
+        fflush(stdout);
 
         if (game.canMove(move))
         {
@@ -82,6 +88,7 @@ int alg_sanity_template(Algorithm* alg)
             //printf("staty algorytmu: %s\n", alg->stats().c_str());
             //printf("opis gry: %s\n", game.getDesc().c_str());
             printf("krok algorytmu zajal: %d\n", time_passed);
+            printf("\n\n\n");
             game.makeMove(move);
             alg->makeMove(move);
         }

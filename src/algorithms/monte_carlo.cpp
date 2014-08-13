@@ -11,6 +11,13 @@ using namespace std;
 MonteCarloMethod::MonteCarloMethod(int seed)
 {
     generator.seed(seed);
+    usingTrustLimit = false;
+}
+
+MonteCarloMethod::MonteCarloMethod(int seed, bool usingTrustLimit)
+{
+    generator.seed(seed);
+    this->usingTrustLimit = usingTrustLimit;
 }
 
 MonteCarloMethod::~MonteCarloMethod() {}
@@ -27,14 +34,15 @@ void MonteCarloMethod::decideMove(Move** move, unsigned int timeToMove)
     boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
     unsigned int time_passed;
     SimulationResult* results = (SimulationResult*) malloc(sizeof(SimulationResult)*size);
+    SimulationResult v;
+    v.total = v.wins = 0;
     for (unsigned int i = 0; i < size; ++i) results[i].total = results[i].wins = 0;
-    uniform_int_distribution<> dis(0, size-1);
 
     do
     {
         for (unsigned int i = 0; i < ONE_STEP_NO_SIMULATIONS; ++i)
         {
-            oneSimulation(dis(generator), results);
+            oneSimulation(chooseSon(&v, results, size, game.curPlayerSign()), results, &v);
         }
         time_passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
     } while (time_passed + MS_DANGER_ZONE < timeToMove);
@@ -43,6 +51,19 @@ void MonteCarloMethod::decideMove(Move** move, unsigned int timeToMove)
     moves = game.getPossibleMoves(&size);
     free(results);
     *move = SplitsGame::rawPossibleMoveOfIndex(moves, index, game.gamePhase());
+}
+
+unsigned int MonteCarloMethod::chooseSon(SimulationResult* v, SimulationResult* sons, unsigned int size, int cps)
+{
+    if (usingTrustLimit)
+    {
+        return v->chooseSon(sons, size, cps);
+    }
+    else
+    {
+        uniform_int_distribution<> dis(0, size-1);
+        return dis(generator);
+    }
 }
 
 unsigned int MonteCarloMethod::chooseBestSimResult(SimulationResult* results, unsigned int size, unsigned int cps)
@@ -55,7 +76,7 @@ unsigned int MonteCarloMethod::chooseBestSimResult(SimulationResult* results, un
     return best;
 }
 
-void MonteCarloMethod::oneSimulation(int i, SimulationResult* results)
+void MonteCarloMethod::oneSimulation(int i, SimulationResult* results, SimulationResult* aggr)
 {
     unsigned int no_moves = 0;
     unsigned int size;
@@ -77,8 +98,8 @@ void MonteCarloMethod::oneSimulation(int i, SimulationResult* results)
     }
     game.undoMove();
 
-    results[i].total++;
-    results[i].wins += winner ^ 1;
+    results[i].total++; aggr->total++;
+    results[i].wins += winner ^ 1; aggr->wins += winner ^ 1;
     //if (winner == game.curPlayer()) results[i].wins++;
 }
 

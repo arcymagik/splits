@@ -16,6 +16,7 @@ public:
     virtual void decideMove(Move** move, unsigned int time); // ta metoda jest zdefiniowana glownie dla istniejacych algorytmow przykladowych. raczej powinna byc overrideowana
     virtual std::string stats();
 
+    std::string gameBoardDesc();
 protected:
     SplitsGame game;
 };

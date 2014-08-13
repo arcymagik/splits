@@ -43,7 +43,10 @@ SplitsGame::SplitsGame()
     structuresAfterBoardIsBuiltAreBuilt = false;
 
     for(int i = 0; i  < WHOLE_MAX_BOARD_SIZE; ++i)
+    {
         board[i].stack = -1;
+        board[i].stacksIndex = 1000000000;
+    }
 
 
     for(int i = 0; i < 2; ++i)
@@ -219,6 +222,16 @@ bool SplitsGame::fieldOutOfBoard(int pos, int dir)
 
     //dir == 4
     return (pos-1) % MAX_BOARD_SIZE == 0;
+}
+
+bool SplitsGame::dangerousMove(Move* move)
+{
+    if (gamePhase() == Normal)
+    {
+        NormalMove nmove = *(NormalMove*) move;
+        if (nmove.quantity+1 == board[nmove.source].stack) return true;
+    }
+    return false;
 }
 
 Move* SplitsGame::rawPossibleMoveOfIndex(void* voidMoves, unsigned int index, GamePhase phase)
@@ -517,8 +530,10 @@ void SplitsGame::undoBuilding(BuildingMove* move)
 
 void SplitsGame::makeInitial(InitialMove* move)
 {
+    unsigned int cp = curPlayer();
+    stacks[cp].push_back(move->pos);
     board[move->pos].stack = TOKEN_QUANTITY;
-    stacks[curPlayer()].push_back(move->pos);
+    board[move->pos].stacksIndex = stacks[cp].size()-1;
 }
 
 bool SplitsGame::canMoveInitial(InitialMove* move)
@@ -959,23 +974,9 @@ vector<Move*> SplitsGame::getHistory()
     return history;
 }
 
-
-string SplitsGame::getDesc()
+string SplitsGame::getStacksDesc()
 {
-    string result = "possible moves:\n";
-    if (!possibleMovesUpToDate) updatePossibleMoves();
-
-    for (unsigned int i = 0; i < possibleMovesSize; ++i)
-    {
-        result += boost::lexical_cast<string>(i);
-        result += ":\t";
-        result += getPrettyDescMove(rawPossibleMoveOfIndex(possibleMoves, i, gamePhase()));
-        result += "\n";
-    }
-
-    result += getPrettyHistory();
-    result += "\n";
-
+    string result = "";
     int cp = curPlayer();
     result += "cp = ";
     result += boost::lexical_cast<string>(cp);
@@ -996,6 +997,26 @@ string SplitsGame::getDesc()
         }
         result += "\n";
     }
+    return result;
+}
+
+string SplitsGame::getDesc()
+{
+    string result = "possible moves:\n";
+    if (!possibleMovesUpToDate) updatePossibleMoves();
+
+    for (unsigned int i = 0; i < possibleMovesSize; ++i)
+    {
+        result += boost::lexical_cast<string>(i);
+        result += ":\t";
+        result += getPrettyDescMove(rawPossibleMoveOfIndex(possibleMoves, i, gamePhase()));
+        result += "\n";
+    }
+
+    result += getPrettyHistory();
+    result += "\n";
+
+    result += getStacksDesc();
     //string result = "fields: ";
     //result += boost::lexical_cast<string>(fields.size());
     // for (unsigned int i = 0; i < fields.size(); ++i)
@@ -1026,16 +1047,18 @@ string SplitsGame::getBoardDesc()
 {
     string result;
     result += "board:\n";
-    for (int i = 0; i < MAX_BOARD_SIZE; ++i)
+    for (int i = 23; i < 38; ++i)
     {
         result += boost::lexical_cast<string>(i);
         result += ":\t";
-        for (int j = 0; j < MAX_BOARD_SIZE; ++j)
+        for (int j = 23; j < 38; ++j)
         {
             result += "(";
             result += boost::lexical_cast<string>(j);
             result += ":";
             result += boost::lexical_cast<string>(board[i*MAX_BOARD_SIZE+j].stack);
+            result += ", ";
+            result += boost::lexical_cast<string>(board[i*MAX_BOARD_SIZE+j].stacksIndex);
             result += ") ";
         }
         result += "\n";

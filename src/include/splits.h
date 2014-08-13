@@ -156,8 +156,10 @@ public:
     std::vector<Move*> getHistory();
     std::string getPrettyHistory();
     std::string getDesc();
+    std::string getStacksDesc();
     std::string getPrettyDescMove(Move* move);
     bool stacksWrong();
+    bool dangerousMove(Move* move);
 
     std::string getBoardDesc();
 

@@ -10,14 +10,17 @@ class MonteCarloMethod : public Algorithm
 {
 public:
     MonteCarloMethod(int seed);
+    MonteCarloMethod(int seed, bool usingTrustLimit);
     virtual ~MonteCarloMethod();
     virtual void decideMove(Move** move);
     virtual void decideMove(Move** move, unsigned int time);
 private:
     std::mt19937 generator;
+    bool usingTrustLimit;
 
+    unsigned int chooseSon(SimulationResult* v, SimulationResult* sons, unsigned int size, int cps);
     unsigned int chooseBestSimResult(SimulationResult* results, unsigned int size, unsigned int cp);
-    void oneSimulation(int i, SimulationResult* results);
+    void oneSimulation(int i, SimulationResult* results, SimulationResult* aggr);
 };
 
 #endif

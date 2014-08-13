@@ -23,6 +23,7 @@ int minimax_alg_sanity();
 int alg_sanity_template(Algorithm* alg);
 
 int undo_sanity();
+int doubleGameWithAllTokensNormalMove();
 int basic_sanity();
 int random_sanity();
 unsigned int choose_move_basic(void* moves, unsigned int size, GamePhase phase);
@@ -42,6 +43,7 @@ int main(int argc, char** argv)
     run_test(undo_sanity, "undo_sanity");
     run_test(random_alg_sanity, "random_alg_sanity");
     run_test(minimax_alg_sanity, "minimax_alg_sanity");
+    run_test(doubleGameWithAllTokensNormalMove, "doubleGameWithAllTokensNormalMove");
 
     return 0;
 }
@@ -65,6 +67,35 @@ int undo_sanity()
     game.makeIndexedMove(0);
     game.undoMove();
     printf("second: %s\n", game.getDesc().c_str());
+
+    return 0;
+}
+
+int doubleGameWithAllTokensNormalMove()
+{
+    SplitsGame game1;
+    SplitsGame game2;
+
+    Move* move;
+    void* moves;
+    unsigned int size;
+
+    for (int i = 0; i < 9; ++i)
+    {
+        moves = game1.getPossibleMoves(&size);
+        move = SplitsGame::rawPossibleMoveOfIndex(moves, 0, game1.gamePhase());
+        game1.makeMove(move);
+        game2.makeMove(move);
+    }
+
+    moves = game1.getPossibleMoves(&size);
+    move = SplitsGame::rawPossibleMoveOfIndex(moves, 14, game1.gamePhase());
+
+    game1.makeMove(move);
+    game2.makeMove(move);
+
+    printf("game1: %s\n\n", game1.getDesc().c_str());
+    printf("game2: %s\n\n", game2.getDesc().c_str());
 
     return 0;
 }
