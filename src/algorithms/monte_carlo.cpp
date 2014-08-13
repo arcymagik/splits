@@ -47,7 +47,7 @@ void MonteCarloMethod::decideMove(Move** move, unsigned int timeToMove)
         time_passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
     } while (time_passed + MS_DANGER_ZONE < timeToMove);
 
-    unsigned int index = chooseBestSimResult(results, size, game.curPlayerSign());
+    unsigned int index = SimulationResult::chooseBestSimResult(results, size, game.curPlayerSign());
     moves = game.getPossibleMoves(&size);
     free(results);
     *move = SplitsGame::rawPossibleMoveOfIndex(moves, index, game.gamePhase());
@@ -64,16 +64,6 @@ unsigned int MonteCarloMethod::chooseSon(SimulationResult* v, SimulationResult* 
         uniform_int_distribution<> dis(0, size-1);
         return dis(generator);
     }
-}
-
-unsigned int MonteCarloMethod::chooseBestSimResult(SimulationResult* results, unsigned int size, unsigned int cps)
-{
-    unsigned int best = 0;
-    for (unsigned int i = 1; i < size; ++i)
-    {
-        if (!results[i].isBetterThan(results + best, cps)) best = i;
-    }
-    return best;
 }
 
 void MonteCarloMethod::oneSimulation(int i, SimulationResult* results, SimulationResult* aggr)

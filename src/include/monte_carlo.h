@@ -19,7 +19,6 @@ private:
     bool usingTrustLimit;
 
     unsigned int chooseSon(SimulationResult* v, SimulationResult* sons, unsigned int size, int cps);
-    unsigned int chooseBestSimResult(SimulationResult* results, unsigned int size, unsigned int cp);
     void oneSimulation(int i, SimulationResult* results, SimulationResult* aggr);
 };
 

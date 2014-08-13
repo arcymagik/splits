@@ -39,3 +39,14 @@ unsigned int SimulationResult::chooseSon(SimulationResult* sons, unsigned int si
     }
     return result;
 }
+
+unsigned int SimulationResult::chooseBestSimResult(SimulationResult* results, unsigned int size, unsigned int cps)
+{
+    unsigned int best = 0;
+    for (unsigned int i = 1; i < size; ++i)
+    {
+        if (results[i].isBetterThan(results + best, cps))
+            best = i;
+    }
+    return best;
+}

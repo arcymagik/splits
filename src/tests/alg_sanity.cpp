@@ -4,6 +4,7 @@
 #include "alpha_beta.h"
 #include "minimax.h"
 #include "monte_carlo.h"
+#include "mcts.h"
 
 #include "simple_grader.h"
 
@@ -19,9 +20,12 @@
 
 using namespace std;
 
+int number_of_fails = 0;
+
 int alpha_beta_sanity();
 int ab_transTable_sanity();
 int mc_sanity();
+int mcts_sanity();
 int alg_sanity_template(Algorithm* alg);
 
 int run_test(int (*test)(), string name);
@@ -30,15 +34,27 @@ int main(int argc, char** argv)
 {
     //run_test(alpha_beta_sanity, "alpha_beta_sanity");
     //run_test(ab_transTable_sanity, "ab_transTable_sanity");
-    run_test(mc_sanity, "mc_sanity");
+    //run_test(mc_sanity, "mc_sanity");
+    run_test(mcts_sanity, "mcts_sanity");
     return 0;
 }
 
 int run_test(int (*test)(), string name)
 {
     printf("%s\n", name.c_str());
-    if (test()) printf("%s test failed\n", name.c_str()); else printf("%s test passed\n", name.c_str());
+    if (test())
+    {
+        printf("%s test failed\n", name.c_str());
+        number_of_fails++;
+    }
+    else printf("%s test passed\n", name.c_str());
     return 0;
+}
+
+int mcts_sanity()
+{
+    MCTS alg(4322);
+    return alg_sanity_template(&alg);
 }
 
 int mc_sanity()

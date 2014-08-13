@@ -430,6 +430,41 @@ void SplitsGame::makeNormal(NormalMove* move)
     }
 }
 
+unsigned int SplitsGame::getIndexOfMove(Move* move)
+{
+    if (!possibleMovesUpToDate) updatePossibleMoves();
+    Move* another;
+    unsigned int size;
+    for (unsigned int i = 0; i < possibleMovesSize; ++i)
+    {
+        another = rawPossibleMoveOfIndex(getPossibleMoves(&size), i, gamePhase());
+        if (movesEqual(move, another)) return i;
+    }
+    return 1000000000;
+}
+
+bool SplitsGame::movesEqual(Move* st, Move* nd)
+{
+    switch (gamePhase())
+    {
+    case Normal:
+    {
+        return
+            ((NormalMove*) st)->source == ((NormalMove*) nd)->source
+            && ((NormalMove*) st)->quantity == ((NormalMove*) nd)->quantity
+            && ((NormalMove*) st)->target == ((NormalMove*) nd)->target;
+    }
+    case Building:
+        return
+            ((BuildingMove*) st)->pos == ((BuildingMove*) nd)->pos
+            && ((BuildingMove*) st)->dir == ((BuildingMove*) nd)->dir;
+    case Initial:
+        return
+            ((InitialMove*) st)->pos == ((InitialMove*) nd)->pos;
+    };
+    return false;
+}
+
 bool SplitsGame::canMoveNormal(NormalMove* move)
 {
     int source = move->source;

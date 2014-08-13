@@ -189,6 +189,9 @@ public:
 
     bool stackBlocked(int pos);
 
+    unsigned int getIndexOfMove(Move* move);
+    bool movesEqual(Move* st, Move* nd);
+
     static int calcDir(int source, int target, int* dist);
     static bool fieldOutOfBoard(int pos, int dir);
     static Move* possibleMoveOfIndex(void* moves, unsigned int index, GamePhase phase);
