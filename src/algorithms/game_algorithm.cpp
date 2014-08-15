@@ -28,5 +28,5 @@ Move* Algorithm::decideMove()
 
 string Algorithm::gameBoardDesc()
 {
-    return game.getBoardDesc();
+    return game.getDesc() + "\n" + game.getBoardDesc();
 }

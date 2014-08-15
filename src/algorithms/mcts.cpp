@@ -80,6 +80,7 @@ void MCTS::doComputing(unsigned int time)
 {
     boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
     unsigned int time_passed;
+    int packs = 0;
 
     do
     {
@@ -87,8 +88,10 @@ void MCTS::doComputing(unsigned int time)
         {
             performSingleComputation();
         }
+        ++packs;
         time_passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
     } while (time_passed + MS_DANGER_ZONE < time);
+    //printf("mcts packs: %d\n", packs);
 }
 
 void MCTS::performSingleComputation()

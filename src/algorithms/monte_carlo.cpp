@@ -6,7 +6,7 @@
 using namespace std;
 
 #define MS_DANGER_ZONE (100)
-#define ONE_STEP_NO_SIMULATIONS (200)
+#define ONE_STEP_NO_SIMULATIONS (150)
 
 MonteCarloMethod::MonteCarloMethod(int seed)
 {

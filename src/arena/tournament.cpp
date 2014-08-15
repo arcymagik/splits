@@ -17,8 +17,8 @@
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
-#define NUMBER_OF_PLAYS (10)
-#define TIME_TO_MOVE (1000) // to chyba lepiej bylyby command line parametryv
+#define NUMBER_OF_PLAYS (5)
+#define TIME_TO_MOVE (1000) // to chyba lepiej bylyby command line parametry
 
 using namespace std;
 
@@ -59,20 +59,21 @@ int main(int argc, char** argv)
     generator.seed(432243);
     uniform_int_distribution<> dis(0, 1000000);
     unsigned int result;
-    for (unsigned int i = 0; i < algorithms_size-1; ++i)
-        for (unsigned int j = i+1; j < algorithms_size; ++j)
-        {
-            result = 0;
-            for (unsigned int k = 0; k < NUMBER_OF_PLAYS; ++k)
+    for (unsigned int i = 0; i < algorithms_size; ++i)
+        for (unsigned int j = 0; j < algorithms_size; ++j)
+            if (i != j) // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
             {
-                alg1 = getAlgorithm(i, dis(generator));
-                alg2 = getAlgorithm(j, dis(generator));
-                result += play(alg1, alg2, TIME_TO_MOVE);
-                delete(alg1);
-                delete(alg2);
+                result = 0;
+                for (unsigned int k = 0; k < NUMBER_OF_PLAYS; ++k)
+                {
+                    alg1 = getAlgorithm(i, dis(generator));
+                    alg2 = getAlgorithm(j, dis(generator));
+                    result += play(alg1, alg2, TIME_TO_MOVE);
+                    delete(alg1);
+                    delete(alg2);
+                }
+                printf("%s\tvs\t%s:\t%u/%u\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS);
             }
-            printf("%s\tvs\t%s:\t%u/%u\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS);
-        }
     return 0;
 }
 
@@ -89,6 +90,7 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
         cp = game.curPlayer();
         start_time = boost::posix_time::microsec_clock::local_time();
         algs[cp]->decideMove(&move, TIME_TO_MOVE);
+        move = game.copyMove(move);
         auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
         time_passed = current_time.total_milliseconds();
         if (time_passed > TIME_TO_MOVE)
@@ -99,6 +101,7 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
         game.makeMove(move);
         for (unsigned int i = 0; i < 2; ++i)
             algs[i]->makeMove(move);
+        delete(move); move = NULL;
     }
     return game.getWinner();
 }

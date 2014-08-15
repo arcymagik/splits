@@ -26,6 +26,7 @@ int main(int argc, char** argv)
 {
     // TODO: dodac wybieranie algorytmu jako opcje command lineowa
     Algorithm* alg0 = new RandomGameAlg(57);
+    //Algorithm* alg0 = new MiniMaxAlg(new SimpleGrader(), 2, 0);
     //Algorithm* alg1 = new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
     Algorithm* alg1 = new MCTS(5334);
 
@@ -68,8 +69,6 @@ int play(Algorithm* alg0, Algorithm* alg1) // na razie bez mierzenia czasu
 
     printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
 
-    printf("%s\n", game.getPrettyHistory().c_str());
-
     printf("plansza: %s\n", game.getDesc().c_str());
     return 0;
 }
@@ -77,7 +76,8 @@ int play(Algorithm* alg0, Algorithm* alg1) // na razie bez mierzenia czasu
 int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
 {
     SplitsGame game;
-    Algorithm* algs[2] = {alg0, alg1};
+    SimpleGrader grader;
+    Algorithm* algs[2] = {alg1, alg0};
 
     unsigned int curPl = 0;
     Move* move;
@@ -89,8 +89,16 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
         start_time = boost::posix_time::microsec_clock::local_time();
         algs[curPl]->decideMove(&move, timeForMove);
         auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
+        move = game.copyMove(move);
         time_passed = current_time.total_milliseconds();
         printf("Algorytm %u myslal przez %d ms\n", curPl, time_passed);
+        printf("move: %s\n", game.getPrettyDescMove(move).c_str());
+        if (!game.canMove(move))
+        {
+            printf("ten ruch nie powinien byl sie wydarzyc!\n");
+            printf("algorytm: %s\n", algs[curPl]->gameBoardDesc().c_str());
+            break;
+        }
         if ((unsigned int) time_passed > timeForMove)
         //if(false)
         {
@@ -98,16 +106,18 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
             printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
             break;
         }
-        printf("move: %s\n", game.getPrettyDescMove(move).c_str());
 
         game.makeMove(move);
+        printf("ocena ruchu: %d\n", grader.grade(&game));
         for (int i = 0; i < 2; ++i) algs[i]->makeMove(move);
         curPl = nextPlayer(curPl);
+        printf("\n");
+        delete(move); move = NULL;
     }
 
     printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
 
-    printf("%s\n", game.getPrettyHistory().c_str());
+    printf("%s\n", game.getBoardDesc().c_str());
 
     printf("plansza: %s\n", game.getDesc().c_str());
     return 0;    

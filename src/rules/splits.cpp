@@ -665,7 +665,7 @@ int SplitsGame::curPlayer()
 int SplitsGame::curPlayerSign()
 {
     int cp = curPlayer();
-    return cp*2-1;
+    return -(cp*2-1);
 }
 
 int SplitsGame::lastEmptyField(int pos, int dir)
@@ -1010,6 +1010,35 @@ string NormalMove::prettyDesc()
     result += "|";
 
     return result;
+}
+
+Move* SplitsGame::copyMove(Move* move)
+{
+    switch(gamePhase())
+    {
+    case Normal:
+    {
+        NormalMove* nmove = new NormalMove();
+        nmove->source = ((NormalMove*) move)->source;
+        nmove->quantity = ((NormalMove*) move)->quantity;
+        nmove->target = ((NormalMove*) move)->target;
+        return nmove;
+    }
+    case Building:
+    {
+        BuildingMove* bmove = new BuildingMove();
+        bmove->pos = ((BuildingMove*) move)->pos;
+        bmove->dir = ((BuildingMove*) move)->dir;
+        return bmove;
+    }
+    case Initial:
+    {
+        InitialMove* imove = new InitialMove();
+        imove->pos = ((InitialMove*) move)->pos;
+        return imove;
+    }
+    };
+    return NULL;
 }
 
 Move* BuildingMove::copy(BuildingMove* move)

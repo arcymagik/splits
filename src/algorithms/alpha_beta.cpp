@@ -7,8 +7,8 @@
 #define GRADE_BIT_LENGTH (22)
 #define HEIGHT_BIT_LENGTH (4)
 
-#define MS_TO_ALERT (50)
-#define VISITED_NODES_TO_CHECK_MASK (0x3ff)
+#define MS_TO_ALERT (100)
+#define VISITED_NODES_TO_CHECK_MASK (0xff)
 
 using namespace std;
 

@@ -192,6 +192,7 @@ public:
 
     unsigned int getIndexOfMove(Move* move);
     bool movesEqual(Move* st, Move* nd);
+    Move* copyMove(Move* move);
 
     static int calcDir(int source, int target, int* dist);
     static bool fieldOutOfBoard(int pos, int dir);
