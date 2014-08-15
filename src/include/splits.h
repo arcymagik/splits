@@ -160,6 +160,7 @@ public:
     std::string getPrettyDescMove(Move* move);
     bool stacksWrong();
     bool dangerousMove(Move* move);
+    bool checkStacks();
 
     std::string getBoardDesc();
 

@@ -14,6 +14,7 @@ public:
     unsigned int sons_size;
 
     MCT_Node();
+    MCT_Node(const MCT_Node& another);
     virtual ~MCT_Node();
     void destroy_sons();
     unsigned int chooseSon(unsigned int cps);

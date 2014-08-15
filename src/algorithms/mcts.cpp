@@ -38,6 +38,13 @@ MCT_Node::MCT_Node()
     sons_size = 0;
 }
 
+MCT_Node::MCT_Node(const MCT_Node& another)
+{
+    simResult = another.simResult;
+    sons = another.sons;
+    sons_size = another.sons_size;
+}
+
 MCT_Node::~MCT_Node()
 {
     destroy_sons();
@@ -64,9 +71,9 @@ void MCTS::makeMove(Move* move)
     tree = tmp;
     tmp.sons = NULL;
     tmp.sons_size = 0;
+    game.makeMove(move);
     if (tree.sons == NULL)
         tree.expand(&game);
-    game.makeMove(move);
 }
 
 void MCTS::doComputing(unsigned int time)
@@ -96,7 +103,7 @@ int MCT_Node::simulate(SplitsGame* game, mt19937* generator)
     int result;
     if (sons == NULL)
     {
-        if (simResult.total >= EXPAND_TRESHOLD)
+        if (simResult.total >= EXPAND_TRESHOLD) // expansion
         {
             expand(game);
             unsigned int mindex = chooseSon(game->curPlayerSign());
@@ -104,15 +111,16 @@ int MCT_Node::simulate(SplitsGame* game, mt19937* generator)
             result = sons[mindex].simulate(game, generator);
             game->undoMove();
         }
-        else result = randomGame(game, generator);
+        else result = randomGame(game, generator); // simulation
     }
-    else
+    else // selection
     {
         unsigned int mindex = chooseSon(game->curPlayerSign());
         game->makeIndexedMove(mindex);
         result = sons[mindex].simulate(game, generator);
         game->undoMove();
     }
+    // backpropagation
     simResult.wins += (result ^ 1);
     simResult.total++;
     return result;
@@ -124,11 +132,13 @@ int MCT_Node::randomGame(SplitsGame* game, mt19937* generator)
     unsigned int size;
     Move* move;
     unsigned int no_moves = 0;
+    unsigned int mindex;
     while (!game->isFinished())
     {
         moves = game->getPossibleMoves(&size);
         uniform_int_distribution<> dis(0, size-1);
-        move = SplitsGame::rawPossibleMoveOfIndex(moves, dis(*generator), game->gamePhase());
+        mindex = dis(*generator);
+        move = SplitsGame::rawPossibleMoveOfIndex(moves, mindex, game->gamePhase());
         game->makeMove(move);
         ++no_moves;
     }

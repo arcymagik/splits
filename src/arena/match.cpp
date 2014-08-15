@@ -4,6 +4,8 @@
 #include "simple_grader.h"
 #include "zobrist_hasher.h"
 #include "alpha_beta.h"
+#include "monte_carlo.h"
+#include "mcts.h"
 
 #include <cstdio>
 
@@ -24,7 +26,8 @@ int main(int argc, char** argv)
 {
     // TODO: dodac wybieranie algorytmu jako opcje command lineowa
     Algorithm* alg0 = new RandomGameAlg(57);
-    Algorithm* alg1 = new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
+    //Algorithm* alg1 = new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
+    Algorithm* alg1 = new MCTS(5334);
 
     play(alg0, alg1, 1000);
 
@@ -89,6 +92,7 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
         time_passed = current_time.total_milliseconds();
         printf("Algorytm %u myslal przez %d ms\n", curPl, time_passed);
         if ((unsigned int) time_passed > timeForMove)
+        //if(false)
         {
             printf("Czas na ruch (%u ms) zostal przekroczony.\n", timeForMove);
             printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);

@@ -77,7 +77,6 @@ SplitsGame::~SplitsGame()
 
 void SplitsGame::makeMove(Move* move)
 {
-    possibleMovesUpToDate = false;
     switch (gamePhase())
     {
     case Building:
@@ -102,6 +101,7 @@ void SplitsGame::makeMove(Move* move)
         break;
     }
     };
+    possibleMovesUpToDate = false;
 }
 
 void SplitsGame::makeIndexedMove(unsigned int index)
@@ -109,7 +109,6 @@ void SplitsGame::makeIndexedMove(unsigned int index)
     GamePhase phase = gamePhase();
     if (!possibleMovesUpToDate) updatePossibleMoves();
     Move* move = possibleMoveOfIndex(possibleMoves, index, phase);
-    possibleMovesUpToDate = false;
     switch (phase)
     {
     case Building:
@@ -134,6 +133,7 @@ void SplitsGame::makeIndexedMove(unsigned int index)
         break;
     }
     };
+    possibleMovesUpToDate = false;
 }
 
 bool SplitsGame::canMove(Move* move)
@@ -150,13 +150,13 @@ bool SplitsGame::canMove(Move* move)
 
 int SplitsGame::undoMove()
 {
-    possibleMovesUpToDate = false;
     if(history.size() == 0) return -1;
 
     Move* unmove = history.back();
     history.pop_back();
     unmove->undo(this);
     delete(unmove);
+    possibleMovesUpToDate = false;
     return 0;
 }
 
@@ -226,10 +226,11 @@ bool SplitsGame::fieldOutOfBoard(int pos, int dir)
 
 bool SplitsGame::dangerousMove(Move* move)
 {
-    if (gamePhase() == Normal)
+    if (history.size() > 9)
     {
         NormalMove nmove = *(NormalMove*) move;
-        if (nmove.quantity+1 == board[nmove.source].stack) return true;
+        NormalMove another = *(NormalMove*) history[history.size()-1];
+        if (nmove.source == another.source || nmove.source == another.target) return true;
     }
     return false;
 }
@@ -391,10 +392,7 @@ bool SplitsGame::fieldTouchesOuterBorder(int pos)
 
 bool SplitsGame::stacksWrong()
 {
-    return
-        stacks[0].size() > 0
-        && stacks[1].size() > 0
-        && stacks[0][0] == stacks[1][0];
+    return board[2205].stack != -1;
 }
 
 void SplitsGame::makeNormal(NormalMove* move)
@@ -403,9 +401,10 @@ void SplitsGame::makeNormal(NormalMove* move)
     int quantity = move->quantity;
     int target = move->target;
     unsigned int cp = curPlayer();
-    //for (unsigned int i = 0; i < history.size(); ++i) printf(" "); printf("m%u\n", cp);
-    
+    //string debug = getDesc() + "\n";// + getBoardDesc()
     board[source].stack -= quantity;
+    // if(board[target].stack != 0)
+    //     printf("ccccccccccccc\n");
     board[target].stack = quantity; // zamiast +=, bo przeciez tu musialo byc 0
 
     if (board[source].stack == 1) // update stacks[cp] vector
@@ -428,6 +427,36 @@ void SplitsGame::makeNormal(NormalMove* move)
         board[target].stacksIndex = stacks[cp].size();
         stacks[cp].push_back(target);
     }
+    // if (checkStacks())
+    // {
+    //     printf ("%s", debug.c_str());
+    // }
+}
+
+bool SplitsGame::checkStacks()
+{
+    for (unsigned int i = 0; i < stacks[0].size(); ++i)
+        for (unsigned int j = 0; j < stacks[1].size(); ++j)
+            if (stacks[0][i] == stacks[1][j])
+            {
+                // printf("plansza: %s\n", getDesc().c_str());
+                // printf("board: %s\n", getBoardDesc().c_str());
+                // printf("GGGGGGGGGGGGGGGGGGG");
+                return true;
+            }
+
+    for (unsigned int pl = 0; pl < 2; ++pl)
+        for (unsigned int i = 0; i < stacks[pl].size(); ++i)
+            if (board[stacks[pl][i]].stacksIndex != i)
+            {
+                // printf("plansza: %s\n", getDesc().c_str());
+                // printf("board: %s\n", getBoardDesc().c_str());
+                // printf("SSSSSSSSSSSSSSSSSSS\n");
+                return true;
+            }
+    if (board[2205].stack == 0)
+        return false;
+    return false;
 }
 
 unsigned int SplitsGame::getIndexOfMove(Move* move)
@@ -440,6 +469,10 @@ unsigned int SplitsGame::getIndexOfMove(Move* move)
         another = rawPossibleMoveOfIndex(getPossibleMoves(&size), i, gamePhase());
         if (movesEqual(move, another)) return i;
     }
+    printf("this should not happen: move not found!\n");
+    printf("%s\n", getDesc().c_str());
+    printf("%s\n", getBoardDesc().c_str());
+    printf("%d\n", (int) canMove(move));
     return 1000000000;
 }
 
@@ -488,7 +521,7 @@ void SplitsGame::undoNormal(NormalMove* move)
     int quantity = move->quantity;
     int target = move->target;
     unsigned int cp = curPlayer();
-    //for (unsigned int i = 0; i < history.size(); ++i) printf(" "); printf("u%u\n", cp);
+    //string debug = getDesc() + "\n";// + getBoardDesc()
     if (board[source].stack == 1) // update stacks[cp] vector
     {
         unsigned int index = board[source].stacksIndex;
@@ -514,6 +547,11 @@ void SplitsGame::undoNormal(NormalMove* move)
 
     board[source].stack += quantity;
     board[target].stack = 0; // bo przeciez musialo byc 0
+
+    // if (checkStacks())
+    // {
+    //     printf("%s", debug.c_str());
+    // }
 }
 
 // building ma zawsze kierunki dir + (0, 1, 5), co byc moze moznaby zapisac
