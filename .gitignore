@@ -20,6 +20,12 @@
 *.out
 *.app
 
+# pdf temp files
+*pdf
+*toc
+*log
+*aux
+
 # Others
 *~
 bin
