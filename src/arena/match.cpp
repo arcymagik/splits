@@ -26,9 +26,10 @@ int main(int argc, char** argv)
 {
     // TODO: dodac wybieranie algorytmu jako opcje command lineowa
     Algorithm* alg0 = new RandomGameAlg(57);
-    //Algorithm* alg0 = new MiniMaxAlg(new SimpleGrader(), 2, 0);
+    //Algorithm* alg1 = new MiniMaxAlg(new SimpleGrader(), 2, 0);
+    Algorithm* alg1 = new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
     //Algorithm* alg1 = new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
-    Algorithm* alg1 = new MCTS(5334);
+    //Algorithm* alg1 = new MCTS(5334);
 
     play(alg0, alg1, 1000);
 
@@ -107,6 +108,11 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
             break;
         }
 
+        for (unsigned int i = 0; i < 2; ++i)
+        {
+            printf("alg[%u]: %s\n\n", i, algs[i]->stats().c_str());
+        }
+
         game.makeMove(move);
         printf("ocena ruchu: %d\n", grader.grade(&game));
         for (int i = 0; i < 2; ++i) algs[i]->makeMove(move);
@@ -117,8 +123,7 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
 
     printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
 
-    printf("%s\n", game.getBoardDesc().c_str());
-
     printf("plansza: %s\n", game.getDesc().c_str());
+    printf("%s\n", game.getBoardDesc().c_str());
     return 0;    
 }

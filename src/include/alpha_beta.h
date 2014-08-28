@@ -17,6 +17,7 @@ public:
     virtual void decideMove(Move** move);
     virtual void decideMove(Move** move, unsigned int time);
     virtual void makeMove(Move* move);
+    virtual std::string stats();
 
 private:
     Grader* grader;

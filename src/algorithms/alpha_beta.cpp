@@ -1,6 +1,8 @@
 #include "alpha_beta.h"
 #include "simple_grader.h"
 
+#include <boost/lexical_cast.hpp>
+
 #define GRADE_INFINITY (1 << 20)
 #define INVALID_GRADE (GRADE_INFINITY+1)
 
@@ -295,3 +297,11 @@ void AlphaBetaAlg::makeMove(Move* move)
     game.makeMove(move);
 }
 
+string AlphaBetaAlg::stats()
+{
+    string result = "alphabet stats:\n";
+    result += "visited nodes: ";
+    result += boost::lexical_cast<string>(visited_nodes);
+    result += "\n";
+    return result;
+}

@@ -51,6 +51,16 @@ Algorithm* getAlgorithm(unsigned int i, int seed)
     }
 }
 
+bool both_active(unsigned int i, unsigned int j)
+{
+    Algorithm* alg1 = getAlgorithm(i, 1);
+    Algorithm* alg2 = getAlgorithm(j, 1);
+    bool result = (alg1 != NULL) && (alg2 != NULL);
+    delete alg1;
+    delete alg2;
+    return result;
+}
+
 int main(int argc, char** argv)
 {
     Algorithm* alg1;
@@ -61,8 +71,10 @@ int main(int argc, char** argv)
     unsigned int result;
     for (unsigned int i = 0; i < algorithms_size; ++i)
         for (unsigned int j = 0; j < algorithms_size; ++j)
-            if (i != j) // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
+            if (//i != j && // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
+                both_active(i, j))
             {
+                boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
                 result = 0;
                 for (unsigned int k = 0; k < NUMBER_OF_PLAYS; ++k)
                 {
@@ -72,7 +84,8 @@ int main(int argc, char** argv)
                     delete(alg1);
                     delete(alg2);
                 }
-                printf("%s\tvs\t%s:\t%u/%u\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS);
+                unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
+                printf("%s\tvs\t%s:\t%u/%u\ttook %u time\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS, passed);
             }
     return 0;
 }
