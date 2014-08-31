@@ -67,13 +67,13 @@ int mc_sanity()
 
 int alpha_beta_sanity()
 {
-    AlphaBetaAlg alg(new SimpleGrader(), 2, 0);
+    AlphaBetaAlg alg(32, new SimpleGrader(), 2, 0);
     return alg_sanity_template(&alg);
 }
 
 int ab_transTable_sanity()
 {
-    AlphaBetaAlg alg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
+    AlphaBetaAlg alg(54, new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
     return alg_sanity_template(&alg);
 }
 

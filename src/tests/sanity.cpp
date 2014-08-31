@@ -16,7 +16,7 @@
 
 using namespace std;
 
-#define SEED 19
+#define SEED (19)
 
 int random_alg_sanity();
 int minimax_alg_sanity();
@@ -175,7 +175,7 @@ int random_alg_sanity()
 
 int minimax_alg_sanity()
 {
-    MiniMaxAlg alg(new SimpleGrader(), 2, 0);
+    MiniMaxAlg alg(4242, new SimpleGrader(), 2, 0);
     return alg_sanity_template(&alg);
 }
 

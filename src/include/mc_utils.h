@@ -11,7 +11,7 @@ public:
     double trustLimit(SimulationResult* son, int cps);
     unsigned int chooseSon(SimulationResult* sons, unsigned int size, int cps);
 
-    static unsigned int chooseBestSimResult(SimulationResult* results, unsigned int size, unsigned int cps);
+    static unsigned int chooseBestSimResult(SimulationResult* results, unsigned int size, int cps);
 };
 
 #endif

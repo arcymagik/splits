@@ -15,6 +15,11 @@
 
 \usepackage{polski}
 
+\usepackage{tikz}
+
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+
 %Jesli uzywasz kodowania polskich znakow ISO-8859-2 nastepna linia powinna byc 
 %odkomentowana
 \usepackage[latin2]{inputenc}
@@ -120,7 +125,190 @@ ulepszenia. W ostatnim rozdziale zawarto podsumowanie oraz przemy¶lenia na temat
 
 \chapter{Gra Splits}
 
+``Splits'' to gra planszowa zaprojektowana przez w³oskiego projektanta gier Francesco Rotta, wydana w 2010 roku. 
+Znana jest równie¿ pod tytu³ami ``Voll Shaft'' oraz ``Battle Sheep''.
+Gra
+szybko zdoby³a popularno¶æ dziêki ciekawym zasadom i ma³ej powtarzalno¶ci rozgrywki. W 2014 roku zdoby³a nawet rekomendacjê
+jury ``Spiel des Jahres'' - uznanej niemieckiej nagrody dla najlepszych gier planszowych na niemieckojêzycznym
+rynku.
+
+\section{Zasady}
+
+P³ytka w grze do pojedyczny element, z którego budowana jest plansza. Jest on podzielona na cztery sze¶ciok±ty foremne - tak zwane
+heksy.
+
+\begin{tikzpicture}
+  [scale=.1,auto=center, x=1mm, y=1mm]
+
+  \draw [color=black] (0, 346) -- (100, 520) -- (300, 520) -- (400, 693) -- (600, 693) -- (700, 520);
+  \draw [color=black] (0, 346) -- (100, 173) -- (300, 173) -- (400, 346) -- (300, 520);
+  \draw [color=black] (300, 173) -- (400, 0) -- (600, 0) -- (700, 173) -- (600, 346) -- (400, 346);
+  \draw [color=black] (600, 346) -- (700, 520) -- (900, 520) -- (1000, 346) -- (900, 173) -- (700, 173);
+\end{tikzpicture}
+
+¯eton to ma³y obiekt, których stos mo¿na umie¶ciæ na heksie. W grze jest 16 ¿etonów czarnych (gracza 0) oraz 16 ¿etonów bia³ych
+(dla gracza 1).
+
+Na pocz±tku gry umieszcza siê jedn± z p³ytek na ¶rodku sto³u. Nastêpnie gracze dok³adaj± na zmianê kolejne p³ytki buduj±c
+w ten sposób planszê (zaczynaj±c od gracza 0). P³ytkê mo¿na umie¶ciæ na stole, je¿eli nie zachodzi na poprzednio
+u³o¿one p³ytki oraz styka siê przynajmniej jedn± krawêdzi± heksa z heksem p³ytki ju¿ po³o¿onej na stole.
+
+Gdy skoñcz± siê p³ytki, plansza jest zbudowana. Sk³ada siê z 32 heksów stanowi±cych spójny podzbiór zbioru heksów
+pokrywaj±cych p³aszczyznê. Gracz 1 wybiera teraz heks, który znajduje siê przy zewnêtrznej krawêdzi planszy - to znaczy
+taki, który przynajmniej jedn± krawêdzi± nie s±siaduje z innym heksem i ta pusta przestrzeñ nie jest ograniczona - nie mo¿e to
+byæ ``dziura'' w planszy. Gracz 1 k³adzie na tym polu wszystkie swoje 16 ¿etonów. Gracz 0 postêpuje podobnie - nie mo¿e
+ju¿ jednak wybraæ tego samego pola, co gracz 1.
+
+W tym momencie zaczyna siê w³a¶ciwa rozgrywka. Zaczyna j± gracz 1, a potem ruchy wykonuje siê na zmianê, a¿ wykonanie ruchu
+stanie siê niemo¿liwe. Gracz wykonuj±cy ruch wybiera dowolny stos ¿etonów na planszy i rozdziela go dowolnie na 2 nowe stosy.
+Ka¿dy z nowych stosów musi byæ niepusty. Jeden ze stosów zostaje w miejscu, a drugi nale¿y przesun±æ tak daleko jak to mo¿liwe
+w prostej linii wzd³u¿ linii heksów. Przesuniêcie musi byæ o co najmniej jedno pole. Podczas przesuwania stosu nale¿y go
+zatrzymaæ, gdy tylko trafi siê na przeszkodê - inny stos lub krawêd¼ planszy. Nale¿y postawiæ wtedy stos tu¿ przed przeszkod±.
+
+Gracz, który nie mo¿e ju¿ wykonaæ ruchu, przegrywa.
+
+\section{Uwagi}
+
+Zauwa¿my, ¿e podczas rozgrywki wykonujemy najpierw ustalon± liczbê ruchów - 9, aby zbudowaæ planszê i umie¶ciæ na niej
+pocz±tkowe stosy. Rozwa¿my teraz nastêpuj±c± liczbê $x$ zale¿n± od sytuacji w grze: ilo¶æ wszystkich stosów. W ka¿dym
+ruchu $x$ zwiêksza siê dok³adnie o 1. Zauwa¿my te¿, ¿e je¶li ilo¶æ stosów wynosi dok³adnie 32, to wszystkie one maj± wielko¶æ 1
+i wszystkie pola na planszy s± zajête. Nie mo¿na wtedy zatem wykonaæ wiêcej ruchów. Zatem maksymalna ilo¶æ wszystkich ruchów
+to $9+30 = 39$ ruchów. Oczywi¶cie spora czê¶æ rozgrywek bêdzie znacznie krótsza, poniewa¿ mo¿e siê zdarzyæ, ¿e jaki¶ stos
+wiêkszy od 1 ¿etonu zostanie wcze¶niej zablokowany.
+
+$39$ nie jest d³ug± rozgrywk± w porównaniu do klasycznych gier takich jak szachy (przeciêtnie 60 - 100 ruchów) czy go (ponad 200),
+ale nadrabia to dosyæ du¿ym rozga³êzieniem drzewa gry. Szczególnie w trakcie budowania planszy jest ona bardzo du¿a - czasami
+mo¿na wykonaæ nawet ponad 100 ró¿nych ruchów. Tak¿e w ostatniej fazie - podczas dzielenia stosów czynnik ten pozostaje wysoki
+i wynosi 30 - 60 mo¿liwych ruchów w danym momencie.
+
+Powoduje to, ¿e gra nie jest prosta i wymaga sprawdzenia wielu
+ró¿nych mo¿liwo¶ci podczas obmy¶lania ruchu. Daje to szerokie pole do popisu dla wielu ró¿nych technik sztucznej inteligencji.
+
 \chapter{Techniki sztucznej inteligencji}
+
+W ogólno¶ci technik± sztucznej inteligencji nazywamy funkcjê stanu gry, której warto¶ci± jest ruch mo¿liwy do wykonania
+w danym stanie. Aby przeprowadziæ rozgrywkê u¿ywaj±c sztucznej inteligencji, nale¿y w momencie zdecydowania siê na ruch
+podawaæ warto¶æ tej funkcji, zazwyczaj obliczon± z pomoc± komputera.
+
+\section{Minimax}
+
+Gdyby¶my dysponowali moc± obliczeniow± i pamiêci± zdoln± w krótkim czasie obliczyæ pe³ne drzewo gry, wiadomo by³oby które
+pozycje s± wygrywaj±ce, a które przegrywaj±ce i wystarczy³oby znajduj±c siê w sytuacji wygrywaj±cej wykonaæ ruch
+do przegrywaj±cej. Niezale¿nie od strategii przeciwnika zagwarantuje nam to zwyciêstwo.
+
+Niestety dysponujemy ograniczonymi ¶rodkami i nawet zbudowanie pe³nego drzewa do g³êboko¶ci 4 stanowi w Splits ju¿
+dosyæ spory problem. To w³a¶nie stara siê zrobiæ algorytm Minimaks. Posiadaj±c jaki¶ sposób oceny sytuacji w grze, który
+nazywaæ bêdziemy funkcj± oceniaj±c±, mo¿emy zbadaæ drzewo gry do pewnej ustalonej g³êboko¶ci i zdecydowaæ, który ruch
+najbardziej siê nam op³aci, zak³adaj±c, ¿e przeciwnik bêdzie siê stara³ graæ tak, ¿eby wynik by³ jak najgorszy dla nas.
+
+Sytuacje, czyli inaczej wêz³y w drzewie gry nazywamy typu max, je¿eli maksymalizujemy w nich warto¶ci funkcji oceniaj±cej
+potomków (czyli s± to pozycje, w których ``my'' wykonujemy ruch), a te w których minimalizujemy, nazywamy typu min (rusza siê
+przeciwnik).
+
+Dla g³êboko¶ci 1 jest to trywialne. Wystarczy wybraæ ruch prowadz±cy do sytuacji o najlepszej warto¶ci funkcji oceniaj±cej (lub
+najgorszej, je¶li rozwa¿amy ruch przeciwnika).
+Dla g³êboko¶ci $n$, nale¿y wykonaæ minimaks g³êboko¶ci $n-1$ dla wszystkich sytuacji, do których prowadz± ruchy. Warto¶ci±
+naszego wêz³a jest maksimum (minimum je¶li wêze³ jest typu min) warto¶ci wêz³ów potomnych.
+
+\begin{algorithm}
+\caption{Minimax}
+\begin{algorithmic}[1]
+
+  \Function{Minimax}{node}
+  \If {node jest li¶ciem} \Return Ocena(node)
+  \EndIf
+  \If {node jest typu max} \Return max(Minimax(son) | son jest synem node)
+  \Else {} \Return min(Minimax(son) | son jest synem node)
+  \EndIf
+  \EndFunction
+
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Funkcja oceniaj±ca}
+
+Problem znalezienia dobrej funkcji oceniaj±cej jest bardzo trudny i zazwyczaj u¿ywa siê lu¼nego pomys³u heurystycznego
+zale¿nego od danej gry.
+
+Funkcja oceniaj±ca powinna byæ ³atwa do obliczenia, poniewa¿ jest podstawowym fragmentem algorytmu, który bêdzie
+wielokrotnie powtarzany dla ró¿nych wêz³ów. Powinna te¿ faktycznie oddawaæ jakie¶ strategiczne przewagi danych sytuacji.
+Oczywi¶cie sytuacja, w której gra zakoñczy³a siê naszym zwyciêstwem powinna zostaæ oceniona jak±¶ symboliczn± warto¶ci±
+``nieskoñczono¶æ'', poniewa¿ na pewno jest co najmniej tak dobra jak ka¿da inna sytuacja. Analogicznie gra przegrana
+powinna dostaæ ocenê ``minus nieskoñczono¶æ''.
+
+Zauwa¿my, ¿e w grze teoretycznie mo¿emy rozstawiæ 16 stosów swojego koloru (ka¿dy wielko¶ci 1). Je¿eli który¶ z naszych stosów
+zostanie zablokowany, nie mo¿emy u¿yæ ju¿ ¿etonów z niego. Wydaje siê, ¿e ma zatem przyjêcie nastêpuj±cej funkcji oceniaj±cej:
+ilo¶æ w³asnych ¿etonów, którymi potencjalnie mo¿na siê ruszyæ minus analogiczna ilo¶æ ¿etonów przeciwnika. ¯etony, którymi
+mo¿na siê ruszyæ to ¿etony z niezablokowanych stosów. Zauwa¿my, ¿e je¿eli warto¶æ tej funkcji bêdzie dodatnia i w pewnym momencie
+gra siê zakoñczy, to wygramy.
+
+\section{Alfabeta}
+
+Algorytm minimax przegl±da wszystkie wêz³y w ustalonym poddrzewie, ale okazuje siê, ¿e nie jest to potrzebne w niektórych
+sytuacjach, aby w dalszym ci±gu umieæ podaæ dok³adn± warto¶æ minimaxow± dla danej sytuacji. Spójrzmy na nastêpuj±c± sytuacjê,
+gdzie wêze³ $a$ jest typu max, obliczyli¶my ju¿ warto¶ci wêz³ów ``b'' i ``d'', które wynosz± odpowiednio $2$ i $-1$.
+
+\begin{tikzpicture}
+  [scale=.4,auto=left,every node/.style={circle,fill=blue!20}]
+  \node (n1) at (5, 10) {a};
+  \node (n2) at (2, 5) {b};
+  \node (n3) at (8, 5) {c};
+  \node (n4) at (6, 0) {d};
+  \node (n5) at (10, 0) {e};
+
+  \foreach \from/\to in {n1/n2, n1/n3, n3/n4, n3/n5}
+    \draw (\from) -- (\to);
+\end{tikzpicture}
+
+Poniewa¿ wêze³ $c$ jest typu min, to jego warto¶æ wynosi co najwy¿ej $-1$. Jest zatem na pewno mniejsza ni¿ warto¶æ wêz³a
+$b$, która wynosi $2$. Zatem warto¶æ wêz³a $a$ to $2$. Nie musimy wyliczaæ warto¶ci wêz³a $e$, aby to stwierdziæ.
+
+Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimax nazywa siê algorytmem Alfabeta.
+
+\section{Tablica transpozycji}
+
+Chocia¿ czêsto mówimy o drzewie gry, to tak naprawdê struktura sytuacji gry i ruchów prowadz±cych od jednych do drugich jest
+DAGiem. Oznacza to, ¿e niektóre pary wêz³ów w drzewie odpowiadaj± tym samym sytuacjom. £atwo zauwa¿yæ, ¿e musz± siê wtedy on
+znajdowaæ na tej samej g³êboko¶ci (w grze Splits), poniewa¿ na przyk³ad ilo¶æ stosów ¿etonów w grze odpowiada bijektywnie g³êboko¶ci
+w drzewie. W takim razie warto¶æ minimaksowa obydwu wêz³ów musi byæ taka sama.
+
+Naturalnym wydaje siê pomys³ wykorzystania tego faktu i unikniêcia powtórnego obliczania tej warto¶ci. Dobrym narzêdziem
+w tym celu jest tablica transpozycji. Jest to tablica haszuj±ca, w której trzymamy warto¶ci minimaksowe sytuacji.
+Pocz±tkowo trzymamy w niej jakie¶ umowne warto¶ci oznaczaj±ce niezainicjalizowany stan, a gdy uda nam siê obliczyæ warto¶æ
+minimaks wêz³a, wpisujemy j± do tablicy. Zawsze gdy chcemy obliczyæ warto¶æ jakiego¶ wêz³a, sprawdzamy najpierw, czy nie znajduje
+siê on ju¿ w tablicy.
+
+%% TODO: cos o haszowaniu Zobrista?
+
+\section{Iteracyjne pog³êbianie}
+
+Zarówno przy minimaksie jak i przy alfabecie pojawia siê pojêcie drzewa przeszukiwania. Zazwyczaj jest ono zdefiniowane przez
+g³êboko¶æ, na jak± zamierzamy przeprowadziæ przeszukiwanie. Pocz±tkowo ustalamy jak±¶ g³êboko¶æ, a nastêpnie zmniejszamy tê warto¶æ
+w rekurencyjnym wywo³aniu. Li¶ciem drzewa przeszukiwañ jest wtedy wêze³, do którego weszli¶my z g³êboko¶ci± $0$ lub faktyczny
+stan koñcowy gry.
+
+Zauwa¿my, ¿e przeszukiwanie z g³êboko¶ci± zaledwie o jeden wiêksz± jest o ca³y rz±d wielko¶ci d³u¿sze, zatem je¿eli
+dysponujemy ograniczonym czasem na ruch, mo¿emy zacz±æ od pewnej ustalonej niewielkiej g³êboko¶ci - na przyk³ad $1$, a nastêpnie
+przeszukiwaæ na coraz wiêksze g³êboko¶ci, a¿ zabraknie nam czasu. Wynikiem iteracyjnego pog³êbiania jest wynik ostatniego
+pe³nego przeszukania.
+
+Ten algorytm ma szczególnie du¿o sensu, je¿eli bardzo trudno jest okre¶liæ w³a¶ciw± g³êboko¶æ oraz gdy stopieñ
+rozga³êzienia drzewa gry zmienia siê z czasem, tak jak jest w przypadku gry Splits, gdzie ilo¶æ mo¿liwych ruchów
+bardzo szybko ro¶nie podczas budowania planszy, a potem spada w czasie w³a¶ciwej rozgrywki, ale wci±¿ pozostaje ma³o stabilny.
+
+\begin{algorithm}
+\caption{Iterative deepening}
+\begin{algorithmic}[1]
+  \Function{Iterative alphabeta} {node}
+  \State $\textit{depth} \gets 1$
+  \While {$\texttt{there is still time}$}
+  \State $\textit{result} \gets \textit{Alphabeta}(node, depth)$
+  \State $\textit{depth} \gets \textit{depth} + 1$
+  \EndWhile
+  \Return result
+  \EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \chapter{Wyniki ekperymentów}
 
@@ -130,7 +318,7 @@ ulepszenia. W ostatnim rozdziale zawarto podsumowanie oraz przemy¶lenia na temat
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
 
-%% \bibitem[Bea65]{beaman} Juliusz Beaman, \textit{Morbidity of the Jolly
+%% \bibitem[Bea65]{beaman} Juliusz Beaman, \textit{Morbidity of the Jollye
 %%     function}, Mathematica Absurdica, 117 (1965) 338--9.
 
 \end{thebibliography}

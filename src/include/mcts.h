@@ -17,8 +17,8 @@ public:
     MCT_Node(const MCT_Node& another);
     virtual ~MCT_Node();
     void destroy_sons();
-    unsigned int chooseSon(unsigned int cps);
-    unsigned int chooseBestSimResult(unsigned int cps);
+    unsigned int chooseSon(int cps);
+    unsigned int chooseBestSimResult(int cps);
     int simulate(SplitsGame* game, std::mt19937* generator); // zwraca wynik rozgrywki
     void expand(SplitsGame* game);
     int randomGame(SplitsGame* game, std::mt19937* generator);

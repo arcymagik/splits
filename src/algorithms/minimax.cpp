@@ -9,13 +9,15 @@ using namespace std;
 
 MiniMaxAlg::MiniMaxAlg()
 {
+    generator.seed(422);
     grader = new SimpleGrader();
     height = 2;
     height_building = 0;
 }
 
-MiniMaxAlg::MiniMaxAlg(Grader* grader, unsigned int height, unsigned int height_building)
+MiniMaxAlg::MiniMaxAlg(unsigned int seed, Grader* grader, unsigned int height, unsigned int height_building)
 {
+    generator.seed(seed);
     this->grader = grader;
     this->height = height;
     this->height_building = height_building;
@@ -38,30 +40,29 @@ void MiniMaxAlg::decideMove(Move** best_move)
     Move* move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
     int best = minimax_opt(move, h);
     int grade;
-    //string shouldBe = game.getDesc();
+    int bests_size = 1;
+
     for (unsigned int i = 1; i < size; ++i)
     {
         moves = game.getPossibleMoves(&an_size);
-        // if (debug_bool && (an_size != size || game.stacksWrong())) {
-        //     printf("markdecmove!!!!!! %u at %u:%u, and size is %u\n", an_size, h, i, size);
-        //     printf("plansze::: %s\n%s\n====================================================\n", shouldBe.c_str(), game.getDesc().c_str());
-        //     debug_bool = false;
-        // }
         move = SplitsGame::rawPossibleMoveOfIndex(moves, i, phase);
         grade = minimax_opt(move, h);
-        if (grader->better(&game, grade, best)) // TODO: lepiej wybierac losowy z najlepszych
+        if (grader->better(&game, grade, best))
         {
             best = grade;
             bestIndex = i;
+            bests_size = 1;
+        }
+        else if (grade == best)
+        {
+            ++bests_size;
+            if (a_bet_is_won(bests_size))
+            {
+                bestIndex = i;
+            } 
         }
     }
-    //printf("wybrano ruch nr %u\n", bestIndex);
     moves = game.getPossibleMoves(&an_size);
-    // if (debug_bool && (an_size != size || game.stacksWrong())) {
-    //     printf("markk!!!!!! %u at %u:%u, and size is %u\n", an_size, h, size, size);
-    //     printf("plansze::: %s\n%s\n====================================================\n", shouldBe.c_str(), game.getDesc().c_str());
-    //     debug_bool = false;
-    // }
     *best_move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
 }
 
@@ -172,4 +173,10 @@ string MiniMaxAlg::stats()
     result += boost::lexical_cast<string>(visited_nodes);
     result += game.getDesc();
     return result;
+}
+
+bool MiniMaxAlg::a_bet_is_won(int size)
+{
+    uniform_int_distribution<> dis(0, size-1);
+    return (dis(generator) == 0); // 1/size probability to win a bet
 }

@@ -20,6 +20,8 @@ private:
 
     unsigned int chooseSon(SimulationResult* v, SimulationResult* sons, unsigned int size, int cps);
     void oneSimulation(int i, SimulationResult* results, SimulationResult* aggr);
+
+    void printResults(SimulationResult* results, unsigned int size);
 };
 
 #endif

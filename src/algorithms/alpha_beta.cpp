@@ -27,8 +27,9 @@ AlphaBetaAlg::AlphaBetaAlg()
     timeToMove = 0;
 }
 
-AlphaBetaAlg::AlphaBetaAlg(Grader* grader, unsigned int height, unsigned int height_building)
+AlphaBetaAlg::AlphaBetaAlg(unsigned int seed, Grader* grader, unsigned int height, unsigned int height_building)
 {
+    generator.seed(seed);
     this->grader = grader;
     this->height = height;
     this->height_building = height_building;
@@ -37,8 +38,9 @@ AlphaBetaAlg::AlphaBetaAlg(Grader* grader, unsigned int height, unsigned int hei
     timeToMove = 0;
 }
 
-AlphaBetaAlg::AlphaBetaAlg(TranspositionTable* transTable, Hasher* hasher, Grader* grader, unsigned int height, unsigned int height_building)
+AlphaBetaAlg::AlphaBetaAlg(unsigned int seed, TranspositionTable* transTable, Hasher* hasher, Grader* grader, unsigned int height, unsigned int height_building)
 {
+    generator.seed(seed);
     this->grader = grader;
     this->height = height;
     this->height_building = height_building;
@@ -68,6 +70,7 @@ Move* AlphaBetaAlg::decideMove()
     int beta = GRADE_INFINITY;
     int best = -game.curPlayerSign()*GRADE_INFINITY;
     int grade;
+    int bests_size = 0;
 
     for (unsigned int i = 0; i < size; ++i)
     {
@@ -75,8 +78,17 @@ Move* AlphaBetaAlg::decideMove()
         if (grader->better(&game, grade, best))
         {
             best = grade;
+            bests_size = 1;
             bestIndex = i;
             updateWindow(best, cp, &alpha, &beta);
+        }
+        else if (grade == best)
+        {
+            ++bests_size;
+            if (a_bet_is_won(bests_size))
+            {
+                bestIndex = i;
+            }
         }
     }
     Move* move = moves[bestIndex]->copy();
@@ -98,6 +110,7 @@ void AlphaBetaAlg::decideMove(Move** best_move)
     int beta = GRADE_INFINITY;
     int best = -game.curPlayerSign()*GRADE_INFINITY;
     int grade;
+    int bests_size = 0;
 
     for (unsigned int i = 1; i < size; ++i)
     {
@@ -107,11 +120,21 @@ void AlphaBetaAlg::decideMove(Move** best_move)
         {
             best = grade;
             bestIndex = i;
+            bests_size = 1;
             updateWindow(best, cp, &alpha, &beta);
+        }
+        else if (grade == best)
+        {
+            ++bests_size;
+            if (a_bet_is_won(bests_size))
+            {
+                bestIndex = i;
+            }
         }
     }
     moves = game.getPossibleMoves(&an_size);
     *best_move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
+    //if (height < 6) printf("expected grade: %d\n", best);
 }
 
 void AlphaBetaAlg::decideMove(Move** move, unsigned int time)
@@ -123,6 +146,7 @@ void AlphaBetaAlg::decideMove(Move** move, unsigned int time)
     Move* result;
     unsigned int i = 0;
     *move = NULL;
+    level_finished = 0;
     while (true)
     {
         height_building = height = i;
@@ -131,6 +155,7 @@ void AlphaBetaAlg::decideMove(Move** move, unsigned int time)
         time_passed = current_time.total_milliseconds();
         if (time_passed + MS_TO_ALERT > timeToMove) alert = true;
         if (alert) break;
+        level_finished = height;
         *move = result;
         ++i;
     }
@@ -299,9 +324,17 @@ void AlphaBetaAlg::makeMove(Move* move)
 
 string AlphaBetaAlg::stats()
 {
-    string result = "alphabet stats:\n";
-    result += "visited nodes: ";
+    string result = "alphabeta stats:\n";
+    result += "\tvisited nodes: ";
     result += boost::lexical_cast<string>(visited_nodes);
     result += "\n";
+    result += "\tlevels_finished: ";
+    result += boost::lexical_cast<string>(level_finished);
     return result;
+}
+
+bool AlphaBetaAlg::a_bet_is_won(int size)
+{
+    uniform_int_distribution<> dis(0, size-1);
+    return (dis(generator) == 0); // 1/size probability to win a bet
 }

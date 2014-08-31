@@ -10,8 +10,8 @@ class AlphaBetaAlg : public Algorithm
 {
 public:
     AlphaBetaAlg();
-    AlphaBetaAlg(Grader* grader, unsigned int height, unsigned int height_building);
-    AlphaBetaAlg(TranspositionTable* transTable, Hasher* hash, Grader* grader, unsigned int height, unsigned int height_building);
+    AlphaBetaAlg(unsigned int seed, Grader* grader, unsigned int height, unsigned int height_building);
+    AlphaBetaAlg(unsigned int seed, TranspositionTable* transTable, Hasher* hash, Grader* grader, unsigned int height, unsigned int height_building);
     virtual ~AlphaBetaAlg();
     virtual Move* decideMove();
     virtual void decideMove(Move** move);
@@ -23,10 +23,12 @@ private:
     Grader* grader;
     TranspositionTable* transTable;
     Hasher* hasher;
+    std::mt19937 generator; // do wybierania sposrod najlepiej punktowanych ruchow
     unsigned int height;
     unsigned int height_building;
 
     unsigned int visited_nodes;
+    unsigned int level_finished;
 
     boost::posix_time::ptime start_time; // start time dla decideMove z czasem    
     unsigned int timeToMove;
@@ -38,6 +40,8 @@ private:
     int alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsigned int height);
     int getHashedValue(unsigned int height);
     void setHashedValue(int grade, unsigned int height);
+
+    bool a_bet_is_won(int size);
 };
 
 #endif

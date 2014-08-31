@@ -25,11 +25,12 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove);
 int main(int argc, char** argv)
 {
     // TODO: dodac wybieranie algorytmu jako opcje command lineowa
-    Algorithm* alg0 = new RandomGameAlg(57);
+    Algorithm* alg0 = new RandomGameAlg(7232);
     //Algorithm* alg1 = new MiniMaxAlg(new SimpleGrader(), 2, 0);
-    Algorithm* alg1 = new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
-    //Algorithm* alg1 = new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
-    //Algorithm* alg1 = new MCTS(5334);
+    //Algorithm* alg0 = new AlphaBetaAlg(22, new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
+    //Algorithm* alg1 = new AlphaBetaAlg(84292, new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
+    Algorithm* alg1 = new MCTS(53332);
+    //Algorithm* alg1 = new MonteCarloMethod(33283, true);
 
     play(alg0, alg1, 1000);
 
@@ -78,7 +79,7 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
 {
     SplitsGame game;
     SimpleGrader grader;
-    Algorithm* algs[2] = {alg1, alg0};
+    Algorithm* algs[2] = {alg0, alg1};
 
     unsigned int curPl = 0;
     Move* move;
@@ -124,6 +125,6 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove)
     printf("Wygral gracz %d\n", ((unsigned int) game.curPlayer()) ^ 1);
 
     printf("plansza: %s\n", game.getDesc().c_str());
-    printf("%s\n", game.getBoardDesc().c_str());
+    //printf("%s\n", game.getBoardDesc().c_str());
     return 0;    
 }

@@ -5,7 +5,7 @@
 
 using namespace std;
 
-#define MS_DANGER_ZONE (100)
+#define MS_DANGER_ZONE (150)
 #define ONE_STEP_NO_SIMULATIONS (200)
 #define EXPAND_TRESHOLD (30)
 
@@ -118,7 +118,8 @@ int MCT_Node::simulate(SplitsGame* game, mt19937* generator)
     }
     else // selection
     {
-        unsigned int mindex = chooseSon(game->curPlayerSign());
+        int cps = game->curPlayerSign();
+        unsigned int mindex = chooseSon(cps);
         game->makeIndexedMove(mindex);
         result = sons[mindex].simulate(game, generator);
         game->undoMove();
@@ -150,9 +151,13 @@ int MCT_Node::randomGame(SplitsGame* game, mt19937* generator)
     return result;
 }
 
-unsigned int MCT_Node::chooseBestSimResult(unsigned int cps)
+unsigned int MCT_Node::chooseBestSimResult(int cps)
 {
     unsigned int best = 0;
+    // for (unsigned int i = 0; i < sons_size; ++i)
+    // {
+    //     printf("%u:\t%d / %d\n", i, sons[i].simResult.wins, sons[i].simResult.total);
+    // }
     for (unsigned int i = 1; i < sons_size; ++i)
     {
         if (sons[i].simResult.isBetterThan(&(sons[best].simResult), cps))
@@ -171,7 +176,7 @@ void MCT_Node::expand(SplitsGame* game)
     sons_size = size;
 }
 
-unsigned int MCT_Node::chooseSon(unsigned int cps)
+unsigned int MCT_Node::chooseSon(int cps)
 {
     unsigned int result = 0;
     double tlimit = simResult.trustLimit(&(sons[0].simResult), cps);

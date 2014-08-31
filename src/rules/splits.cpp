@@ -322,12 +322,12 @@ bool SplitsGame::touchesInOneOf4(int pos, int dir1, int dir2)
 
 bool SplitsGame::stackBlocked(int pos)
 {
-    bool result = false;
+    bool result = true;
     int next;
     for (unsigned int i = 0; i < 6; ++i)
     {
         next = shift_unit_field(pos, i);
-        if (board[next].stack == 0) return true;
+        if (board[next].stack == 0) return false;
     }
     return result;
 }

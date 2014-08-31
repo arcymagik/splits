@@ -41,12 +41,12 @@ Algorithm* getAlgorithm(unsigned int i, int seed)
     switch(i)
     {
     case 0: return new RandomGameAlg(seed);
-    case 1: return new MiniMaxAlg(new SimpleGrader(), 2, 0); // nie mierzy sobie czasu - moze nie powinien byc uzywany?
-    case 2: return new AlphaBetaAlg(new SimpleGrader(), 2, 0);
-    case 3: return new AlphaBetaAlg(new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0);
-    case 4: return new MonteCarloMethod(seed);
+    // case 1: return new MiniMaxAlg(seed, new SimpleGrader(), 2, 0); // nie mierzy sobie czasu - moze nie powinien byc uzywany?
+    // case 2: return new AlphaBetaAlg(seed, new SimpleGrader(), 2, 0);
+    // case 3: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0);
+    // case 4: return new MonteCarloMethod(seed);
     case 5: return new MonteCarloMethod(seed, true);
-    case 6: return new MCTS(seed);
+        //case 6: return new MCTS(seed);
     default: return NULL;
     }
 }
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
     Algorithm* alg1;
     Algorithm* alg2;
     mt19937 generator;
-    generator.seed(432243);
+    generator.seed(43223);
     uniform_int_distribution<> dis(0, 1000000);
     unsigned int result;
     for (unsigned int i = 0; i < algorithms_size; ++i)
@@ -80,12 +80,12 @@ int main(int argc, char** argv)
                 {
                     alg1 = getAlgorithm(i, dis(generator));
                     alg2 = getAlgorithm(j, dis(generator));
-                    result += play(alg1, alg2, TIME_TO_MOVE);
+                    result += play(alg1, alg2, TIME_TO_MOVE); //ilosc zwyciestw gracza 1 (tzn. alg2)
                     delete(alg1);
                     delete(alg2);
                 }
                 unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
-                printf("%s\tvs\t%s:\t%u/%u\ttook %u time\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS, passed);
+                printf("%s\tvs\t%s:\t%u/%u\ttook %u ms\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS, passed);
             }
     return 0;
 }

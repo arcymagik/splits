@@ -1,17 +1,18 @@
 #include "mc_utils.h"
+#include <cstdio>
 #include <cmath>
 
 using namespace std;
 
 bool SimulationResult::isBetterThan(SimulationResult* another, int cps)
 {
-    return
+    int number =
         cps*
         (wins * another->total
          -
-         another->wins * total)
-        >
-        0;
+         another->wins * total);
+    //printf("number: %d\n", number);
+    return number > 0;
 }
 
 double SimulationResult::trustLimit(SimulationResult* son, int cps)
@@ -27,6 +28,7 @@ unsigned int SimulationResult::chooseSon(SimulationResult* sons, unsigned int si
 {
     unsigned int result = 0;
     double tlimit = trustLimit(sons, cps);
+    //printf("tlimit: %f\n", tlimit);
     double temp;
     for (unsigned int i = 1; i < size; ++i)
     {
@@ -37,10 +39,11 @@ unsigned int SimulationResult::chooseSon(SimulationResult* sons, unsigned int si
             result = i;
         }
     }
+//    printf("chosen: %f\n", tlimit);
     return result;
 }
 
-unsigned int SimulationResult::chooseBestSimResult(SimulationResult* results, unsigned int size, unsigned int cps)
+unsigned int SimulationResult::chooseBestSimResult(SimulationResult* results, unsigned int size, int cps)
 {
     unsigned int best = 0;
     for (unsigned int i = 1; i < size; ++i)
