@@ -48,8 +48,8 @@ void MonteCarloMethod::decideMove(Move** move, unsigned int timeToMove)
     } while (time_passed + MS_DANGER_ZONE < timeToMove);
 
     unsigned int index = SimulationResult::chooseBestSimResult(results, size, game.curPlayerSign());
-    printResults(results, size);
-    printf("chosen: %u\n", index);
+    //printResults(results, size);
+    //printf("chosen: %u\n", index);
     moves = game.getPossibleMoves(&size);
     free(results);
     *move = SplitsGame::rawPossibleMoveOfIndex(moves, index, game.gamePhase());

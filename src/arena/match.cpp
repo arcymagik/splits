@@ -25,12 +25,13 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove);
 int main(int argc, char** argv)
 {
     // TODO: dodac wybieranie algorytmu jako opcje command lineowa
-    Algorithm* alg0 = new RandomGameAlg(7232);
+    //Algorithm* alg0 = new RandomGameAlg(7232);
     //Algorithm* alg1 = new MiniMaxAlg(new SimpleGrader(), 2, 0);
     //Algorithm* alg0 = new AlphaBetaAlg(22, new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
     //Algorithm* alg1 = new AlphaBetaAlg(84292, new TranspositionTable(), new ZobristHasher(231), new SimpleGrader(), 2, 0);
-    Algorithm* alg1 = new MCTS(53332);
-    //Algorithm* alg1 = new MonteCarloMethod(33283, true);
+    //Algorithm* alg0 = new MCTS(53332);
+    Algorithm* alg0 = new MonteCarloMethod(434324, false);
+    Algorithm* alg1 = new MonteCarloMethod(33283, true);
 
     play(alg0, alg1, 1000);
 

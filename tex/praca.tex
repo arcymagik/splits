@@ -19,6 +19,7 @@
 
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
+\algrenewcommand\Return{\State \algorithmicreturn{} }%
 
 %Jesli uzywasz kodowania polskich znakow ISO-8859-2 nastepna linia powinna byc 
 %odkomentowana
@@ -137,6 +138,7 @@ rynku.
 P³ytka w grze do pojedyczny element, z którego budowana jest plansza. Jest on podzielona na cztery sze¶ciok±ty foremne - tak zwane
 heksy.
 
+\begin{center}
 \begin{tikzpicture}
   [scale=.1,auto=center, x=1mm, y=1mm]
 
@@ -145,6 +147,7 @@ heksy.
   \draw [color=black] (300, 173) -- (400, 0) -- (600, 0) -- (700, 173) -- (600, 346) -- (400, 346);
   \draw [color=black] (600, 346) -- (700, 520) -- (900, 520) -- (1000, 346) -- (900, 173) -- (700, 173);
 \end{tikzpicture}
+\end{center}
 
 ¯eton to ma³y obiekt, których stos mo¿na umie¶ciæ na heksie. W grze jest 16 ¿etonów czarnych (gracza 0) oraz 16 ¿etonów bia³ych
 (dla gracza 1).
@@ -225,6 +228,8 @@ naszego wêz³a jest maksimum (minimum je¶li wêze³ jest typu min) warto¶ci wêz³ów 
 \end{algorithmic}
 \end{algorithm}
 
+Dok³adny opis algorytmu minimax znajduje siê w pracy doktorskiej Aske Plaata \cite{ap96}.
+
 \subsection{Funkcja oceniaj±ca}
 
 Problem znalezienia dobrej funkcji oceniaj±cej jest bardzo trudny i zazwyczaj u¿ywa siê lu¼nego pomys³u heurystycznego
@@ -248,6 +253,7 @@ Algorytm minimax przegl±da wszystkie wêz³y w ustalonym poddrzewie, ale okazuje s
 sytuacjach, aby w dalszym ci±gu umieæ podaæ dok³adn± warto¶æ minimaxow± dla danej sytuacji. Spójrzmy na nastêpuj±c± sytuacjê,
 gdzie wêze³ $a$ jest typu max, obliczyli¶my ju¿ warto¶ci wêz³ów ``b'' i ``d'', które wynosz± odpowiednio $2$ i $-1$.
 
+\begin{center}
 \begin{tikzpicture}
   [scale=.4,auto=left,every node/.style={circle,fill=blue!20}]
   \node (n1) at (5, 10) {a};
@@ -259,13 +265,15 @@ gdzie wêze³ $a$ jest typu max, obliczyli¶my ju¿ warto¶ci wêz³ów ``b'' i ``d'', k
   \foreach \from/\to in {n1/n2, n1/n3, n3/n4, n3/n5}
     \draw (\from) -- (\to);
 \end{tikzpicture}
+\end{center}
 
 Poniewa¿ wêze³ $c$ jest typu min, to jego warto¶æ wynosi co najwy¿ej $-1$. Jest zatem na pewno mniejsza ni¿ warto¶æ wêz³a
 $b$, która wynosi $2$. Zatem warto¶æ wêz³a $a$ to $2$. Nie musimy wyliczaæ warto¶ci wêz³a $e$, aby to stwierdziæ.
 
-Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimax nazywa siê algorytmem Alfabeta.
+Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimax nazywa siê algorytmem Alfabeta. Wraz z ró¿nymi usprawnieniami
+zosta³ dok³adnie opisany w \cite{ap96}.
 
-\section{Tablica transpozycji}
+\subsection{Tablica transpozycji}
 
 Chocia¿ czêsto mówimy o drzewie gry, to tak naprawdê struktura sytuacji gry i ruchów prowadz±cych od jednych do drugich jest
 DAGiem. Oznacza to, ¿e niektóre pary wêz³ów w drzewie odpowiadaj± tym samym sytuacjom. £atwo zauwa¿yæ, ¿e musz± siê wtedy on
@@ -280,7 +288,7 @@ siê on ju¿ w tablicy.
 
 %% TODO: cos o haszowaniu Zobrista?
 
-\section{Iteracyjne pog³êbianie}
+\subsection{Iteracyjne pog³êbianie}
 
 Zarówno przy minimaksie jak i przy alfabecie pojawia siê pojêcie drzewa przeszukiwania. Zazwyczaj jest ono zdefiniowane przez
 g³êboko¶æ, na jak± zamierzamy przeprowadziæ przeszukiwanie. Pocz±tkowo ustalamy jak±¶ g³êboko¶æ, a nastêpnie zmniejszamy tê warto¶æ
@@ -292,7 +300,7 @@ dysponujemy ograniczonym czasem na ruch, mo¿emy zacz±æ od pewnej ustalonej niewi
 przeszukiwaæ na coraz wiêksze g³êboko¶ci, a¿ zabraknie nam czasu. Wynikiem iteracyjnego pog³êbiania jest wynik ostatniego
 pe³nego przeszukania.
 
-Ten algorytm ma szczególnie du¿o sensu, je¿eli bardzo trudno jest okre¶liæ w³a¶ciw± g³êboko¶æ oraz gdy stopieñ
+Ten algorytm jest szczególnie przydatny, je¿eli bardzo trudno jest okre¶liæ w³a¶ciw± g³êboko¶æ oraz gdy stopieñ
 rozga³êzienia drzewa gry zmienia siê z czasem, tak jak jest w przypadku gry Splits, gdzie ilo¶æ mo¿liwych ruchów
 bardzo szybko ro¶nie podczas budowania planszy, a potem spada w czasie w³a¶ciwej rozgrywki, ale wci±¿ pozostaje ma³o stabilny.
 
@@ -301,7 +309,7 @@ bardzo szybko ro¶nie podczas budowania planszy, a potem spada w czasie w³a¶ciwej
 \begin{algorithmic}[1]
   \Function{Iterative alphabeta} {node}
   \State $\textit{depth} \gets 1$
-  \While {$\texttt{there is still time}$}
+  \While {$\texttt{wci±¿ jest czas}$}
   \State $\textit{result} \gets \textit{Alphabeta}(node, depth)$
   \State $\textit{depth} \gets \textit{depth} + 1$
   \EndWhile
@@ -310,6 +318,117 @@ bardzo szybko ro¶nie podczas budowania planszy, a potem spada w czasie w³a¶ciwej
 \end{algorithmic}
 \end{algorithm}
 
+\section{Monte Carlo}
+
+Techniki Monte Carlo to w³a¶ciwie nie jeden algorytm, ale ca³a ich rodzina. Zastosowania metod Monte Carlo znajduj± siê nie tylko
+w grach, ale równie¿ w statystyce czy rachunku ró¿niczkowym (zob. \cite{la87}). Najpro¶ciesz rzecz ujmuj±c, metoda ta polega
+na wykonywaniu du¿ej liczby losowych symulacji i wyci±ganiu wniosków z wyników.
+
+W przpadku gry symulacj± jest losowa rozgrywka, a wynikiem - numer gracza zwyciêskiego. Je¿eli z danej sytuacji
+przprowadzimy du¿o losowych rozgrywek i wiêkszo¶æ z nich wygra³ gracz 0, to mo¿emy wnioskowaæ, ¿e jest to stosunkowo dobra sytuacja
+dla tego gracza. Algorytm, który realizuje ten pomys³ zosta³ w projekcie nazwany po prostu ``monte carlo''.
+
+Wiêcej o technikach Monte Carlo mo¿na znale¼æ w pracy \cite{mcts12}.
+
+\begin{algorithm}
+\caption{Monte Carlo}
+\begin{algorithmic}[1]
+  \Function{monteCarlo} {node}
+  \While {$\texttt{wci±¿ jest czas}$}
+  \State $\textit{son} \gets \textit{chooseSon}(node)$
+  \State $\textit{simulate}(son)$
+  \EndWhile
+  \Return $\texttt{syn z najlepszymi wynikami}$
+  \EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+W powy¿szym pseudokodzie funkcja $\textit{chooseSon}$ wybiera po prostu losowego syna, natomiast $\textit{simulate}$
+przeprowadza ca³kowicie losow± rozgrywkê. Te funkcje mo¿na jednak zast±piæ nieco innymi, które prowadz± do ciekawych
+odmian techniki Monte Carlo. Jedn± z nich jest wykorzystanie pojêcia granicy ufno¶ci.
+
+\subsection{Monte Carlo z granic± ufno¶ci}
+
+Zauwa¿my, ¿e przeprowadzaj±c algorytm Monte Carlo mo¿e siê zdarzyæ, ¿e jakie¶ dwa ruchy s± widocznie lepsze od trzeciego
+ju¿ po niedu¿ej liczbie rozgrywek. Podstawowy algorytm wci±¿ jednak bêdzie wybiera³ wszystkie ruchy do symulacji
+z tym samym prawdopodobieñstwem. Byæ mo¿e jednak lepiej by³oby zrezygnowaæ z czê¶ci rozgrywek przeznaczonych
+na wyj±tkowo s³aby ruch, aby móc przeznaczyæ wiêcej w celu rozró¿nienia pomiêdzy dobrymi ruchami.
+
+U¶ci¶leniem tego pomys³u jest pojêcie granicy ufno¶ci. Uzasadnienie wykorzystania w³a¶nie takich warto¶ci mo¿na
+znale¼æ w \cite{mcts12}.
+
+\begin{algorithm}
+  \caption{Monte Carlo with confidency bound}
+  \begin{algorithmic}
+    \Function {ConfidencyBound} {node, son}
+    \State $\textit{estimated} \gets \frac{\texttt{wygrane z son}}{\texttt{wszystkie rozgrywki son}}$
+    \State $\textit{variance} \gets \sqrt{\frac{\log({\texttt{wszystkie rozgrywki node}})}{\texttt{wygrane z son}}}$
+    \If {\texttt{node is of type max}} \Return $\textit{estimated} + \textit{variance}$
+    \Else {} \Return $\textit{estimated} - \textit{variance}$
+    \EndIf
+    \EndFunction
+
+    \Function {chooseSon} {node}
+    {}\Return $\texttt{syn s stanu node optymalizuj±cy warto¶æ \textit{ConfidencyBound}(node, s)}$
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+\section{Monte Carlo Tree Search}
+
+Algorytm przeszukiwania drzewa Monte Carlo to jeden z najmocniejszych znanych algorytmów sztucznej inteligencji w grach.
+By³ on z sukcesem stosowany w grach takich jak go czy szachy. Stanowi on naturalne rozwiniêcie podstawowej techniki
+Monte Carlo. Zauwa¿my, ¿e poprzednio decydowali¶my, który ruch wybraæ na podstawie wyników symulacji przeprowadzanych
+z synów. Odpowiada to nieco sytuacji, w której przeprowadzamy minimaxa o g³êboko¶ci 1 z funkcj± oceniaj±c± na podstawie
+losowych symulacji. Naturalnym pomys³em jest zwiêkszenie g³êboko¶ci i przeprowadzanie losowych rozgrywek dopiero
+z li¶ci wybranego poddrzewa. Nie chcemy jednak traciæ zysków z wykorzystania granicy ufno¶ci, dlatego zamiast
+zawsze dochodziæ do pe³nej g³êboko¶ci jak w minimaksie, bêdziemy powoli rozbudowywaæ drzewo tam, gdzie wydaje siê to
+op³acalne. Pe³ny opis ró¿nych podej¶æ do przeszukiwania drzewa Monte Carlo mo¿na znale¼æ w \cite{mcts12}.
+
+Poni¿ej zaprezentowano najbardziej klasyczne podej¶cie.
+
+\begin{algorithm}
+  \caption{Monte Carlo Tree Search}
+  \begin{algorithmic}
+    \Function {findBestMove} {node}
+    \State $\texttt{utwórz korzeñ drzewa ze stanem \textit{node}}$
+    \State $\texttt{rozwiñ drzewo w textit{node}}$
+    \While {$\texttt{wci±¿ jest czas}$}
+    \State $\textit{play}(node)$
+    \EndWhile
+    \Return $\texttt{syn s wêz³a \textit{node} optymalizuj±cy warto¶æ} \frac{\texttt{wygrane z s}}{\texttt{rozgrywki z s}}$
+    \EndFunction
+
+
+    \Function {play} {node}
+    \If {$\texttt{\textit{node} jest li¶ciem}$}
+
+    \If {$\texttt{przeprowadzono wystarczaj±co du¿o rozgrywek z \textit{node}}$}
+    \State $\texttt{rozwiñ \textit{node}}$
+    \State $\textit{result} \gets \textit{play}(\textit{chooseSon}(node))$
+    \Else
+    \State $\texttt{przeprowad¼ losow± rozgrywkê}$
+    \Return $\texttt{1 dla wygranej, 0 dla przegranej}$
+    \EndIf
+
+    \Else
+    \State $\textit{result} \gets \textit{play}(\textit{chooseSon}(node))$
+    \EndIf
+
+    \Return $\textit{result}$
+
+    \EndFunction
+  \end{algorithmic}
+\end{algorithm}
+
+W powy¿szym algorytmie stwierdzenie ``przeprowadzono wystarczaj±co du¿o rozgrywek'' mo¿na zrealizowaæ na ró¿ne sposoby.
+Najprostszym jest ustalenie pewnej ustalonej liczby rozgrywek, po przekroczeniu której nale¿y rozwijaæ wêze³.
+
+Zauwa¿my pewn± dodatkow± w³asno¶æ algorytmu. Statystyki liczby wygranych z poszczególnych wêz³ów s± tak samo dobre
+teraz, jak i po faktycznym wykonaniu ruchów. Warto je zatem zachowaæ. Mo¿emy przechowaæ drzewo i gdy otrzymamy
+informacjê, ¿e wykonano ruch, zamiast budowaæ drzewo od pocz±tku, mo¿emy po prostu przesun±æ wska¼nik korzenia
+na odpowiedniego z synów.
+
 \chapter{Wyniki ekperymentów}
 
 \chapter{Podsumowanie}
@@ -317,6 +436,15 @@ bardzo szybko ro¶nie podczas budowania planszy, a potem spada w czasie w³a¶ciwej
 
 \begin{thebibliography}{99}
 \addcontentsline{toc}{chapter}{Bibliografia}
+
+\bibitem[MCTS12]{mcts12} C. Brown, E. Powley, D. Whitehouse, S. Lucas, P. I. Cowling, P. Rohlsfhagen, S. Tavener, D. Perez,
+  S. Samothrakis, S. Colton, \textit{A Survey of Monte Carlo Tree Search Methods},
+  IEEE Transactions on Computational Intelligence and AI in Games, vol.4, no.1 (2012)
+
+\bibitem[LA87]{la87} N. Metropolis, \textit{The Beginning of the Monte Carlo Method}, Los Alamos Science Special Issue (1987),
+  125 - 130
+
+\bibitem[AP96]{ap96} A. Plaat, \textit{Research, Re: search \& Re-search} (1996) 9 - 36
 
 %% \bibitem[Bea65]{beaman} Juliusz Beaman, \textit{Morbidity of the Jollye
 %%     function}, Mathematica Absurdica, 117 (1965) 338--9.
