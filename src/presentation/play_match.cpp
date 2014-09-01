@@ -14,11 +14,12 @@
 #include <iostream>
 
 #include <string>
+#include <cstdlib>
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
 #define NUMBER_OF_PLAYS (5)
-#define TIME_TO_MOVE (1000) // to chyba lepiej bylyby command line parametry
+#define TIME_TO_MOVE (1000)
 
 using namespace std;
 
@@ -31,12 +32,12 @@ const string alg_names[] =
     "alphabeta",
     "alphabeta_with_transposition_table",
     "monte_carlo",
-    "monte_carlo_with_trust_limit",
+    "monte_carlo_with_confidentiality_bound",
     "mcts"
 };
 
 unsigned int algorithms_size = 7;
-Algorithm* getAlgorithm(unsigned int i, int seed)
+Algorithm* getAlgorithm(int i, int seed)
 {
     switch(i)
     {
@@ -51,42 +52,30 @@ Algorithm* getAlgorithm(unsigned int i, int seed)
     }
 }
 
-bool both_active(unsigned int i, unsigned int j)
-{
-    Algorithm* alg1 = getAlgorithm(i, 1);
-    Algorithm* alg2 = getAlgorithm(j, 1);
-    bool result = (alg1 != NULL) && (alg2 != NULL);
-    delete alg1;
-    delete alg2;
-    return result;
-}
-
 int main(int argc, char** argv)
 {
-    Algorithm* alg1;
-    Algorithm* alg2;
+    int zth, st;
+    zth = atoi(argv[1]);
+    st = atoi(argv[2]);
+
     mt19937 generator;
-    generator.seed(43223);
+    generator.seed(434523);
+    unsigned int result = 0;
     uniform_int_distribution<> dis(0, 1000000);
-    unsigned int result;
-    for (unsigned int i = 0; i < algorithms_size; ++i)
-        for (unsigned int j = 0; j < algorithms_size; ++j)
-            if (//i != j && // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
-                both_active(i, j))
-            {
-                boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
-                result = 0;
-                for (unsigned int k = 0; k < NUMBER_OF_PLAYS; ++k)
-                {
-                    alg1 = getAlgorithm(i, dis(generator));
-                    alg2 = getAlgorithm(j, dis(generator));
-                    result += play(alg1, alg2, TIME_TO_MOVE); //ilosc zwyciestw gracza 1 (tzn. alg2)
-                    delete(alg1);
-                    delete(alg2);
-                }
-                unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
-                printf("%s\tvs\t%s:\t%u/%u\ttook %u ms\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS, passed);
-            }
+    boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
+    for (unsigned int i = 0; i < NUMBER_OF_PLAYS; ++i)
+    {
+        Algorithm* alg0 = getAlgorithm(zth, dis(generator));
+        Algorithm* alg1 = getAlgorithm(st, dis(generator));
+        result += play(alg0, alg1, TIME_TO_MOVE);
+        delete(alg1);
+        delete(alg0);
+    }
+
+    unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
+    printf("%s\tvs\t%s:\t%u/%u\ttook %u ms\n",
+           alg_names[zth].c_str(), alg_names[st].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS, passed);
+
     return 0;
 }
 

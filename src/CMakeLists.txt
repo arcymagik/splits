@@ -33,6 +33,7 @@ add_subdirectory(rules)
 add_subdirectory(tests)
 add_subdirectory(algorithms)
 add_subdirectory(arena)
+add_subdirectory(presentation)
 
 set(COMMON_LIBRARIES mcts monte_carlo random_game_algorithm minimax alpha_beta zobrist_hasher transposition_table game_algorithm mc_utils splits)
 set(GRADER_LIBRARIES simple_grader)
@@ -54,5 +55,24 @@ target_link_libraries(match ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
 add_executable(tournament arena/tournament.cpp)
 target_link_libraries(tournament ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+
+add_executable(play_match presentation/play_match.cpp)
+target_link_libraries(play_match ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+add_executable(alphabeta_speeds presentation/alphabeta_speeds.cpp)
+target_link_libraries(alphabeta_speeds ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+# add_executable(transposition_table presentation/transposition_table.cpp)
+# target_link_libraries(transposition_table ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+# add_executable(confidentiality_bound presentation/confidentiality_bound.cpp)
+# target_link_libraries(confidentiality_bound ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+# add_executable(mcts_mc presentation/mcts_mc.cpp)
+# target_link_libraries(mcts_mc ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+# add_executable(mcts_alphabeta presentation/mcts_alphabeta.cpp)
+# target_link_libraries(mcts_alphabeta ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
 add_definitions(-Wall)

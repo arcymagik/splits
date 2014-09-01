@@ -431,6 +431,67 @@ na odpowiedniego z synów.
 
 \chapter{Wyniki ekperymentów}
 
+W celu przeprowadzenia badañ zasady gry zosta³y zaimplementowane wraz z wariantami opisanych powy¿ej algorytmów.
+Aby zbudowaæ aplikacjê nale¿y wej¶æ do katalogu splits, a nastêpnie wykonaæ:
+
+\begin{algorithm}
+  \begin{algorithmic}
+    \State $\texttt{mkdir bin}$
+    \State $\texttt{cd bin}$
+    \State $\texttt{cmake ../src}$
+    \State $\texttt{make}$
+  \end{algorithmic}
+\end{algorithm}
+
+Nastêpnie mo¿na uruchamiaæ komendy opisane w poni¿szych sekcjach.
+
+\section{Losowy algorytm}
+
+Pierwszym testem algorytmu jest mecz z algorytmem wykonuj±cym zupe³nie losowe ruchy. Je¿eli nie napisano inaczej, przez
+mecz bêdziemy rozumieæ grê z limitem czasu na ruch wielko¶ci 2 sekund uruchomiony na maszynie students. Test
+$\texttt{play\_match}$
+uruchamia 5 meczy wybranych algorytmów. Na przyk³ad komenda:
+
+\begin{algorithm}
+  \begin{algorithmic}
+    \State $\texttt{play\_match 0 1}$
+  \end{algorithmic}
+\end{algorithm}
+
+uruchomi 5 meczów pomiêdzy algorytmem losowym, a minimax (algorytm losowy bêdzie zaczyna³). Numery poszczególnych algorytmów
+to:
+
+\begin{tabular}{|l|l|}
+\hline
+0 & random \\
+\hline
+1 & minimax \\
+\hline
+2 & alphabeta \\
+\hline
+3 & alphabeta with transposition table \\
+\hline
+4 & monte carlo \\
+\hline 
+5 & monte carlo with confidentiality bound \\
+\hline
+6 & mcts \\
+\hline
+\end{tabular}
+
+\section{Alfabeta}
+
+Przyjrzymy siê teraz przyspieszeniu jakie daje mo¿liwo¶æ dokonywania odciêæ przez alfabetê oraz sprawdzania tablicy transpozycji.
+Wszystkie algorytmy $\texttt{minimax}$, $\texttt{alphabeta}$ oraz $\texttt{alphabeta with transposition table}$ ustawione
+na tê sam± g³êboko¶æ obliczaj± warto¶æ minimaksow± tego samego drzewa. Test $\alphabeta\_speeds$ doprowadza grê do przeciêtnego
+momentu w fazie przek³adania ¿etonów i uruchamia wszystkie 3 algorytmy na g³êboko¶ci 3.
+
+\section{Granica ufno¶ci}
+
+\section{Monte Carlo Tree Search}
+
+\section{MCTS i Alfabeta}
+
 \chapter{Podsumowanie}
 
 
