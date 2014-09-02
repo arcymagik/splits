@@ -96,7 +96,7 @@
 
 %tu idzie streszczenie na strone poczatkowa
 \begin{abstract}
-  W pracy zaimplementowano oraz prztestowano metody sztucznej inteligencji w grach na przyk³adie gry planszowej Splits.
+  W pracy zaimplementowano oraz przetestowano metody sztucznej inteligencji w grach na przyk³adzie gry planszowej Splits.
   W¶ród zbadanych metod znajduj± siê miêdzy innymi alfabeta, monte carlo i mcts wraz z ulepszeniami takimi jak
   tablica transpozycji. Ró¿nice w efektywno¶ci poszczególnych algorytmów zosta³y zbadane, a ich analiza mo¿e
   pomóc zdecydowaæ o charakterze gry Splits (strategiczny lub kombinacyjny).
@@ -109,7 +109,9 @@
 \chapter*{Wprowadzenie}
 \addcontentsline{toc}{chapter}{Wprowadzenie}
 
-Za pomoc± gier mo¿na modelowaæ wiele zjawisk w dziedzinach ekonomii, matematyki i informatyki. Nie dziwi zatem dynamiczny
+Za pomoc± gier mo¿na modelowaæ wiele zjawisk.
+Teoria gier znajduje zastosowanie
+ w dziedzinach ekonomii, matematyki i informatyki. Nie dziwi zatem dynamiczny
 rozwój metod sztucznej inteligencji w grach. 
 
 Istnieje wiele gier: zaczynaj±c od znanych i klasycznych jak go lub szachy, a koñcz±c na wspó³czesnych grach planszowych
@@ -149,7 +151,7 @@ heksy.
 \end{tikzpicture}
 \end{center}
 
-¯eton to ma³y obiekt, których stos mo¿na umie¶ciæ na heksie. W grze jest 16 ¿etonów czarnych (gracza 0) oraz 16 ¿etonów bia³ych
+¯eton to ma³y obiekt, których stos mo¿na umie¶ciæ na heksie. W grze jest 16 ¿etonów czarnych (dla gracza 0) oraz 16 ¿etonów bia³ych
 (dla gracza 1).
 
 Na pocz±tku gry umieszcza siê jedn± z p³ytek na ¶rodku sto³u. Nastêpnie gracze dok³adaj± na zmianê kolejne p³ytki buduj±c
@@ -159,7 +161,7 @@ u³o¿one p³ytki oraz styka siê przynajmniej jedn± krawêdzi± heksa z heksem p³ytki
 Gdy skoñcz± siê p³ytki, plansza jest zbudowana. Sk³ada siê z 32 heksów stanowi±cych spójny podzbiór zbioru heksów
 pokrywaj±cych p³aszczyznê. Gracz 1 wybiera teraz heks, który znajduje siê przy zewnêtrznej krawêdzi planszy - to znaczy
 taki, który przynajmniej jedn± krawêdzi± nie s±siaduje z innym heksem i ta pusta przestrzeñ nie jest ograniczona - nie mo¿e to
-byæ ``dziura'' w planszy. Gracz 1 k³adzie na tym polu wszystkie swoje 16 ¿etonów. Gracz 0 postêpuje podobnie - nie mo¿e
+byæ ``dziura'' w ¶rodku planszy. Gracz 1 k³adzie na tym polu wszystkie swoje 16 ¿etonów. Gracz 0 postêpuje podobnie - nie mo¿e
 ju¿ jednak wybraæ tego samego pola, co gracz 1.
 
 W tym momencie zaczyna siê w³a¶ciwa rozgrywka. Zaczyna j± gracz 1, a potem ruchy wykonuje siê na zmianê, a¿ wykonanie ruchu
@@ -271,13 +273,44 @@ Poniewa¿ wêze³ $c$ jest typu min, to jego warto¶æ wynosi co najwy¿ej $-1$. Jest 
 $b$, która wynosi $2$. Zatem warto¶æ wêz³a $a$ to $2$. Nie musimy wyliczaæ warto¶ci wêz³a $e$, aby to stwierdziæ.
 
 Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimax nazywa siê algorytmem Alfabeta. Wraz z ró¿nymi usprawnieniami
-zosta³ dok³adnie opisany w \cite{ap96}.
+zosta³ dok³adnie opisany w \cite{ap96}. Tutaj algorytm przedstawiono w pseudokodzie Algorithm \ref{alg:alphabeta}.
+
+\begin{algorithm}
+\caption{Alphabeta}
+\label{alg:alphabeta}
+\begin{algorithmic}
+  \Function {Alphabeta} {node, $\alpha$, $\beta$}
+  \If {$\texttt{\textit{node} jest li¶ciem}$}
+  \Return Ocena(node)
+  \EndIf
+
+  \If {$\texttt{\textit{node} jest typu max}$}
+  \State $\textit{result} \gets -\infty$
+  \ForAll {$\texttt{s - syn \textit{node}}$}
+  \State $\textit{tmp} \gets \textit{Alphabeta} (s, max(\textit{result}, \alpha), \beta)$
+  \If {$\textit{tmp} \geq \beta$} \Return $\textit{tmp}$ \EndIf
+  \State $\textit{result} \gets max(\textit{result}, \textit{tmp})$
+  \EndFor
+
+  \Else
+  \State $\textit{result} \gets +\infty$
+  \ForAll {$\texttt{s - syn \textit{node}}$}
+  \State $\textit{tmp} \gets \textit{Alphabeta} (s, \alpha, min(\textit{result}, \beta))$
+  \If {$\textit{tmp} \leq \beta$} \Return $\textit{tmp}$ \EndIf
+  \State $\textit{result} \gets min(\textit{result}, \textit{tmp})$
+  \EndFor
+  \EndIf
+  \Return $\textit{result}$
+  \EndFunction
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{Tablica transpozycji}
 
 Chocia¿ czêsto mówimy o drzewie gry, to tak naprawdê struktura sytuacji gry i ruchów prowadz±cych od jednych do drugich jest
-DAGiem. Oznacza to, ¿e niektóre pary wêz³ów w drzewie odpowiadaj± tym samym sytuacjom. £atwo zauwa¿yæ, ¿e musz± siê wtedy on
-znajdowaæ na tej samej g³êboko¶ci (w grze Splits), poniewa¿ na przyk³ad ilo¶æ stosów ¿etonów w grze odpowiada bijektywnie g³êboko¶ci
+DAGiem. Oznacza to, ¿e niektóre pary wêz³ów w drzewie odpowiadaj± tym samym sytuacjom. £atwo zauwa¿yæ, ¿e w grze Splits
+musz± siê wtedy one
+znajdowaæ na tej samej g³êboko¶ci, poniewa¿ na przyk³ad ilo¶æ stosów ¿etonów w grze odpowiada bijektywnie g³êboko¶ci
 w drzewie. W takim razie warto¶æ minimaksowa obydwu wêz³ów musi byæ taka sama.
 
 Naturalnym wydaje siê pomys³ wykorzystania tego faktu i unikniêcia powtórnego obliczania tej warto¶ci. Dobrym narzêdziem
@@ -298,7 +331,7 @@ stan koñcowy gry.
 Zauwa¿my, ¿e przeszukiwanie z g³êboko¶ci± zaledwie o jeden wiêksz± jest o ca³y rz±d wielko¶ci d³u¿sze, zatem je¿eli
 dysponujemy ograniczonym czasem na ruch, mo¿emy zacz±æ od pewnej ustalonej niewielkiej g³êboko¶ci - na przyk³ad $1$, a nastêpnie
 przeszukiwaæ na coraz wiêksze g³êboko¶ci, a¿ zabraknie nam czasu. Wynikiem iteracyjnego pog³êbiania jest wynik ostatniego
-pe³nego przeszukania.
+pe³nego przeszukania. Czas wykonania ca³o¶ci bêdzie tego samego rzêdu, co wykonanie tylko ostatniego poziomu.
 
 Ten algorytm jest szczególnie przydatny, je¿eli bardzo trudno jest okre¶liæ w³a¶ciw± g³êboko¶æ oraz gdy stopieñ
 rozga³êzienia drzewa gry zmienia siê z czasem, tak jak jest w przypadku gry Splits, gdzie ilo¶æ mo¿liwych ruchów
@@ -355,10 +388,11 @@ z tym samym prawdopodobieñstwem. Byæ mo¿e jednak lepiej by³oby zrezygnowaæ z czê
 na wyj±tkowo s³aby ruch, aby móc przeznaczyæ wiêcej w celu rozró¿nienia pomiêdzy dobrymi ruchami.
 
 U¶ci¶leniem tego pomys³u jest pojêcie granicy ufno¶ci. Uzasadnienie wykorzystania w³a¶nie takich warto¶ci mo¿na
-znale¼æ w \cite{mcts12}.
+znale¼æ w \cite{mcts12}. Tutaj przedstawiono pseudokod w Algorithm~\ref{alg:mc}.
 
 \begin{algorithm}
   \caption{Monte Carlo with confidency bound}
+  \label{alg:mc}
   \begin{algorithmic}
     \Function {ConfidencyBound} {node, son}
     \State $\textit{estimated} \gets \frac{\texttt{wygrane z son}}{\texttt{wszystkie rozgrywki son}}$
@@ -376,7 +410,7 @@ znale¼æ w \cite{mcts12}.
 
 \section{Monte Carlo Tree Search}
 
-Algorytm przeszukiwania drzewa Monte Carlo to jeden z najmocniejszych znanych algorytmów sztucznej inteligencji w grach.
+Algorytm przeszukiwania drzewa Monte Carlo to jeden z najsilniejszych znanych algorytmów sztucznej inteligencji w grach.
 By³ on z sukcesem stosowany w grach takich jak go czy szachy. Stanowi on naturalne rozwiniêcie podstawowej techniki
 Monte Carlo. Zauwa¿my, ¿e poprzednio decydowali¶my, który ruch wybraæ na podstawie wyników symulacji przeprowadzanych
 z synów. Odpowiada to nieco sytuacji, w której przeprowadzamy minimaxa o g³êboko¶ci 1 z funkcj± oceniaj±c± na podstawie
