@@ -64,7 +64,8 @@ int main(int argc, char** argv)
         test(alg);
         delete(alg);
         unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
-        printf("%s:\tfull search at depth %d took:\t%u\n", alg_names[i].c_str(), DEPTH, passed);
+        printf("%s:\tfull search at depth %d took:\t%u\n", alg_names[i].c_str(), DEPTH+1, passed);
+        //depth +1, bo depth 0 oznacza zaglebienie sie na 1
     }
 
     return 0;

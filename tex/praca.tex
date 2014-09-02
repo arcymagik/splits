@@ -445,21 +445,49 @@ Aby zbudowaæ aplikacjê nale¿y wej¶æ do katalogu splits, a nastêpnie wykonaæ:
 
 Nastêpnie mo¿na uruchamiaæ komendy opisane w poni¿szych sekcjach.
 
-\section{Losowy algorytm}
+\section{Turniej}
 
-Pierwszym testem algorytmu jest mecz z algorytmem wykonuj±cym zupe³nie losowe ruchy. Je¿eli nie napisano inaczej, przez
-mecz bêdziemy rozumieæ grê z limitem czasu na ruch wielko¶ci 2 sekund uruchomiony na maszynie students. Test
-$\texttt{play\_match}$
-uruchamia 5 meczy wybranych algorytmów. Na przyk³ad komenda:
+%% Pierwszym testem algorytmu jest mecz z algorytmem wykonuj±cym zupe³nie losowe ruchy. Je¿eli nie napisano inaczej, przez
+%% mecz bêdziemy rozumieæ grê z limitem czasu na ruch wielko¶ci 1 sekundy. Test
+%% $\texttt{play\_match}$
+%% uruchamia 5 meczy wybranych algorytmów. Na przyk³ad komenda:
 
+%% \begin{algorithm}
+%%   \begin{algorithmic}
+%%     \State $\texttt{play\_match 0 1}$
+%%   \end{algorithmic}
+%% \end{algorithm}
+
+%% uruchomi 5 meczów pomiêdzy algorytmem losowym, a minimax (algorytm losowy bêdzie zaczyna³). Numery poszczególnych algorytmów
+%% to:
+
+%% \begin{tabular}{|l|l|}
+%% \hline
+%% 0 & random \\
+%% \hline
+%% 1 & minimax \\
+%% \hline
+%% 2 & alphabeta \\
+%% \hline
+%% 3 & alphabeta with transposition table \\
+%% \hline
+%% 4 & monte carlo \\
+%% \hline 
+%% 5 & monte carlo with confidentiality bound \\
+%% \hline
+%% 6 & mcts \\
+%% \hline
+%% \end{tabular}
+
+Najsensowniejszym sposobem przetestowania si³y algorytmu na tle innych jest rozegranie kilku partii z pozosta³ymi.
+Program
 \begin{algorithm}
   \begin{algorithmic}
-    \State $\texttt{play\_match 0 1}$
+    \State $\texttt{./tournament}$
   \end{algorithmic}
 \end{algorithm}
-
-uruchomi 5 meczów pomiêdzy algorytmem losowym, a minimax (algorytm losowy bêdzie zaczyna³). Numery poszczególnych algorytmów
-to:
+³±czy ka¿dy program z ka¿dym innym na 2 sposoby - raz zaczyna jeden algorytm a raz drugi. W sumie ka¿da para ró¿nych
+algorytmów rozgrywa 10 meczów. Przyjmuj±c poni¿sze numerowanie algorytmów:
 
 \begin{tabular}{|l|l|}
 \hline
@@ -479,18 +507,62 @@ to:
 \hline
 \end{tabular}
 
+W tabeli przedstawiono wyniki przeprowadzenia turnieju. Liczba oznacza ilo¶æ gier wygranych przez gracza ``wierszowego'' na 5
+meczów. Gracz ``wierszowy'' rozpoczyna³.
+
+\begin{tabular}{|r|c|c|c|c|c|c|c|}
+\hline
+nr & 0 & 1 & 2 & 3 & 4 & 5 & 6 \\
+\hline
+0 & 2 & 1 & 1 & 1 & 0 & 0 & 0 \\
+\hline
+1 & 4 & 3 & 2 & 3 & 0 & 0 & 0 \\
+\hline
+2 & 5 & 2 & 2 & 1 & 0 & 0 & 0 \\
+\hline
+3 & 4 & 4 & 1 & 2 & 0 & 0 & 0 \\
+\hline
+4 & 5 & 5 & 5 & 5 & 3 & 2 & 0 \\
+\hline
+5 & 5 & 5 & 5 & 4 & 3 & 3 & 0 \\
+\hline
+6 & 5 & 5 & 5 & 5 & 3 & 3 & 2 \\
+\hline
+\end{tabular}
+
+Wszystkie algorytmy poradzi³y sobie dosyæ dobrze z randomem. Jedynie minimaksowi i alfabetom zdarzy³o siê nie wygraæ do 0.
+Prawdopodobnie wynika to z faktu, ¿e algorytmy te w fazie budowania planszy, gdy nie ma jeszcze ¿etonów, funkcja
+oceniaj±ca zwraca zawsze 0, wiêc ruszaj± siê one losowo. Faktycznie zaczynaj± one wyliczaæ najlepszy ruch dopiero
+po postawieniu ¿etonów, gdy mo¿e byæ za pó¼no. Istnieje zatem szansa, ¿e losowy algorytm je pokona.
+
+Techniki monte carlo nie maj± tego problemu. S± ca³kowicie niezale¿ne od heurystyk i poradzi³y sobie znakomicie
+zarówno z randomem jak i z technikami opartymi o funkcjê oceniaj±c±.
+
 \section{Alfabeta}
 
 Przyjrzymy siê teraz przyspieszeniu jakie daje mo¿liwo¶æ dokonywania odciêæ przez alfabetê oraz sprawdzania tablicy transpozycji.
-Wszystkie algorytmy $\texttt{minimax}$, $\texttt{alphabeta}$ oraz $\texttt{alphabeta with transposition table}$ ustawione
-na tê sam± g³êboko¶æ obliczaj± warto¶æ minimaksow± tego samego drzewa. Test $\alphabeta\_speeds$ doprowadza grê do przeciêtnego
-momentu w fazie przek³adania ¿etonów i uruchamia wszystkie 3 algorytmy na g³êboko¶ci 3.
+Wszystkie algorytmy $\texttt{minimax}$, $\texttt{alphabeta}$ oraz $\texttt{alphabeta\_with\_transposition\_table}$ ustawione
+na tê sam± g³êboko¶æ obliczaj± warto¶æ minimaksow± tego samego drzewa. Test $alphabeta\_speeds$ doprowadza grê do przeciêtnego
+momentu w fazie przek³adania ¿etonów i uruchamia wszystkie 3 algorytmy na g³êboko¶ci 4. Czasy potrzebne na obliczenie
+warto¶ci drzewa przedstawiono w tabeli.
 
-\section{Granica ufno¶ci}
+\begin {tabular}{|c|c|}
+\hline
+Algorytm & Czas [ms] \\
+\hline
+minimax & 22291 \\
+\hline
+alfabeta & 21982 \\
+\hline
+alfabeta z tablic± transpozycji & 19454 \\
+\hline
+\end{tabular}
 
-\section{Monte Carlo Tree Search}
+Widaæ, ¿e ka¿de ulepszenie spowodowa³o pewien wzrost prêdko¶ci, jednak prawdopodobnie wiêkse ró¿nice pojawi³yby siê dopiero
+przy wiêkszych g³êboko¶ciach. W sytuacji, gdy mamy tylko 1 sekundê na ruch w meczu, prawdopodobnie wszystkie algorytmy
+wykonywa³y przeszukanie na tê sam± wysoko¶æ, nie licz±c sytuacji, gdy rozga³êzienie drzewa maleje, jak na przyk³ad pod koniec
+gry. Dlatego nie widaæ znacz±cej przewagi alfabety z tablic± transpozycji nad pozosta³ymi dwoma algorytmami w turnieju.
 
-\section{MCTS i Alfabeta}
 
 \chapter{Podsumowanie}
 

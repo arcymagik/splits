@@ -59,7 +59,7 @@ int main(int argc, char** argv)
     st = atoi(argv[2]);
 
     mt19937 generator;
-    generator.seed(434523);
+    generator.seed(43423);
     unsigned int result = 0;
     uniform_int_distribution<> dis(0, 1000000);
     boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
