@@ -129,6 +129,7 @@ void AlphaBetaAlg::decideMove(Move** best_move)
     else
         visited_nodes = 1;
     cuts = 0;
+    wrong_firsts = 0;
 
     if (choosing_best_first_son && !cbf_warming)
     {
@@ -309,6 +310,7 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
     if (hasher != NULL) hasher->makeMove(mmove, &game, game.gamePhase());
     game.makeMove(mmove);
     result = getHashedValue(h, &firstChosen);
+
     if (result == INVALID_GRADE)
     {
         if (h == 0 || game.isFinished()) result = grader->grade(&game);
@@ -318,25 +320,31 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
             game.getPossibleMoves(&size);
             int cp = game.curPlayer();
 
-            //int alpha = -GRADE_INFINITY;
-            //int beta = GRADE_INFINITY;
+            if (firstChosen >= size)
+            {
+                firstChosen = 0;
+                wrong_firsts++;
+            }
             int best = alpha_beta_opt(firstChosen, alpha, beta, h-1);
             bestIndex = firstChosen;
             updateWindow(best, cp, &alpha, &beta);
 
-            int grade;
-            for (unsigned int i = 0; i < size; ++i)
-                if (i != firstChosen)
-                {
-                    grade = alpha_beta_opt(i, alpha, beta, h-1);
-                    if (grader->better(&game, grade, best))
+            if (!outsideWindow(best, cp, alpha, beta))
+            {
+                int grade;
+                for (unsigned int i = 0; i < size; ++i)
+                    if (i != firstChosen)
                     {
-                        bestIndex = i;
-                        best = grade;
-                        if (outsideWindow(best, cp, alpha, beta)) break;
-                        updateWindow(best, cp, &alpha, &beta);
+                        grade = alpha_beta_opt(i, alpha, beta, h-1);
+                        if (grader->better(&game, grade, best))
+                        {
+                            bestIndex = i;
+                            best = grade;
+                            if (outsideWindow(best, cp, alpha, beta)) break;
+                            updateWindow(best, cp, &alpha, &beta);
+                        }
                     }
-                }
+            }
             result = best;
         }
         setHashedValue(result, h, bestIndex);
@@ -398,8 +406,10 @@ string AlphaBetaAlg::stats()
     result += "\n";
     result += "\tlevels_finished: ";
     result += boost::lexical_cast<string>(level_finished);
-    result += "\tcuts done: ";
+    result += "\n\tcuts done: ";
     result += boost::lexical_cast<string>(cuts);
+    result += "\n\twrong firstChosen: ";
+    result += boost::lexical_cast<string>(wrong_firsts);
     return result;
 }
 

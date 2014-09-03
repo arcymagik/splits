@@ -2,6 +2,7 @@
 #include "random_game_algorithm.h"
 #include "minimax.h"
 #include "simple_grader.h"
+#include "adv_grader.h"
 #include "zobrist_hasher.h"
 #include "alpha_beta.h"
 #include "monte_carlo.h"
@@ -20,7 +21,7 @@
 
 using namespace std;
 
-#define DEPTH (3)
+#define DEPTH (4)
 
 const string alg_names[] =
 {
@@ -32,9 +33,11 @@ const string alg_names[] =
     "monte_carlo_with_confidentiality_bound",
     "mcts"
     ,"alphabeta_with_tt_and_cbf"
+    ,"alphabeta_adv_with_tt_and_cbf"
+    ,"alphabeta_adv_with_transposition_table",
 };
 
-unsigned int algorithms_size = 7;
+unsigned int algorithms_size = 10;
 Algorithm* getAlgorithm(int i, int seed)
 {
     switch(i)
@@ -47,6 +50,8 @@ Algorithm* getAlgorithm(int i, int seed)
     case 5: return new MonteCarloMethod(seed, true);
     case 6: return new MCTS(seed);
     case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), DEPTH, 0, true);
+    case 8: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), DEPTH, 0);
+    case 9: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), DEPTH, 0, true);
     default: return NULL;
     }
 }
@@ -58,10 +63,10 @@ int main(int argc, char** argv)
     mt19937 generator;
     generator.seed(5674);
     uniform_int_distribution<> dis(0, 1000000);
-    int ab_indices[4] = {1,2,3,7};
+    int ab_indices[6] = {1,2,3,7, 8,9};
 
     int i;
-    for (int j = 2; j < 4; ++j)
+    for (int j = 4; j < 6; ++j)
     {
         i = ab_indices[j];
         boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();

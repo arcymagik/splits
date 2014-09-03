@@ -2,6 +2,7 @@
 #include "random_game_algorithm.h"
 #include "minimax.h"
 #include "simple_grader.h"
+#include "adv_grader.h"
 #include "zobrist_hasher.h"
 #include "alpha_beta.h"
 #include "monte_carlo.h"
@@ -35,6 +36,8 @@ const string alg_names[] =
     "monte_carlo_with_confidentiality_bound",
     "mcts"
     ,"alphabeta_with_tt_and_cbf"
+    ,"alphabeta_adv_with_tt_and_cbf"
+    ,"alphabeta_adv_with_transposition_table",
 };
 
 unsigned int algorithms_size = 8;
@@ -50,6 +53,8 @@ Algorithm* getAlgorithm(int i, int seed)
     case 5: return new MonteCarloMethod(seed, true);
     case 6: return new MCTS(seed);
     case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0, true);
+    case 8: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0);
+    case 9: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0, true);
     default: return NULL;
     }
 }
@@ -70,6 +75,8 @@ int main(int argc, char** argv)
         Algorithm* alg0 = getAlgorithm(zth, dis(generator));
         Algorithm* alg1 = getAlgorithm(st, dis(generator));
         result += play(alg0, alg1, TIME_TO_MOVE);
+        // printf("alg[0]: %s\n\n", alg0->stats().c_str());
+        // printf("alg[1]: %s\n\n", alg1->stats().c_str());
         delete(alg1);
         delete(alg0);
     }

@@ -188,7 +188,8 @@ public:
 
     void buildStructuresAfterBoardIsBuilt();
 
-    bool stackBlocked(int pos);
+    //bool stackBlocked(int pos);
+    unsigned int freeContacts(int pos);
 
     unsigned int getIndexOfMove(Move* move);
     bool movesEqual(Move* st, Move* nd);

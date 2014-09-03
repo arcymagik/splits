@@ -33,6 +33,7 @@ private:
     unsigned int visited_nodes;
     unsigned int level_finished;
     unsigned int cuts;
+    unsigned int wrong_firsts;
 
     boost::posix_time::ptime start_time; // start time dla decideMove z czasem    
     unsigned int timeToMove;

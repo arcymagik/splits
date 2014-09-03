@@ -25,6 +25,7 @@ add_library(monte_carlo algorithms/monte_carlo.cpp)
 add_library(mcts algorithms/mcts)
 
 add_library(simple_grader algorithms/simple_grader.cpp)
+add_library(advanced_grader algorithms/adv_grader.cpp)
 add_library(zobrist_hasher algorithms/zobrist_hasher.cpp)
 add_library(transposition_table algorithms/transposition_table.cpp)
 add_library(mc_utils algorithms/mc_utils.cpp)
@@ -36,7 +37,7 @@ add_subdirectory(arena)
 add_subdirectory(presentation)
 
 set(COMMON_LIBRARIES mcts monte_carlo random_game_algorithm minimax alpha_beta zobrist_hasher transposition_table game_algorithm mc_utils splits)
-set(GRADER_LIBRARIES simple_grader)
+set(GRADER_LIBRARIES simple_grader advanced_grader)
 
 message(STATUS "common libraries " ${COMMON_LIBRARIES})
 message(STATUS "graders " ${GRADER_LIBRARIES})
