@@ -34,9 +34,10 @@ const string alg_names[] =
     "monte_carlo",
     "monte_carlo_with_confidentiality_bound",
     "mcts"
+    ,"alphabeta_with_tt_and_cbf"
 };
 
-unsigned int algorithms_size = 7;
+unsigned int algorithms_size = 8;
 Algorithm* getAlgorithm(int i, int seed)
 {
     switch(i)
@@ -48,6 +49,7 @@ Algorithm* getAlgorithm(int i, int seed)
     case 4: return new MonteCarloMethod(seed);
     case 5: return new MonteCarloMethod(seed, true);
     case 6: return new MCTS(seed);
+    case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0, true);
     default: return NULL;
     }
 }

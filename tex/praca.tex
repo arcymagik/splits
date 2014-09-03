@@ -252,9 +252,11 @@ gra siê zakoñczy, to wygramy.
 \section{Alfabeta}
 
 Algorytm minimax przegl±da wszystkie wêz³y w ustalonym poddrzewie, ale okazuje siê, ¿e nie jest to potrzebne w niektórych
-sytuacjach, aby w dalszym ci±gu umieæ podaæ dok³adn± warto¶æ minimaxow± dla danej sytuacji. Spójrzmy na nastêpuj±c± sytuacjê,
+sytuacjach, aby w dalszym ci±gu umieæ podaæ dok³adn± warto¶æ minimaxow± dla danej sytuacji. Spójrzmy na nastêpuj±c± sytuacjê
+na rysunku \ref{fig:ab_tree},
 gdzie wêze³ $a$ jest typu max, obliczyli¶my ju¿ warto¶ci wêz³ów ``b'' i ``d'', które wynosz± odpowiednio $2$ i $-1$.
 
+\begin{figure}
 \begin{center}
 \begin{tikzpicture}
   [scale=.4,auto=left,every node/.style={circle,fill=blue!20}]
@@ -268,6 +270,9 @@ gdzie wêze³ $a$ jest typu max, obliczyli¶my ju¿ warto¶ci wêz³ów ``b'' i ``d'', k
     \draw (\from) -- (\to);
 \end{tikzpicture}
 \end{center}
+\caption{Przyk³adowe drzewo gry}
+\label{fig:ab_tree}
+\end{figure}
 
 Poniewa¿ wêze³ $c$ jest typu min, to jego warto¶æ wynosi co najwy¿ej $-1$. Jest zatem na pewno mniejsza ni¿ warto¶æ wêz³a
 $b$, która wynosi $2$. Zatem warto¶æ wêz³a $a$ to $2$. Nie musimy wyliczaæ warto¶ci wêz³a $e$, aby to stwierdziæ.

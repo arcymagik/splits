@@ -6,6 +6,10 @@ using namespace std;
   ilosc zetonow w niezablokowanych stackach, ktore potencjalnie mozna jescze ruszyc
   minus to samo u przeciwnika
  */
+
+#define GRADE_INFINITY (1 << 10)
+#define INVALID_GRADE (GRADE_INFINITY+1)
+
 int SimpleGrader::grade(SplitsGame* game)
 {
     //vector<Move*> moves = game->getPossibleMoves();
@@ -14,7 +18,7 @@ int SimpleGrader::grade(SplitsGame* game)
     int cps = game->curPlayerSign();
     vector<int>* stacks = getStacks(game);
 
-    if (game->isFinished()) return - cps * 100000;
+    if (game->isFinished()) return - cps * GRADE_INFINITY;
 
     int result = 0;
 

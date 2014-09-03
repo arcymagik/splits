@@ -3,6 +3,7 @@
 #include "minimax.h"
 #include "simple_grader.h"
 #include "zobrist_hasher.h"
+#include "transposition_table.h"
 
 #include <cstdio>
 
@@ -14,7 +15,50 @@
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
+#define GRADE_INFINITY (1 << 10)
+#define INVALID_GRADE (GRADE_INFINITY+1)
+
+#define GRADE_BIT_LENGTH (12)
+#define HEIGHT_BIT_LENGTH (4)
+#define LAST_BEST_LENGTH (8)
+
 using namespace std;
+
+const unsigned long long grade_mask = ~((~0) << GRADE_BIT_LENGTH);
+const unsigned long long height_mask = (~((~0) << (HEIGHT_BIT_LENGTH +GRADE_BIT_LENGTH))) ^ grade_mask;
+const unsigned long long last_best_mask = (~((~0) << (HEIGHT_BIT_LENGTH +GRADE_BIT_LENGTH +LAST_BEST_LENGTH))) ^ (grade_mask | height_mask);
+
+int getHashedValue(TranspositionTable* transTable, unsigned int height, unsigned int* best_son_index)
+{
+    *best_son_index = 0; // 0 will be default, because it's always correct
+
+    unsigned long long hash = 5;
+    TTEntry entry = transTable->get(hash);
+    if (entry.hash != hash) return INVALID_GRADE;
+
+    unsigned long long hbast_last = (entry.data & last_best_mask) >> (GRADE_BIT_LENGTH + HEIGHT_BIT_LENGTH);
+    unsigned long long hheight = (entry.data & height_mask) >> GRADE_BIT_LENGTH;
+    unsigned long long hgrade = entry.data & grade_mask;
+
+    if (height == hheight) return ((int) hgrade) - GRADE_INFINITY;
+    else
+    {
+        *best_son_index = (unsigned int) hbast_last; // otherise the default 0
+        return INVALID_GRADE;
+    }
+}
+
+void setHashedValue(TranspositionTable* transTable, int grade, unsigned int height, unsigned int best_son_index)
+{
+    unsigned long long hash = 5;
+    TTEntry entry;
+    entry.hash = hash;
+    entry.data =
+        (((unsigned long long)best_son_index) << (HEIGHT_BIT_LENGTH + GRADE_BIT_LENGTH))
+        | (((unsigned long long)height) << GRADE_BIT_LENGTH)
+        | (unsigned long long) (grade + GRADE_INFINITY);
+    transTable->push(entry);
+}
 
 #define SEED (19)
 
@@ -28,6 +72,7 @@ int basic_sanity();
 int random_sanity();
 unsigned int choose_move_basic(void* moves, unsigned int size, GamePhase phase);
 unsigned int choose_move_random(void* moves, unsigned int size, GamePhase phase);
+int tt_sanity();
 
 mt19937 generator;
 
@@ -38,12 +83,13 @@ int main(int argc, char** argv)
     argc = argc; argv = argv;
     generator.seed(SEED);
 
-    run_test(basic_sanity, "basic_sanity");
-    run_test(random_sanity, "random_sanity");
-    run_test(undo_sanity, "undo_sanity");
-    run_test(random_alg_sanity, "random_alg_sanity");
-    run_test(minimax_alg_sanity, "minimax_alg_sanity");
-    run_test(doubleGameWithAllTokensNormalMove, "doubleGameWithAllTokensNormalMove");
+    // run_test(basic_sanity, "basic_sanity");
+    // run_test(random_sanity, "random_sanity");
+    // run_test(undo_sanity, "undo_sanity");
+    // run_test(random_alg_sanity, "random_alg_sanity");
+    // run_test(minimax_alg_sanity, "minimax_alg_sanity");
+    // run_test(doubleGameWithAllTokensNormalMove, "doubleGameWithAllTokensNormalMove");
+    run_test(tt_sanity, "tt_sanity");
 
     return 0;
 }
@@ -177,6 +223,20 @@ int minimax_alg_sanity()
 {
     MiniMaxAlg alg(4242, new SimpleGrader(), 2, 0);
     return alg_sanity_template(&alg);
+}
+
+int tt_sanity()
+{
+    TranspositionTable* tt = new TranspositionTable();
+
+    unsigned int blast = 0;
+    int val = 34;
+    printf("%d\t%u\n", val, blast);
+    setHashedValue(tt, 34, 1, blast);
+    val = getHashedValue(tt, 2, &blast);
+    printf("%d\t%u\n", val, blast);
+    delete(tt);
+    return 0;
 }
 
 int alg_sanity_template(Algorithm* alg)

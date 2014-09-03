@@ -3,11 +3,12 @@
 
 #include <boost/lexical_cast.hpp>
 
-#define GRADE_INFINITY (1 << 20)
+#define GRADE_INFINITY (1 << 10)
 #define INVALID_GRADE (GRADE_INFINITY+1)
 
-#define GRADE_BIT_LENGTH (22)
-#define HEIGHT_BIT_LENGTH (4)
+#define GRADE_BIT_LENGTH (12)
+#define HEIGHT_BIT_LENGTH (6)
+#define LAST_BEST_LENGTH (8)
 
 #define MS_TO_ALERT (100)
 #define VISITED_NODES_TO_CHECK_MASK (0xff)
@@ -16,6 +17,9 @@ using namespace std;
 
 const unsigned long long grade_mask = ~((~0) << GRADE_BIT_LENGTH);
 const unsigned long long height_mask = (~((~0) << (HEIGHT_BIT_LENGTH +GRADE_BIT_LENGTH))) ^ grade_mask;
+const unsigned long long last_best_mask = (~((~0) << (HEIGHT_BIT_LENGTH +GRADE_BIT_LENGTH +LAST_BEST_LENGTH))) ^ (grade_mask | height_mask);
+
+unsigned long long maximal_height = 40; // gra nie moze byc dluzsza niz 39, wiec przyjmuje to za max zaglebiania sie
 
 AlphaBetaAlg::AlphaBetaAlg()
 {
@@ -25,6 +29,8 @@ AlphaBetaAlg::AlphaBetaAlg()
     transTable = NULL;
     hasher = NULL;
     timeToMove = 0;
+    choosing_best_first_son = false;
+    cbf_warming = false;
 }
 
 AlphaBetaAlg::AlphaBetaAlg(unsigned int seed, Grader* grader, unsigned int height, unsigned int height_building)
@@ -36,6 +42,8 @@ AlphaBetaAlg::AlphaBetaAlg(unsigned int seed, Grader* grader, unsigned int heigh
     transTable = NULL;
     hasher = NULL;
     timeToMove = 0;
+    choosing_best_first_son = false;
+    cbf_warming = false;
 }
 
 AlphaBetaAlg::AlphaBetaAlg(unsigned int seed, TranspositionTable* transTable, Hasher* hasher, Grader* grader, unsigned int height, unsigned int height_building)
@@ -47,6 +55,21 @@ AlphaBetaAlg::AlphaBetaAlg(unsigned int seed, TranspositionTable* transTable, Ha
     this->transTable = transTable;
     this->hasher = hasher;
     timeToMove = 0;
+    choosing_best_first_son = false;
+    cbf_warming = false;
+}
+
+AlphaBetaAlg::AlphaBetaAlg(unsigned int seed, TranspositionTable* transTable, Hasher* hasher, Grader* grader, unsigned int height, unsigned int height_building, bool choosing_best_first_son)
+{
+    generator.seed(seed);
+    this->grader = grader;
+    this->height = height;
+    this->height_building = height_building;
+    this->transTable = transTable;
+    this->hasher = hasher;
+    timeToMove = 0;
+    this->choosing_best_first_son = choosing_best_first_son;
+    cbf_warming = false;
 }
 
 AlphaBetaAlg::~AlphaBetaAlg()
@@ -98,40 +121,65 @@ Move* AlphaBetaAlg::decideMove()
 
 void AlphaBetaAlg::decideMove(Move** best_move)
 {
-    visited_nodes = 1;
-    unsigned int size, an_size;
-    void* moves = game.getPossibleMoves(&size);
     GamePhase phase = game.gamePhase();
-    int cp = game.curPlayer();
     unsigned int h = phase == Building ? height_building : height;
 
-    unsigned int bestIndex = 0;
+    if (cbf_warming)
+        ++visited_nodes;
+    else
+        visited_nodes = 1;
+    cuts = 0;
+
+    if (choosing_best_first_son && !cbf_warming)
+    {
+        unsigned int old_h = h;
+        h  = h == 0 ? 0 : h-1;
+        if (phase == Building) height_building = h;
+        else height = h;
+
+        cbf_warming = true;
+        decideMove(best_move); // zapelnienie tablicy transpozycji
+        cbf_warming = false;
+        h = old_h;
+        if (phase == Building) height_building = h;
+        else height = h;
+        printf("alphabeta: visited node is already %u\n", visited_nodes);
+    }
+    unsigned int size, an_size;
+    void* moves = game.getPossibleMoves(&size);
+    int cp = game.curPlayer();
+
+    unsigned int firstChosen;
+    getHashedValue(h+1, &firstChosen);
+    unsigned int bestIndex = firstChosen;
     int alpha = -GRADE_INFINITY;
     int beta = GRADE_INFINITY;
     int best = -game.curPlayerSign()*GRADE_INFINITY;
     int grade;
     int bests_size = 0;
 
-    for (unsigned int i = 1; i < size; ++i)
-    {
-        moves = game.getPossibleMoves(&an_size);
-        grade = alpha_beta_opt(i, alpha, beta, h);
-        if (grader->better(&game, grade, best))
+    for (unsigned int i = 0; i < size; ++i)
+        if (i != firstChosen)
         {
-            best = grade;
-            bestIndex = i;
-            bests_size = 1;
-            updateWindow(best, cp, &alpha, &beta);
-        }
-        else if (grade == best)
-        {
-            ++bests_size;
-            if (a_bet_is_won(bests_size))
+            moves = game.getPossibleMoves(&an_size);
+            grade = alpha_beta_opt(i, alpha, beta, h);
+            if (grader->better(&game, grade, best))
             {
+                best = grade;
                 bestIndex = i;
+                bests_size = 1;
+                updateWindow(best, cp, &alpha, &beta);
+            }
+            else if (grade == best)
+            {
+                ++bests_size;
+                if (a_bet_is_won(bests_size))
+                {
+                    bestIndex = i;
+                }
             }
         }
-    }
+    setHashedValue(best, h+1, bestIndex);
     moves = game.getPossibleMoves(&an_size);
     *best_move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
     //if (height < 6) printf("expected grade: %d\n", best);
@@ -147,7 +195,9 @@ void AlphaBetaAlg::decideMove(Move** move, unsigned int time)
     unsigned int i = 0;
     *move = NULL;
     level_finished = 0;
-    while (true)
+    cbf_warming = choosing_best_first_son;
+    visited_nodes = 0;
+    while (true && i < maximal_height)
     {
         height_building = height = i;
         decideMove(&result);
@@ -159,6 +209,7 @@ void AlphaBetaAlg::decideMove(Move** move, unsigned int time)
         *move = result;
         ++i;
     }
+    cbf_warming  = false;
     if (*move == NULL) *move = result;
     alert = false;
     timeToMove = 0;
@@ -178,14 +229,17 @@ void AlphaBetaAlg::updateWindow(int best, int cp , int* alpha, int* beta)
 
 bool AlphaBetaAlg::outsideWindow(int best, int cp, int alpha, int beta)
 {
+    bool result;
     if (cp == 0) //max
     {
-        return best >= beta;
+        result = best >= beta;
     }
     else //min
     {
-        return best <= alpha;
+        result = best <= alpha;
     }
+    if (result) ++cuts;
+    return result;
 }
 
 int AlphaBetaAlg::alpha_beta(Move* move, int alpha, int beta, unsigned int h)
@@ -194,7 +248,8 @@ int AlphaBetaAlg::alpha_beta(Move* move, int alpha, int beta, unsigned int h)
     ++visited_nodes;
     if (hasher != NULL) hasher->makeMove(move, &game, game.gamePhase());
     game.makeMove(move);
-    result = getHashedValue(h);
+    unsigned int last_best;
+    result = getHashedValue(h, &last_best);
     if (result == INVALID_GRADE)
     {
         if (h == 0 || game.isFinished()) result = grader->grade(&game);
@@ -223,7 +278,7 @@ int AlphaBetaAlg::alpha_beta(Move* move, int alpha, int beta, unsigned int h)
             result = best;
             for (unsigned int i = 0; i < size; ++i) delete(moves[i]);
         }
-        setHashedValue(result, h);
+        setHashedValue(result, h, last_best);
     }
     game.undoMove();
     if (hasher != NULL) hasher->undoMove(move, &game, game.gamePhase());
@@ -247,11 +302,13 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
     }
     ++visited_nodes;
     unsigned int ssize;
+    unsigned int firstChosen;
+    unsigned int bestIndex = 0;
     void* moves = game.getPossibleMoves(&ssize);
     Move* mmove = SplitsGame::rawPossibleMoveOfIndex(moves, mindex, game.gamePhase());
     if (hasher != NULL) hasher->makeMove(mmove, &game, game.gamePhase());
     game.makeMove(mmove);
-    result = getHashedValue(h);
+    result = getHashedValue(h, &firstChosen);
     if (result == INVALID_GRADE)
     {
         if (h == 0 || game.isFinished()) result = grader->grade(&game);
@@ -261,25 +318,28 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
             game.getPossibleMoves(&size);
             int cp = game.curPlayer();
 
-            int alpha = -GRADE_INFINITY;
-            int beta = GRADE_INFINITY;
-            int best = -game.curPlayerSign()*GRADE_INFINITY;
+            //int alpha = -GRADE_INFINITY;
+            //int beta = GRADE_INFINITY;
+            int best = alpha_beta_opt(firstChosen, alpha, beta, h-1);
+            bestIndex = firstChosen;
             updateWindow(best, cp, &alpha, &beta);
-            int grade;
 
+            int grade;
             for (unsigned int i = 0; i < size; ++i)
-            {
-                grade = alpha_beta_opt(i, alpha, beta, h-1);
-                if (grader->better(&game, grade, best))
+                if (i != firstChosen)
                 {
-                    best = grade;
-                    if (outsideWindow(best, cp, alpha, beta)) break;
-                    updateWindow(best, cp, &alpha, &beta);
+                    grade = alpha_beta_opt(i, alpha, beta, h-1);
+                    if (grader->better(&game, grade, best))
+                    {
+                        bestIndex = i;
+                        best = grade;
+                        if (outsideWindow(best, cp, alpha, beta)) break;
+                        updateWindow(best, cp, &alpha, &beta);
+                    }
                 }
-            }
             result = best;
         }
-        setHashedValue(result, h);
+        setHashedValue(result, h, bestIndex);
     }
     game.undoMove();
     moves = game.getPossibleMoves(&ssize);
@@ -288,22 +348,29 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
     return result;
 }
 
-int AlphaBetaAlg::getHashedValue(unsigned int height)
+int AlphaBetaAlg::getHashedValue(unsigned int height, unsigned int* best_son_index)
 {
+    *best_son_index = 0; // 0 will be default, because it's always correct
     if (hasher == NULL) return INVALID_GRADE;
 
     unsigned long long hash = hasher->getHash();
-    TTEntry entry = transTable->get(hasher->getHash());
+    TTEntry entry = transTable->get(hash);
     if (entry.hash != hash) return INVALID_GRADE;
 
-    unsigned long long hheight = entry.data >> GRADE_BIT_LENGTH;
+    unsigned long long hbest_last = (entry.data & last_best_mask) >> (GRADE_BIT_LENGTH + HEIGHT_BIT_LENGTH);
+    unsigned long long hheight = (entry.data & height_mask) >> GRADE_BIT_LENGTH;
     unsigned long long hgrade = entry.data & grade_mask;
 
     if (height == hheight) return ((int) hgrade) - GRADE_INFINITY;
-    else return INVALID_GRADE;
+    else
+    {
+        if (choosing_best_first_son)
+            *best_son_index = (unsigned int) hbest_last; // otherise the default 0
+        return INVALID_GRADE;
+    }
 }
 
-void AlphaBetaAlg::setHashedValue(int grade, unsigned int height)
+void AlphaBetaAlg::setHashedValue(int grade, unsigned int height, unsigned int best_son_index)
 {
     if (hasher == NULL) return;
 
@@ -311,7 +378,8 @@ void AlphaBetaAlg::setHashedValue(int grade, unsigned int height)
     TTEntry entry;
     entry.hash = hash;
     entry.data =
-        (((unsigned long long)height) << HEIGHT_BIT_LENGTH)
+        (((unsigned long long)best_son_index) << (HEIGHT_BIT_LENGTH + GRADE_BIT_LENGTH))
+        | (((unsigned long long)height) << GRADE_BIT_LENGTH)
         | (unsigned long long) (grade + GRADE_INFINITY);
     transTable->push(entry);
 }
@@ -330,6 +398,8 @@ string AlphaBetaAlg::stats()
     result += "\n";
     result += "\tlevels_finished: ";
     result += boost::lexical_cast<string>(level_finished);
+    result += "\tcuts done: ";
+    result += boost::lexical_cast<string>(cuts);
     return result;
 }
 
