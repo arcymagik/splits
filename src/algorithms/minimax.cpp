@@ -64,6 +64,7 @@ void MiniMaxAlg::decideMove(Move** best_move)
     }
     moves = game.getPossibleMoves(&an_size);
     *best_move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
+    //printf("mmbest val is: %d\n", best);
 }
 
 Move* MiniMaxAlg::decideMove()
@@ -171,7 +172,7 @@ string MiniMaxAlg::stats()
     string result = "";
     result += "visited_nodes: ";
     result += boost::lexical_cast<string>(visited_nodes);
-    result += game.getDesc();
+    //result += game.getDesc();
     return result;
 }
 

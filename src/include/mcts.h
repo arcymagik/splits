@@ -12,8 +12,9 @@ public:
     SimulationResult simResult;
     MCT_Node* sons;
     unsigned int sons_size;
+    unsigned int expand_treshold;
 
-    MCT_Node();
+    MCT_Node(unsigned int expand_treshold);
     MCT_Node(const MCT_Node& another);
     virtual ~MCT_Node();
     void destroy_sons();
@@ -28,6 +29,7 @@ class MCTS : public Algorithm
 {
 public:
     MCTS(int seed);
+    MCTS(int seed, unsigned int expand_treshold);
     virtual ~MCTS();
     virtual void decideMove(Move** move);
     virtual void decideMove(Move** move, unsigned int time);
@@ -38,6 +40,7 @@ public:
 private:
     MCT_Node tree;
     std::mt19937 generator;
+    unsigned int expand_treshold;
 };
 
 #endif

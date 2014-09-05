@@ -7,12 +7,22 @@ using namespace std;
 
 #define MS_DANGER_ZONE (150)
 #define ONE_STEP_NO_SIMULATIONS (200)
-#define EXPAND_TRESHOLD (30)
+#define DEFAULT_EXPAND_TRESHOLD (30)
 
 MCTS::MCTS(int seed)
+    : tree(DEFAULT_EXPAND_TRESHOLD)
 {
     generator.seed(seed);
     tree.expand(&game);
+    expand_treshold = DEFAULT_EXPAND_TRESHOLD;
+}
+
+MCTS::MCTS(int seed, unsigned int expand_treshold)
+    : tree(expand_treshold)
+{
+    generator.seed(seed);
+    tree.expand(&game);
+    this->expand_treshold = expand_treshold;
 }
 
 MCTS::~MCTS() {}
@@ -31,11 +41,12 @@ void MCTS::decideMove(Move** move, unsigned int time)
     *move = SplitsGame::rawPossibleMoveOfIndex(moves, mindex, game.gamePhase());
 }
 
-MCT_Node::MCT_Node()
+MCT_Node::MCT_Node(unsigned int expand_treshold)
 {
     sons = NULL;
     simResult.wins = simResult.total = 0;
     sons_size = 0;
+    this->expand_treshold = expand_treshold;
 }
 
 MCT_Node::MCT_Node(const MCT_Node& another)
@@ -43,6 +54,7 @@ MCT_Node::MCT_Node(const MCT_Node& another)
     simResult = another.simResult;
     sons = another.sons;
     sons_size = another.sons_size;
+    this->expand_treshold = another.expand_treshold;
 }
 
 MCT_Node::~MCT_Node()
@@ -106,7 +118,7 @@ int MCT_Node::simulate(SplitsGame* game, mt19937* generator)
     int result;
     if (sons == NULL)
     {
-        if (simResult.total >= EXPAND_TRESHOLD) // expansion
+        if (simResult.total >= expand_treshold) // expansion
         {
             expand(game);
             unsigned int mindex = chooseSon(game->curPlayerSign());
@@ -172,7 +184,7 @@ void MCT_Node::expand(SplitsGame* game)
     game->getPossibleMoves(&size);
     sons = (MCT_Node*) malloc(sizeof(MCT_Node)*size);
     for (unsigned int i = 0; i < size; ++i)
-        sons[i] = MCT_Node();
+        sons[i] = MCT_Node(expand_treshold);
     sons_size = size;
 }
 

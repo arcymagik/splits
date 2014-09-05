@@ -33,11 +33,12 @@ const string alg_names[] =
     "monte_carlo_with_confidentiality_bound",
     "mcts"
     ,"alphabeta_with_tt_and_cbf"
+    ,"alphabeta_adv_with_transposition_table"
     ,"alphabeta_adv_with_tt_and_cbf"
-    ,"alphabeta_adv_with_transposition_table",
+    ,"alphabeta_adv"
 };
 
-unsigned int algorithms_size = 10;
+unsigned int algorithms_size = 12;
 Algorithm* getAlgorithm(int i, int seed)
 {
     switch(i)
@@ -52,37 +53,41 @@ Algorithm* getAlgorithm(int i, int seed)
     case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), DEPTH, 0, true);
     case 8: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), DEPTH, 0);
     case 9: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), DEPTH, 0, true);
+    case 10:return new AlphaBetaAlg(seed, new AdvancedGrader(), DEPTH, 0);
+    case 11:return new MiniMaxAlg(seed, new AdvancedGrader(), DEPTH, 0);
     default: return NULL;
     }
 }
 
 
-void test(Algorithm* alg);
+unsigned int test(Algorithm* alg);
 int main(int argc, char** argv)
 {
     mt19937 generator;
     generator.seed(5674);
     uniform_int_distribution<> dis(0, 1000000);
-    int ab_indices[6] = {1,2,3,7, 8,9};
+    unsigned int algs = 8;
+    int ab_indices[8] = {1,2,3,7, 8,9,10, 11};
 
     int i;
-    for (int j = 4; j < 6; ++j)
+    for (unsigned int j = 0; j < algs; ++j)
     {
         i = ab_indices[j];
-        boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
         Algorithm* alg = getAlgorithm(i, dis(generator));
-        test(alg);
-        unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
-        printf("%s:\tfull search at depth %d took:\t%u\n", alg_names[i].c_str(), DEPTH+1, passed);
-        printf("alg[%u]: %s\n\n", i, alg->stats().c_str());
-        delete(alg);
-        //depth +1, bo depth 0 oznacza zaglebienie sie na 1
+        if (alg != NULL)
+        {
+            unsigned int passed = test(alg);
+            printf("%s:\tfull search at depth %d took:\t%u ms\n", alg_names[i].c_str(), DEPTH+1, passed);
+            //printf("alg[%u]: %s\n\n", i, alg->stats().c_str());
+            delete(alg);
+            //depth +1, bo depth 0 oznacza zaglebienie sie na 1
+        }
     }
 
     return 0;
 }
 
-void test(Algorithm* alg)
+unsigned int test(Algorithm* alg)
 {
     SplitsGame game;
     void* moves;
@@ -100,7 +105,8 @@ void test(Algorithm* alg)
         alg->makeMove(move);
         delete(move); move = NULL;
     }
-
+    boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
     alg->decideMove(&move);
+    return (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
 }
 

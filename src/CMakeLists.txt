@@ -57,6 +57,12 @@ target_link_libraries(match ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 add_executable(tournament arena/tournament.cpp)
 target_link_libraries(tournament ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
 
+add_executable(mcts_tournament arena/mcts_tournament.cpp)
+target_link_libraries(mcts_tournament ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
+add_executable(ab_tournament arena/ab_tournament.cpp)
+target_link_libraries(ab_tournament ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})
+
 
 add_executable(play_match presentation/play_match.cpp)
 target_link_libraries(play_match ${COMMON_LIBRARIES} ${GRADER_LIBRARIES})

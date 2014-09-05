@@ -27,33 +27,31 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove);
 
 const string alg_names[] =
 {
-    "random",
-    "minimax",
-    "alphabeta",
-    "alphabeta_with_transposition_table",
-    "monte_carlo",
-    "monte_carlo_with_trust_limit",
-    "mcts"
-    ,"alphabeta_with_tt_and_cbf"
-    ,"alphabeta_adv_with_transposition_table"
-    ,"alphabeta_adv_with_tt_and_cbf"
+    "random"
+    ,"minimax_simple"
+    ,"ab_simple"
+    ,"ab_simple_tt"
+    ,"ab_simple_tt_cbf"
+    ,"minimax_adv"
+    ,"ab_adv"
+    ,"ab_adv_tt"
+    ,"ab_adv_tt_cbf"
 };
 
-unsigned int algorithms_size = 10;
+unsigned int algorithms_size = 9;
 Algorithm* getAlgorithm(unsigned int i, int seed)
 {
     switch(i)
     {
-    case 0: return new RandomGameAlg(seed);
-    case 1: return new MiniMaxAlg(seed, new SimpleGrader(), 2, 0); // nie mierzy sobie czasu - moze nie powinien byc uzywany?
-    case 2: return new AlphaBetaAlg(seed, new SimpleGrader(), 2, 0);
-    case 3: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0);
-    case 4: return new MonteCarloMethod(seed);
-    case 5: return new MonteCarloMethod(seed, true);
-    case 6: return new MCTS(seed);
-    case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0, true);
-    case 8: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0);
-    case 9: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0, true);
+    // case 0: return new RandomGameAlg(seed);
+    // case 1: return new MiniMaxAlg(seed, new SimpleGrader(), 2, 0); // nie mierzy sobie czasu - moze nie powinien byc uzywany?
+    // case 2: return new AlphaBetaAlg(seed, new SimpleGrader(), 2, 0);
+    // case 3: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0);
+    // case 4: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0, true);
+    case 5:return new MiniMaxAlg(seed, new AdvancedGrader(), 2, 0);
+    case 6:return new AlphaBetaAlg(seed, new AdvancedGrader(), 2, 0);
+    case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0);
+    case 8: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0, true);
     default: return NULL;
     }
 }
@@ -73,12 +71,12 @@ int main(int argc, char** argv)
     Algorithm* alg1;
     Algorithm* alg2;
     mt19937 generator;
-    generator.seed(43223);
+    generator.seed(419676);
     uniform_int_distribution<> dis(0, 1000000);
     unsigned int result;
     for (unsigned int i = 0; i < algorithms_size; ++i)
         for (unsigned int j = 0; j < algorithms_size; ++j)
-            if (//i != j && // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
+            if (i != j && // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
                 both_active(i, j))
             {
                 boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
@@ -90,6 +88,8 @@ int main(int argc, char** argv)
                     result += play(alg1, alg2, TIME_TO_MOVE); //ilosc zwyciestw gracza 1 (tzn. alg2)
                     delete(alg1);
                     delete(alg2);
+                    printf(".");
+                    fflush(stdout);
                 }
                 unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
                 printf("%s\tvs\t%s:\t%u/%u\ttook %u ms\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS, passed);

@@ -123,7 +123,7 @@ void AlphaBetaAlg::decideMove(Move** best_move)
 {
     GamePhase phase = game.gamePhase();
     unsigned int h = phase == Building ? height_building : height;
-
+    //printf("ab decide move (height = %u)\n", h);
     if (cbf_warming)
         ++visited_nodes;
     else
@@ -139,12 +139,13 @@ void AlphaBetaAlg::decideMove(Move** best_move)
         else height = h;
 
         cbf_warming = true;
-        decideMove(best_move); // zapelnienie tablicy transpozycji
+        Move* dummy;
+        decideMove(&dummy); // zapelnienie tablicy transpozycji
         cbf_warming = false;
         h = old_h;
         if (phase == Building) height_building = h;
         else height = h;
-        printf("alphabeta: visited node is already %u\n", visited_nodes);
+        //printf("alphabeta: visited node is already %u\n", visited_nodes);
     }
     unsigned int size, an_size;
     void* moves = game.getPossibleMoves(&size);
@@ -155,15 +156,23 @@ void AlphaBetaAlg::decideMove(Move** best_move)
     unsigned int bestIndex = firstChosen;
     int alpha = -GRADE_INFINITY;
     int beta = GRADE_INFINITY;
-    int best = -game.curPlayerSign()*GRADE_INFINITY;
+    //int best = -game.curPlayerSign()*GRADE_INFINITY;
+    if (firstChosen >= size)
+    {
+        firstChosen = 0;
+        wrong_firsts++;
+    }
+    int best = alpha_beta_opt(firstChosen, alpha, beta, h);
+    updateWindow(best, cp, &alpha, &beta);
     int grade;
-    int bests_size = 0;
+    int bests_size = 1;
 
     for (unsigned int i = 0; i < size; ++i)
         if (i != firstChosen)
         {
             moves = game.getPossibleMoves(&an_size);
             grade = alpha_beta_opt(i, alpha, beta, h);
+            //printf("grade: %d (%d)\n", grade, best);
             if (grader->better(&game, grade, best))
             {
                 best = grade;
@@ -183,6 +192,7 @@ void AlphaBetaAlg::decideMove(Move** best_move)
     setHashedValue(best, h+1, bestIndex);
     moves = game.getPossibleMoves(&an_size);
     *best_move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
+    //printf("%d: best val is: %d\n", game.curPlayer(), best);
     //if (height < 6) printf("expected grade: %d\n", best);
 }
 
@@ -290,7 +300,7 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
 {
     int result;
     unsigned int time_passed = 0;
-    if (alert) return 0;
+    if (alert) return 6+INVALID_GRADE;
     if (timeToMove > 0 && ((visited_nodes & VISITED_NODES_TO_CHECK_MASK) == 0))
     {
         auto current_time = boost::posix_time::microsec_clock::local_time() - start_time;
@@ -298,7 +308,7 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
         if (time_passed + MS_TO_ALERT > timeToMove)
         {
             alert = true;
-            return 0;
+            return 5+INVALID_GRADE;
         }
     }
     ++visited_nodes;
@@ -332,7 +342,7 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
             if (!outsideWindow(best, cp, alpha, beta))
             {
                 int grade;
-                for (unsigned int i = 0; i < size; ++i)
+                for (unsigned int i = 0; i < size && !alert; ++i)
                     if (i != firstChosen)
                     {
                         grade = alpha_beta_opt(i, alpha, beta, h-1);
@@ -349,6 +359,11 @@ int AlphaBetaAlg::alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsig
         }
         setHashedValue(result, h, bestIndex);
     }
+    // if (height - h < 2)
+    // {
+    //     for (unsigned int i = 0; i < (height-h)+1; ++i) printf("  ");
+    //     printf("%u:result %d\n", game.curPlayer(), result);
+    // }
     game.undoMove();
     moves = game.getPossibleMoves(&ssize);
     mmove = SplitsGame::rawPossibleMoveOfIndex(moves, mindex, game.gamePhase());

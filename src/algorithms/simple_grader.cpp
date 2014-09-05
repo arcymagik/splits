@@ -22,7 +22,7 @@ int SimpleGrader::grade(SplitsGame* game)
 
     int result = 0;
 
-    for (unsigned int pl = 0; pl < 2; ++pl)
+    for (int pl = 0; pl < 2; ++pl)
     {
         int pls = -(pl*2-1);
         for (unsigned int i = 0; i < stacks[pl].size(); ++i)

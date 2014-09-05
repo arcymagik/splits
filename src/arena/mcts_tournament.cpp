@@ -18,8 +18,8 @@
 
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 
-#define NUMBER_OF_PLAYS (5)
-#define TIME_TO_MOVE (1000) // to chyba lepiej bylyby command line parametry
+#define NUMBER_OF_PLAYS (10)
+#define TIME_TO_MOVE (2000) // to chyba lepiej bylyby command line parametry
 
 using namespace std;
 
@@ -27,33 +27,31 @@ int play(Algorithm* alg0, Algorithm* alg1, unsigned int timeForMove);
 
 const string alg_names[] =
 {
-    "random",
-    "minimax",
-    "alphabeta",
-    "alphabeta_with_transposition_table",
-    "monte_carlo",
-    "monte_carlo_with_trust_limit",
-    "mcts"
-    ,"alphabeta_with_tt_and_cbf"
-    ,"alphabeta_adv_with_transposition_table"
-    ,"alphabeta_adv_with_tt_and_cbf"
+    "mcts_20"
+    ,"mcts_30"
+    ,"mcts_50"
+    ,"mcts_80"
+    ,"mcts_100"
+    ,"mcts_150"
+    ,"mcts_200"
+    ,"mcts_4"
+    ,"mcts_4000"
 };
 
-unsigned int algorithms_size = 10;
+unsigned int algorithms_size = 9;
 Algorithm* getAlgorithm(unsigned int i, int seed)
 {
     switch(i)
     {
-    case 0: return new RandomGameAlg(seed);
-    case 1: return new MiniMaxAlg(seed, new SimpleGrader(), 2, 0); // nie mierzy sobie czasu - moze nie powinien byc uzywany?
-    case 2: return new AlphaBetaAlg(seed, new SimpleGrader(), 2, 0);
-    case 3: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0);
-    case 4: return new MonteCarloMethod(seed);
-    case 5: return new MonteCarloMethod(seed, true);
-    case 6: return new MCTS(seed);
-    case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0, true);
-    case 8: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0);
-    case 9: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0, true);
+        //case 0: return new MCTS(seed, 20);
+        //case 1: return new MCTS(seed, 30);
+        //case 2: return new MCTS(seed, 50);
+        //case 3: return new MCTS(seed, 80);
+    case 4: return new MCTS(seed, 100);
+        //case 5: return new MCTS(seed, 150);
+        //case 6: return new MCTS(seed, 200);
+    case 7: return new MCTS(seed, 5);
+    case 8: return new MCTS(seed, 4000);
     default: return NULL;
     }
 }
@@ -78,7 +76,7 @@ int main(int argc, char** argv)
     unsigned int result;
     for (unsigned int i = 0; i < algorithms_size; ++i)
         for (unsigned int j = 0; j < algorithms_size; ++j)
-            if (//i != j && // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
+            if (i != j && // MAYBE nawet bez tego, zeby zobaczyc jaki wplyw na wygrywanie ma pierwszenstwo
                 both_active(i, j))
             {
                 boost::posix_time::ptime start_time = boost::posix_time::microsec_clock::local_time();
@@ -90,6 +88,8 @@ int main(int argc, char** argv)
                     result += play(alg1, alg2, TIME_TO_MOVE); //ilosc zwyciestw gracza 1 (tzn. alg2)
                     delete(alg1);
                     delete(alg2);
+                    printf(".");
+                    fflush(stdout);
                 }
                 unsigned int passed = (boost::posix_time::microsec_clock::local_time() - start_time).total_milliseconds();
                 printf("%s\tvs\t%s:\t%u/%u\ttook %u ms\n", alg_names[i].c_str(), alg_names[j].c_str(), NUMBER_OF_PLAYS-result, NUMBER_OF_PLAYS, passed);
