@@ -39,10 +39,11 @@ const string alg_names[] =
     ,"alphabeta_adv_with_transposition_table"
     ,"alphabeta_adv_with_tt_and_cbf"
     ,"alphabeta_adv"
-    ,"minimax_adv"
+    ,"minimax_adv_2"
+    ,"minimax_adv_3"
 };
 
-unsigned int algorithms_size = 12;
+unsigned int algorithms_size = 13;
 Algorithm* getAlgorithm(int i, int seed)
 {
     switch(i)
@@ -59,6 +60,7 @@ Algorithm* getAlgorithm(int i, int seed)
     case 9: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0, true);
     case 10: return new AlphaBetaAlg(seed, new AdvancedGrader(), 2, 0);
     case 11: return new MiniMaxAlg(seed, new AdvancedGrader(), 2, 0);
+    case 12: return new MiniMaxAlg(seed, new AdvancedGrader(), 3, 0);
     default: return NULL;
     }
 }

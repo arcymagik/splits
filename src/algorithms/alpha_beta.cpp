@@ -171,7 +171,7 @@ void AlphaBetaAlg::decideMove(Move** best_move)
         if (i != firstChosen)
         {
             moves = game.getPossibleMoves(&an_size);
-            grade = alpha_beta_opt(i, alpha, beta, h);
+            grade = alpha_beta_opt(i, alpha-1, beta+1, h);
             //printf("grade: %d (%d)\n", grade, best);
             if (grader->better(&game, grade, best))
             {
@@ -192,7 +192,7 @@ void AlphaBetaAlg::decideMove(Move** best_move)
     setHashedValue(best, h+1, bestIndex);
     moves = game.getPossibleMoves(&an_size);
     *best_move = SplitsGame::rawPossibleMoveOfIndex(moves, bestIndex, phase);
-    //printf("%d: best val is: %d\n", game.curPlayer(), best);
+    //printf("%d: best val is: %d\tbest size: %u\n", game.curPlayer(), best, bests_size);
     //if (height < 6) printf("expected grade: %d\n", best);
 }
 

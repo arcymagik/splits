@@ -36,6 +36,7 @@ const string alg_names[] =
     ,"alphabeta_adv_with_transposition_table"
     ,"alphabeta_adv_with_tt_and_cbf"
     ,"alphabeta_adv"
+    ,"minimax_adv"
 };
 
 unsigned int algorithms_size = 12;

@@ -43,11 +43,11 @@ Algorithm* getAlgorithm(unsigned int i, int seed)
 {
     switch(i)
     {
-    // case 0: return new RandomGameAlg(seed);
-    // case 1: return new MiniMaxAlg(seed, new SimpleGrader(), 2, 0); // nie mierzy sobie czasu - moze nie powinien byc uzywany?
-    // case 2: return new AlphaBetaAlg(seed, new SimpleGrader(), 2, 0);
-    // case 3: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0);
-    // case 4: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0, true);
+    case 0: return new RandomGameAlg(seed);
+    case 1: return new MiniMaxAlg(seed, new SimpleGrader(), 2, 0); // nie mierzy sobie czasu - moze nie powinien byc uzywany?
+    case 2: return new AlphaBetaAlg(seed, new SimpleGrader(), 2, 0);
+    case 3: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0);
+    case 4: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new SimpleGrader(), 2, 0, true);
     case 5:return new MiniMaxAlg(seed, new AdvancedGrader(), 2, 0);
     case 6:return new AlphaBetaAlg(seed, new AdvancedGrader(), 2, 0);
     case 7: return new AlphaBetaAlg(seed, new TranspositionTable(), new ZobristHasher(42), new AdvancedGrader(), 2, 0);
