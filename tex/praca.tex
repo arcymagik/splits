@@ -24,6 +24,10 @@
 \usepackage[noend]{algpseudocode}
 \algrenewcommand\Return{\State \algorithmicreturn{} }%
 
+\makeatletter
+\renewcommand{\ALG@name}{Algorytm}
+\makeatother
+
 %Jesli uzywasz kodowania polskich znakow ISO-8859-2 nastepna linia powinna byc 
 %odkomentowana
 \usepackage[latin2]{inputenc}
@@ -308,6 +312,7 @@ naszego wêz³a jest maksimum (minimum je¶li wêze³ jest typu min) warto¶ci wêz³ów 
 
 \begin{algorithm}
 \caption{Minimax}
+\label{alg:minimax}
 \begin{algorithmic}[1]
 
   \Function{Minimax}{node}
@@ -321,7 +326,8 @@ naszego wêz³a jest maksimum (minimum je¶li wêze³ jest typu min) warto¶ci wêz³ów 
 \end{algorithmic}
 \end{algorithm}
 
-Dok³adny opis algorytmu minimax znajduje siê w pracy doktorskiej Aske Plaata \cite{ap96}.
+Dok³adny opis algorytmu minimax znajduje siê w pracy doktorskiej Aske Plaata \cite{ap96}. Pseudokod przedstawiono jako
+Algorytm \ref{alg:minimax}.
 
 \subsection{Funkcja oceniaj±ca}
 
@@ -344,16 +350,27 @@ gra siê zakoñczy, to wygramy. Jest to pierwsza funkcja oceniaj±ca zbadana w tej 
 
 Druga funkcja jest rozwiniêciem pomys³u z pierwszej. Aby nie dopu¶ciæ do zablokowania ¿etonów na stosie, nale¿y dbaæ, aby
 wysokie stosy mia³y du¿e mo¿liwo¶ci ruchu. Dlatego zamiast po prostu liczyæ ka¿dy niezablokowany ¿eton z wag± 1, policzmy go
-z ustalon± wag± $N$ (w badaniach u¿yto warto¶ci $N = 10$) i dodajmy ilo¶æ pustych s±siadów stosu,
-w którym siê znajduje, jak na rysunku \cite{rys}. Ta warto¶æ stanowi drug±, ulepszon± funkcjê oceniaj±c±.
+z ustalon± wag± $N$ (w badaniach u¿yto warto¶ci $N = 10$) powiêkszon± o ilo¶æ pustych s±siadów stosu,
+w którym siê znajduje, jak na rysunku \ref{fig:focen}. Ta warto¶æ stanowi drug±, ulepszon± funkcjê oceniaj±c±.
 
 \begin{figure}
 \begin{center}
 \begin{tikzpicture}
-  \node (n1) at (5, 10) {a};
+  [
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+    \node (n0) {};
+    \node (n1) at (n0.corner 1) {12 W};
+    \node (n2) at (n0.corner 5) {};
+    \node (n3) at (n2.corner 1) {};
+    \node (n4) at (n3.corner 1) {};
 \end{tikzpicture}
 \end{center}
-\caption{¯etony tego stosu dok³adaj± siê do funkcji oceniaj±cej z warto¶ci± TODO}
+\caption{¯etony tego stosu dok³adaj± siê do funkcji oceniaj±cej z warto¶ci± $12\cdot(10+3)=156$.}
+\label {fig:focen}
 \end{figure}
 
 \section{Alfabeta}
@@ -384,11 +401,22 @@ gdzie wêze³ $a$ jest typu max, obliczyli¶my ju¿ warto¶ci wêz³ów ``b'' i ``d'', k
 Poniewa¿ wêze³ $c$ jest typu min, to jego warto¶æ wynosi co najwy¿ej $-1$. Jest zatem na pewno mniejsza ni¿ warto¶æ wêz³a
 $b$, która wynosi $2$. Zatem warto¶æ wêz³a $a$ to $2$. Nie musimy wyliczaæ warto¶ci wêz³a $e$, aby to stwierdziæ.
 
+To spostrze¿enie mo¿na uogólniæ wprowadzaj±c pojêcie okna wywo³ania. Jak ju¿ zauwa¿yli¶my, w momencie, gdy wchodzimy
+do wêz³a, nie interesuje nas dok³adna warto¶æ funkcji oceniaj±cej, je¿eli tylko wiemy, ¿e jest bardzo du¿a lub bardzo ma³a,
+to znaczy znajduje siê poza pewnym przedzia³em. Ten przedzia³ nazywa siê oknem wywo³ania. Bêdziemy ¿±daæ, aby
+algorytm zwraca³ dok³adn± warto¶æ dla wierzcho³ka je¿eli jest ona w oknie wywo³ania, a je¿eli jest poza oknem, to dowoln±
+warto¶æ poza oknem z tej samej strony (to znaczy wiêksz± od okna, je¿eli warto¶æ minimaksowa jest wiêksza i mniejsz±,
+je¿eli warto¶æ minimaksowa jest mniejsza).
+
 Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimax nazywa siê algorytmem Alfabeta. Wraz z ró¿nymi usprawnieniami
-zosta³ dok³adnie opisany w \cite{ap96}. Tutaj algorytm przedstawiono w pseudokodzie Algorithm \ref{alg:alphabeta}.
+zosta³ dok³adnie opisany w \cite{ap96} oraz \cite{km75}. Tutaj algorytm przedstawiono w pseudokodzie Algorytm \ref{alg:alphabeta}.
+
+Alfabeta to klasyczny algorytm sztucznej inteligencji znany i stosowany od ponad pó³ wieku. Jest szczególnie dobry
+w grach kombinacyjnych, gdzie trzeba zbadaæ dok³adnie rozgrywkê na kilka ruchów do przodu. Sprawdzi³ siê
+wielokrotnie chocia¿by w szachach.
 
 \begin{algorithm}
-\caption{Alphabeta}
+\caption{Alfabeta}
 \label{alg:alphabeta}
 \begin{algorithmic}
   \Function {Alphabeta} {node, $\alpha$, $\beta$}
@@ -420,7 +448,8 @@ zosta³ dok³adnie opisany w \cite{ap96}. Tutaj algorytm przedstawiono w pseudokod
 \subsection{Tablica transpozycji}
 
 Chocia¿ czêsto mówimy o drzewie gry, to tak naprawdê struktura sytuacji gry i ruchów prowadz±cych od jednych do drugich jest
-DAGiem. Oznacza to, ¿e niektóre pary wêz³ów w drzewie odpowiadaj± tym samym sytuacjom. £atwo zauwa¿yæ, ¿e w grze Splits
+grafem skierowanym acyklicznym.
+Oznacza to, ¿e niektóre pary wêz³ów w drzewie odpowiadaj± tym samym sytuacjom. £atwo zauwa¿yæ, ¿e w grze Splits
 musz± siê wtedy one
 znajdowaæ na tej samej g³êboko¶ci, poniewa¿ na przyk³ad ilo¶æ stosów ¿etonów w grze odpowiada bijektywnie g³êboko¶ci
 w drzewie. W takim razie warto¶æ minimaksowa obydwu wêz³ów musi byæ taka sama.
@@ -450,7 +479,7 @@ rozga³êzienia drzewa gry zmienia siê z czasem, tak jak jest w przypadku gry Spli
 bardzo szybko ro¶nie podczas budowania planszy, a potem spada w czasie w³a¶ciwej rozgrywki, ale wci±¿ pozostaje ma³o stabilny.
 
 \begin{algorithm}
-\caption{Iterative deepening}
+\caption{Iteracyjne pog³êbianie}
 \begin{algorithmic}[1]
   \Function{Iterative alphabeta} {node}
   \State $\textit{depth} \gets 1$
@@ -462,6 +491,22 @@ bardzo szybko ro¶nie podczas budowania planszy, a potem spada w czasie w³a¶ciwej
   \EndFunction
 \end{algorithmic}
 \end{algorithm}
+
+\subsection{Wybieranie najpierw najlepszego syna}
+
+Zauwa¿my, ¿e ilo¶æ czasu oszczêdzonego czasu, który zyskujemy u¿ywaj±c alfabety w stosunku do minimaxa, zale¿y od ilo¶ci
+ciêæ oraz tego, jak wysoko w drzewie zosta³y one u¿yte. W du¿ej mierze jest ono efektem kolejno¶ci wyboru synów podczas
+przeszukiwania wierzcho³ka. Najbardziej zyskaliby¶my, gdyby¶my zaczynali od najlepszego wierzcho³ka, poniewa¿ okno
+wywo³ania jest wtedy najbardziej ograniczane.
+
+Nie mo¿emy jednak wiedzieæ, który syn da najlepszy wynik, zanim faktycznie nie wykonamy przeszukania. Mo¿na jednak
+próbowaæ heurystycznie zgadn±æ w³a¶ciw± kolejno¶æ przeszukiwania. Jedn± z najlepszych metod jest wykorzystanie do tego
+celu dwóch powy¿ej opisanych technik: tablicy transpozycji oraz iteracyjnego pog³êbiania. U¿ywaj±c pog³êbiania
+w finalnej fazie bêdziemy mieli tablicê transpozycji zapisan± warto¶ciami z wywo³ania dla p³ytszej g³êboko¶ci.
+Bardzo czêsto jest to ¶wietne przybli¿enie faktycznej optymalnej kolejno¶ci. Zauwa¿my przy okazji, ¿e je¿eli
+korzystamy ju¿ i tak z tablicy transpozycji i iteracyjnego pog³êbiania to nie ponosimy ¿adnych dodatkowych kosztów.
+Po prostu zamiast losowej kolejno¶ci wybierania synów (albo nawet gorszej - narzuconej przez funkcjê zwracaj±c±
+mo¿liwe ruchy) stosujemy heurystyczny wybór.
 
 \section{Monte Carlo}
 
@@ -520,10 +565,12 @@ znale¼æ w \cite{mcts12}. Tutaj przedstawiono pseudokod w Algorithm~\ref{alg:mc}.
   \end{algorithmic}
 \end{algorithm}
 
-\section{Monte Carlo Tree Search}
+\section{Przeszukiwanie drzewa Monte Carlo}
 
 Algorytm przeszukiwania drzewa Monte Carlo to jeden z najsilniejszych znanych algorytmów sztucznej inteligencji w grach.
-By³ on z sukcesem stosowany w grach takich jak go czy szachy. Stanowi on naturalne rozwiniêcie podstawowej techniki
+By³ on z sukcesem stosowany w grach takich jak go czy szachy. Szczególnie go jest ¶wietnym przyk³adem wysokiej jako¶ci
+algorytmu. Przed u¿ywaniem tej techniki nie by³o ¿adnych programów mog±cych sprostaæ cz³owiekowi.
+Stanowi on naturalne rozwiniêcie podstawowej techniki
 Monte Carlo. Zauwa¿my, ¿e poprzednio decydowali¶my, który ruch wybraæ na podstawie wyników symulacji przeprowadzanych
 z synów. Odpowiada to nieco sytuacji, w której przeprowadzamy minimaxa o g³êboko¶ci 1 z funkcj± oceniaj±c± na podstawie
 losowych symulacji. Naturalnym pomys³em jest zwiêkszenie g³êboko¶ci i przeprowadzanie losowych rozgrywek dopiero
@@ -654,24 +701,178 @@ Nastêpnie mo¿na uruchamiaæ komendy opisane w poni¿szych sekcjach.
 
 \section{Algorytmy z funkcj± oceniaj±c±}
 
+W tym punkcie przyjrzymy siê wynikom osi±ganym przez algorytm minimax oraz jego warianty. Najpierw zaprezentujemy
+sam± wydajno¶æ przeszukiwania drzewa na ustalon± g³êboko¶æ, a nastêpnie zobaczymy faktyczne rezultaty rozgrywania
+meczów pomiêdzy algorytmami.
+
+\subsection{Szybko¶æ przeszukiwania}
+
 Przyjrzymy siê teraz przyspieszeniu jakie daje mo¿liwo¶æ dokonywania odciêæ przez alfabetê oraz sprawdzania tablicy transpozycji.
-Wszystkie algorytmy $\texttt{minimax}$, $\texttt{alphabeta}$ oraz $\texttt{alphabeta\_with\_transposition\_table}$ ustawione
-na tê sam± g³êboko¶æ obliczaj± warto¶æ minimaksow± tego samego drzewa. Test $alphabeta\_speeds$ doprowadza grê do przeciêtnego
-momentu w fazie przek³adania ¿etonów i uruchamia wszystkie 3 algorytmy na g³êboko¶ci 4. Czasy potrzebne na obliczenie
-warto¶ci drzewa przedstawiono w tabeli.
+Poni¿ej w tabeli \ref{fig:ab_speeds} zaprezentowano czasy potrzebne na ca³kowite przej¶cie drzewa gry do g³êboko¶ci 5,
+zaczynaj±c od pewnej typowej sytuacji po zbudowaniu planszy.
 
+\begin{figure}
+\caption{Czas potrzebny na znalezienie warto¶ci minimax drzewa o g³êboko¶ci 5}
+\begin{center}
 \begin {tabular}{|c|c|}
-
+\hline
+Algorytm & czas [ms] \\
+\hline
+minimax (I funkcja oceniaj±ca) & 32514 \\
+\hline
+alfabeta (I funkcja oceniaj±ca) & 55 \\
+\hline
+alfabeta z tablic± transpozycji (I funkcja oceniaj±ca) & 55 \\
+\hline
+alfabeta z tablic± i wybieraniem najlepszego syna (I funkcja oceniaj±ca) & 77 \\
+\hline
+minimax (II funkcja oceniaj±ca) & 33774 \\
+\hline
+alfabeta (II funkcja oceniaj±ca) & 977 \\
+\hline
+alfabeta z tablic± transpozycji (II funkcja oceniaj±ca) & 1075 \\
+\hline
+alfabeta z tablic± i wybieraniem najlepszego syna (II funkcja oceniaj±ca) & 217 \\
 \hline
 \end{tabular}
+\end{center}
+\label{fig:ab_speeds}
+\end{figure}
 
-Widaæ, ¿e ka¿de ulepszenie spowodowa³o pewien wzrost prêdko¶ci, jednak prawdopodobnie wiêkse ró¿nice pojawi³yby siê dopiero
-przy wiêkszych g³êboko¶ciach. W sytuacji, gdy mamy tylko 1 sekundê na ruch w meczu, prawdopodobnie wszystkie algorytmy
-wykonywa³y przeszukanie na tê sam± wysoko¶æ, nie licz±c sytuacji, gdy rozga³êzienie drzewa maleje, jak na przyk³ad pod koniec
-gry. Dlatego nie widaæ znacz±cej przewagi alfabety z tablic± transpozycji nad pozosta³ymi dwoma algorytmami w turnieju.
+Rzuca siê w oczy przede wszystkim niesamowity skok wydajno¶ci przez ulepszenie do alfabety - jest przyspieszenie
+o kilka rzêdów wielko¶ci. Tablica transpozycji nie da³a a¿ tak dobrych rezultatów, co jest nieco zaskakuj±ce bior±c pod uwagê
+ilo¶æ transpozycji, jakie wystêpuj± w Splits. Wybieranie najpierw najlepszego syna okazuje siê bardzo dobrym pomys³em,
+ale tylko w przypadku drugiej funkcji oceniaj±cej. Nie jest to niespodziank±, poniewa¿ pierwsza funkcja oceniaj±ca
+zbyt ma³o rozró¿nia ruchy. Zwykle z tej samej pozycji synowie maj± bardzo zbli¿one warto¶ci funkcji oceniaj±cej
+i wybieranie najlepszego syna jest niewiele lepsze ni¿ wybieranie losowego.
 
+Rzuca siê w oczy równie¿ znaczne spowolnienie wywo³ane przez u¿ycie drugiej funkcji oceniaj±cej. Przyczyna tego jest bardzo prosta.
+Pierwsza funkcja nie rozró¿nia³a ruchów wystarczaj±co, a taka sama warto¶æ funkcji ju¿ powoduje wykonanie ciêcia, dlatego
+przy u¿yciu pierwszej funkcji wykonuje siê du¿o wiêkszej liczby ciêæ.
+Pamiêtajmy jednak, ¿e sam szybko¶æ nie przes±dza o jako¶ci funkcji oceniaj±cej. W koñcu zyskujemy lepsz± ocenê sytuacji.
+
+\subsection{Turniej}
+
+Najlepszym sposobem sprawdzenia si³y algorytmu jest prztestowanie go podczas prawdziwych rozgrywek z innymi algorytmami.
+Na rysunku \ref{fig:ab_tournament} przedstawiono wyniki turnieju miêdzy algorytmami z funkcj± oceniaj±c± oraz algorytmem wykonuj±cym
+losowe ruchy.
+Turniej
+rozegrano metod± ``ka¿dy z ka¿dym'' po 10 meczów z sekund± na ruch zmieniaj±c zaczynaj±cego gracza co mecz. Ka¿dy algorytm rozegra³
+w sumie 80 meczów. W tabeli podano ilo¶æ meczów zwyciê¿onych przez dany algorytm.
+
+\begin{figure}
+\caption{Wyniki turnieju algorytmów z funkcj± oceniaj±c±}
+\label{fig:ab_tournament}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Algorytm & wynik (zwyciêstwa na 80 gier) \\
+\hline
+losowy & 10 \\
+\hline
+minimax (I funkcja oceniaj±ca) & 22 \\
+\hline
+alfabeta (I funkcja oceniaj±ca) & 30 \\
+\hline
+alfabeta z tablic± transpozycji (I funkcja oceniaj±ca) & 32 \\
+\hline
+alfabeta z tablic± i wybieraniem najlepszego syna (I funkcja) & 35 \\
+\hline
+minimax (II funkcja oceniaj±ca) & 42 \\
+\hline
+alfabeta z tablic± transpozycji (II funkcja oceniaj±ca) & 59 \\
+\hline
+alfabeta (II funkcja oceniaj±ca) & 65 \\
+\hline
+alfabeta z tablic± i wybieraniem najlepszego syna (II funkcja) & 65 \\
+\hline
+\end{tabular}
+\end{center}
+\end{figure}
+
+Zodnie z przewidywaniami algorytm losowy nie odniós³ wielkiego sukcesu. Widoczna jest du¿a przewaga u¿ycia lepszej
+funkcji oceniaj±cej. Nawet pomimo du¿o mniejszej szybko¶ci przeszukania drzewa przez podstawowy algorytm minimax,
+pokonywa³ on ³atwo alfabetê korzystaj±c± ze s³abszej funkcji.
+
+Poza tym widaæ, ¿e w wiêkszo¶ci przypadków korzystanie z ulepszenia poprawi³o wynik algorytmu, czasami dosyæ znacz±co,
+co oznacza, ¿e faktycznie op³aca siê dodawaæ ró¿ne usprawnienia do algorytmów. Ten turniej pokazuje równie¿,
+jak wielkie znaczenie ma wybór funkcji oceniaj±cej dla tej rodziny algorytmów. Bez dobrze funkcji faktycznie dobrze oddaj±cej
+si³ê danej sytuacji, algorytmy minimax i alfabeta s± praktycznie bezu¿yteczne.
+
+\section{Przeszukiwanie drzewa Monte Carlo}
+
+W przypadku technik Monte Carlo algorytm z drzewem zdecydowanie górowa³ nad ``prostym`` Monte Carlo w czasie
+przeprowadzania testowych rozgrywek, dlatego przejdziemy od razu analizy algorymu MCTS.
+
+
+W algorytmie MCTS zwykle bardzo wa¿nym parametrem jest próg rozwijania wierzcho³ka drzewa, to znaczy ilo¶æ
+symulacji, po których nale¿y rozwijaæ. W tabeli \ref{fig:mc_simple} przedstawiono wyniki turnieju miêdzy algorytmami
+MCTS z ró¿nymi warto¶ciami sta³ej rozwijania. Jest to ilo¶æ symulacji z danego wêz³a, po których nale¿y go rozwin±æ.
+Tym razem turniej przeprowadzono rozgrywaj±c 20 gier na parê i dano 2 sekundy na ruch.
+
+\begin{figure}
+\caption{Turniej MCTS}
+\label{fig:mc_simple}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Warto¶æ sta³ej ekspansji & Wynik (zwyciêstwa na 60 gier) \\
+\hline
+50 & 32 \\
+\hline
+100  & 26 \\
+\hline
+150 & 32 \\
+\hline
+200 & 30\\
+\hline
+\end{tabular}
+\end{center}
+\end{figure}
+
+Okazuje siê, ¿e sta³a rozwijania nie ma wcale a¿ takieo znaczenia. Wszystkie algorytmy prezentuj± zbli¿ony poziom.
+Próbowanie ró¿nych sta³ych nie da³o zbyt dobrych reultatów - wyniki algorytmów wci±¿ by³y bardzo zbli¿one.
+Dopiero u¿ycie ekstremalnie wysokich sta³ych spowodowa³o pogorszenie jako¶ci algorytmu, co prezentuje tabela \ref{fig:mc_adv}.
+Ten turniej równie¿ przeprowadzono graj±c 20 gier w parze i daj±c 2 sekundy na ruch.
+
+\begin{figure}
+\caption{Turniej MCTS II}
+\label{fig:mc_adv}
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+Warto¶æ sta³ej ekspansji & Wynik (zwyciêstwa na 40 gier) \\
+\hline
+5 & 26 \\
+\hline
+100 & 25 \\
+\hline
+4000 & 9 \\
+\hline
+\end{tabular}
+\end{center}
+\end{figure}
+
+Przy tak du¿ej sta³ej drzewo nie rozwinê³o siê prawie wcale i algorytm MCTS praktycznie zdegenerowa³ siê do prostego
+Monte Carlo z u¿yciem granicy ufno¶ci.
+
+\section{Alfabeta a Monte Carlo}
+
+W tym punkcie nie prezentujemy zbiorczego wyniku turnieju, ani wyników meczy w tabeli, poniewa¿ okaza³o siê, ¿e
+techniki Monte Carlo kompletnie zdeklasowa³y pozosta³ych przeciwników. W przeciwieñstwie do alfabety, której zdarza³o
+siê przegrywaæ z algorytmem losowym, wszystkie testowane algorytmy oparte na metodzie Monte Carlo poradzi³y sobie
+znakomicie. Równie¿ w starciu z alfabet± nie mia³y ¿adnych problemów.
+
+Byæ mo¿e dobór lepszej funkcji oceniaj±cej lub jakie¶ inne dobre usprawnienie polepszy³oby sytuacjê alfabety, ale jak
+na razie okaza³o siê, ¿e MCTS jest zdecydowanie najlepszym algorytmem grajacym w Splits.
 
 \chapter{Podsumowanie}
+
+W tej pracy zaprezentowano przegl±d klasycznych algorytmów sztucznej inteligencji wraz z ich implementacj±
+dla gry planszowej Splits oraz eksperymenty sprawdzaj±ce ich efektywno¶æ w grze. Przebadano algorytmy minimax, alfabetê
+oraz Monte Carlo wraz z ró¿nymi ulepszeniami.
+
+Okaza³o siê, ¿e najlepiej radzi sobie algorytm MCTS.
 
 
 \begin{thebibliography}{99}
@@ -680,6 +881,8 @@ gry. Dlatego nie widaæ znacz±cej przewagi alfabety z tablic± transpozycji nad po
 \bibitem[MCTS12]{mcts12} C. Brown, E. Powley, D. Whitehouse, S. Lucas, P. I. Cowling, P. Rohlsfhagen, S. Tavener, D. Perez,
   S. Samothrakis, S. Colton, \textit{A Survey of Monte Carlo Tree Search Methods},
   IEEE Transactions on Computational Intelligence and AI in Games, vol.4, no.1 (2012)
+
+\bibitem[KM75]{km75} D. E. Knuth, R. W. Moore, \textit{An Analysis of Alpha-Beta Pruning} (1975)
 
 \bibitem[LA87]{la87} N. Metropolis, \textit{The Beginning of the Monte Carlo Method}, Los Alamos Science Special Issue (1987),
   125 - 130
