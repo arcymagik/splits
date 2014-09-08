@@ -16,6 +16,9 @@
 \usepackage{polski}
 
 \usepackage{tikz}
+\usetikzlibrary{shapes}
+\usetikzlibrary{calc,positioning}
+%\usepackage[section]{placeins}
 
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
@@ -109,20 +112,33 @@
 \chapter*{Wprowadzenie}
 \addcontentsline{toc}{chapter}{Wprowadzenie}
 
-Za pomoc± gier mo¿na modelowaæ wiele zjawisk.
+Gry towarzysz± cz³owiekowi od pocz±tków cywilizacji. S³u¿a nie tylko rozrywce, ale równie¿ samorozwojowi.
+Za pomoc± gier mo¿na równie¿ modelowaæ wiele zjawisk.
 Teoria gier znajduje zastosowanie
- w dziedzinach ekonomii, matematyki i informatyki. Nie dziwi zatem dynamiczny
-rozwój metod sztucznej inteligencji w grach. 
+ w dziedzinach ekonomii, matematyki i informatyki.
 
-Istnieje wiele gier: zaczynaj±c od znanych i klasycznych jak go lub szachy, a koñcz±c na wspó³czesnych grach planszowych
-wymy¶lanych dla celów rorywkowych. Wiele z tych ostatnich, aby zostaæ zauwa¿one na rynku, musz± wyró¿niaæ siê
+Nie dziwi± zatem próby tworzenia programów komputerowych graj±cych w gry. Techniki sztucznej inteligencji w grach
+to dziedzina obecna informatyce od pocz±tków istnienia komputerów. Szczególnie czêsto próbowano dokonaæ sukcesów
+w grze w szachy i faktycznie osi±gniêto ca³kiem sporo. W 1997 komputer Deep Blue jako pierwsza maszyna na ¶wiecie
+zwyciê¿y³a z mistrzem ¶wiata Garry'm Kasparovem.
+
+Istnieje bardzo wiele gier. Ró¿ni± siê one miêdzy sob± czasami bardzo diametralnie i techniki zastosowane przy szachach
+niekoniecznie musz± sprawdzaæ siê w go i na odwrót. Wspó³cze¶nie wci±¿ wymy¶lane s± nowe gry planszowe. Wiele
+z nich, aby zostaæ zauwa¿one na rynku, musz± wyró¿niaæ siê
 niebanalnymi zasadami nieprzypominaj±cymi tych znanych z innych gier.
+
+
+%% Istnieje wiele gier: zaczynaj±c od znanych i klasycznych jak go lub szachy, a koñcz±c na wspó³czesnych grach planszowych
+%% wymy¶lanych dla celów rorywkowych. Wiele z tych ostatnich, aby zostaæ zauwa¿one na rynku, musz± wyró¿niaæ siê
+%% niebanalnymi zasadami nieprzypominaj±cymi tych znanych z innych gier.
 
 Jedn± z takich gier jest Splits. Bardzo du¿a ¶rednia ilo¶æ ruchów z pozycji a przy tym stosunkowo krótka rozgrywka
 daj± szerokie pole dla badania efektywno¶ci algorytmów.
 
 Praca sk³ada siê z czterech rozdzia³ów. W rozdziale 1 wprowadzono zasady gry Splits i pojêcia u¿ywane pó¼niej. Opis
-u¿ytych technik sztucznej inteligencji zawarto w rozdziale 2. Rozdzia³ 3 przedstawia wyniki eksperymentów, w¶ród których
+u¿ytych technik sztucznej inteligencji zawarto w rozdziale 2. Opisano w nim algorytm minimax i jego pochodn± - alfabetê
+oraz techniki monte carlo.
+Rozdzia³ 3 przedstawia wyniki eksperymentów, w¶ród których
 znalaz³y siê bezpo¶rednie rozgrywki miêdzy ró¿nymi algorytmami oraz testy usprawnieñ pokazuj±ce faktyczny zysk z danego
 ulepszenia. W ostatnim rozdziale zawarto podsumowanie oraz przemy¶lenia na temat charakteru gry.
 
@@ -138,11 +154,12 @@ rynku.
 \section{Zasady}
 
 P³ytka w grze do pojedyczny element, z którego budowana jest plansza. Jest on podzielona na cztery sze¶ciok±ty foremne - tak zwane
-heksy.
+heksy. P³ytkê przdstawiono poni¿ej na rysunku \ref{fig:plytka}.
 
+\begin{figure}
 \begin{center}
 \begin{tikzpicture}
-  [scale=.1,auto=center, x=1mm, y=1mm]
+  [scale=.02,auto=center, x=1mm, y=1mm]
 
   \draw [color=black] (0, 346) -- (100, 520) -- (300, 520) -- (400, 693) -- (600, 693) -- (700, 520);
   \draw [color=black] (0, 346) -- (100, 173) -- (300, 173) -- (400, 346) -- (300, 520);
@@ -150,6 +167,9 @@ heksy.
   \draw [color=black] (600, 346) -- (700, 520) -- (900, 520) -- (1000, 346) -- (900, 173) -- (700, 173);
 \end{tikzpicture}
 \end{center}
+\caption{P³ytka sk³adaj±ca siê z czterech heksów}
+\label{fig:plytka}
+\end{figure}
 
 ¯eton to ma³y obiekt, których stos mo¿na umie¶ciæ na heksie. W grze jest 16 ¿etonów czarnych (dla gracza 0) oraz 16 ¿etonów bia³ych
 (dla gracza 1).
@@ -171,6 +191,74 @@ w prostej linii wzd³u¿ linii heksów. Przesuniêcie musi byæ o co najmniej jedno p
 zatrzymaæ, gdy tylko trafi siê na przeszkodê - inny stos lub krawêd¼ planszy. Nale¿y postawiæ wtedy stos tu¿ przed przeszkod±.
 
 Gracz, który nie mo¿e ju¿ wykonaæ ruchu, przegrywa.
+
+Na rysunku \ref{fig:example_game_situation} przedstawiono przyk³adow± sytuacjê w grze.
+
+\begin{figure}
+\begin{center}
+\begin{tikzpicture}
+  [scale=1,auto=center, x=0.01mm, y=0.01mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {4 W};
+  \node (n5) at (n2.corner 5) {10 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  %%\node (n10) at ($(n8.corner 3)+(0,200) $) {10};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  %%\node (n12) at ($(n6.corner 5)+(0,850)$) {12};
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {12 B};
+  \node (n15) at (n13.corner 5) {4 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Przyk³adowa sytuacja w grze Splits (B i W oznaczaj± kolory ¿etonów - odpowiednio czarne i bia³e, a numer - ich ilo¶æ. Czarny
+hex nie nale¿y do planszy)}
+\label{fig:example_game_situation}
+\end{figure}
+
+\section{Przyk³adowa rozgrywka}
+
+Aby lepiej zrozumieæ zasady, poni¿ej przedstawiono przyk³adow± rozgrywkê.
+
+\input{rozgrywka.tex}
+
 
 \section{Uwagi}
 
@@ -194,6 +282,9 @@ ró¿nych mo¿liwo¶ci podczas obmy¶lania ruchu. Daje to szerokie pole do popisu dla
 W ogólno¶ci technik± sztucznej inteligencji nazywamy funkcjê stanu gry, której warto¶ci± jest ruch mo¿liwy do wykonania
 w danym stanie. Aby przeprowadziæ rozgrywkê u¿ywaj±c sztucznej inteligencji, nale¿y w momencie zdecydowania siê na ruch
 podawaæ warto¶æ tej funkcji, zazwyczaj obliczon± z pomoc± komputera.
+
+W tym rozdziale zaprezentowano algorytmy sztucznej inteligencji zaimplementowane i zbadane w trakcie pisania pracy. Na pocz±tku
+opisano klasyczny algorytm minimax oraz pochodz±c± od niego alfabetê.
 
 \section{Minimax}
 
@@ -243,11 +334,27 @@ Oczywi¶cie sytuacja, w której gra zakoñczy³a siê naszym zwyciêstwem powinna zost
 ``nieskoñczono¶æ'', poniewa¿ na pewno jest co najmniej tak dobra jak ka¿da inna sytuacja. Analogicznie gra przegrana
 powinna dostaæ ocenê ``minus nieskoñczono¶æ''.
 
-Zauwa¿my, ¿e w grze teoretycznie mo¿emy rozstawiæ 16 stosów swojego koloru (ka¿dy wielko¶ci 1). Je¿eli który¶ z naszych stosów
-zostanie zablokowany, nie mo¿emy u¿yæ ju¿ ¿etonów z niego. Wydaje siê, ¿e ma zatem przyjêcie nastêpuj±cej funkcji oceniaj±cej:
-ilo¶æ w³asnych ¿etonów, którymi potencjalnie mo¿na siê ruszyæ minus analogiczna ilo¶æ ¿etonów przeciwnika. ¯etony, którymi
-mo¿na siê ruszyæ to ¿etony z niezablokowanych stosów. Zauwa¿my, ¿e je¿eli warto¶æ tej funkcji bêdzie dodatnia i w pewnym momencie
-gra siê zakoñczy, to wygramy.
+Zauwa¿my, ¿e w grze teoretycznie mo¿emy rozstawiæ 16 stosów swojego koloru (ka¿dy wielko¶ci 1). Je¿eli stos zostanie otoczony
+tak, ¿e nie mo¿na wykonaæ ju¿ ruchu ¿etonami z tego stosu, mówimy, ¿e ¿etony na tym stosie s± zablokowane. Pozosta³e ¿etony
+s± niezablokowane i potencjalnie mo¿na siê nimi ruszyæ. Wydaje siê, ¿e dobrym pomys³em jest staraæ siê blokowaæ ¿etony
+przeciwnikowi i nie dopu¶ciæ do zablokowania swoich. St±d pochodzi pomys³ na pierwsz± funkcjê oceniaj±c±: Ilo¶æ
+w³asnych ¿etonów niezablokowanych minus ilo¶æ niezablokowanych ¿etonów przeciwnika.
+Zauwa¿my, ¿e je¿eli warto¶æ tej funkcji bêdzie dodatnia i w pewnym momencie
+gra siê zakoñczy, to wygramy. Jest to pierwsza funkcja oceniaj±ca zbadana w tej pracy.
+
+Druga funkcja jest rozwiniêciem pomys³u z pierwszej. Aby nie dopu¶ciæ do zablokowania ¿etonów na stosie, nale¿y dbaæ, aby
+wysokie stosy mia³y du¿e mo¿liwo¶ci ruchu. Dlatego zamiast po prostu liczyæ ka¿dy niezablokowany ¿eton z wag± 1, policzmy go
+z ustalon± wag± $N$ (w badaniach u¿yto warto¶ci $N = 10$) i dodajmy ilo¶æ pustych s±siadów stosu,
+w którym siê znajduje, jak na rysunku \cite{rys}. Ta warto¶æ stanowi drug±, ulepszon± funkcjê oceniaj±c±.
+
+\begin{figure}
+\begin{center}
+\begin{tikzpicture}
+  \node (n1) at (5, 10) {a};
+\end{tikzpicture}
+\end{center}
+\caption{¯etony tego stosu dok³adaj± siê do funkcji oceniaj±cej z warto¶ci± TODO}
+\end{figure}
 
 \section{Alfabeta}
 
@@ -484,21 +591,17 @@ Aby zbudowaæ aplikacjê nale¿y wej¶æ do katalogu splits, a nastêpnie wykonaæ:
 
 Nastêpnie mo¿na uruchamiaæ komendy opisane w poni¿szych sekcjach.
 
-\section{Turniej}
+%% \section{Turniej}
 
-%% Pierwszym testem algorytmu jest mecz z algorytmem wykonuj±cym zupe³nie losowe ruchy. Je¿eli nie napisano inaczej, przez
-%% mecz bêdziemy rozumieæ grê z limitem czasu na ruch wielko¶ci 1 sekundy. Test
-%% $\texttt{play\_match}$
-%% uruchamia 5 meczy wybranych algorytmów. Na przyk³ad komenda:
-
+%% Najsensowniejszym sposobem przetestowania si³y algorytmu na tle innych jest rozegranie kilku partii z pozosta³ymi.
+%% Program
 %% \begin{algorithm}
 %%   \begin{algorithmic}
-%%     \State $\texttt{play\_match 0 1}$
+%%     \State $\texttt{./tournament}$
 %%   \end{algorithmic}
 %% \end{algorithm}
-
-%% uruchomi 5 meczów pomiêdzy algorytmem losowym, a minimax (algorytm losowy bêdzie zaczyna³). Numery poszczególnych algorytmów
-%% to:
+%% ³±czy ka¿dy program z ka¿dym innym na 2 sposoby - raz zaczyna jeden algorytm a raz drugi. W sumie ka¿da para ró¿nych
+%% algorytmów rozgrywa 10 meczów. Przyjmuj±c poni¿sze numerowanie algorytmów:
 
 %% \begin{tabular}{|l|l|}
 %% \hline
@@ -518,66 +621,38 @@ Nastêpnie mo¿na uruchamiaæ komendy opisane w poni¿szych sekcjach.
 %% \hline
 %% \end{tabular}
 
-Najsensowniejszym sposobem przetestowania si³y algorytmu na tle innych jest rozegranie kilku partii z pozosta³ymi.
-Program
-\begin{algorithm}
-  \begin{algorithmic}
-    \State $\texttt{./tournament}$
-  \end{algorithmic}
-\end{algorithm}
-³±czy ka¿dy program z ka¿dym innym na 2 sposoby - raz zaczyna jeden algorytm a raz drugi. W sumie ka¿da para ró¿nych
-algorytmów rozgrywa 10 meczów. Przyjmuj±c poni¿sze numerowanie algorytmów:
+%% W tabeli przedstawiono wyniki przeprowadzenia turnieju. Liczba oznacza ilo¶æ gier wygranych przez gracza ``wierszowego'' na 5
+%% meczów. Gracz ``wierszowy'' rozpoczyna³.
 
-\begin{tabular}{|l|l|}
-\hline
-0 & random \\
-\hline
-1 & minimax \\
-\hline
-2 & alphabeta \\
-\hline
-3 & alphabeta with transposition table \\
-\hline
-4 & monte carlo \\
-\hline 
-5 & monte carlo with confidentiality bound \\
-\hline
-6 & mcts \\
-\hline
-\end{tabular}
+%% \begin{tabular}{|r|c|c|c|c|c|c|c|}
+%% \hline
+%% nr & 0 & 1 & 2 & 3 & 4 & 5 & 6 \\
+%% \hline
+%% 0 & 2 & 1 & 1 & 1 & 0 & 0 & 0 \\
+%% \hline
+%% 1 & 4 & 3 & 2 & 3 & 0 & 0 & 0 \\
+%% \hline
+%% 2 & 5 & 2 & 2 & 1 & 0 & 0 & 0 \\
+%% \hline
+%% 3 & 4 & 4 & 1 & 2 & 0 & 0 & 0 \\
+%% \hline
+%% 4 & 5 & 5 & 5 & 5 & 3 & 2 & 0 \\
+%% \hline
+%% 5 & 5 & 5 & 5 & 4 & 3 & 3 & 0 \\
+%% \hline
+%% 6 & 5 & 5 & 5 & 5 & 3 & 3 & 2 \\
+%% \hline
+%% \end{tabular}
 
-W tabeli przedstawiono wyniki przeprowadzenia turnieju. Liczba oznacza ilo¶æ gier wygranych przez gracza ``wierszowego'' na 5
-meczów. Gracz ``wierszowy'' rozpoczyna³.
+%% Wszystkie algorytmy poradzi³y sobie dosyæ dobrze z randomem. Jedynie minimaksowi i alfabetom zdarzy³o siê nie wygraæ do 0.
+%% Prawdopodobnie wynika to z faktu, ¿e algorytmy te w fazie budowania planszy, gdy nie ma jeszcze ¿etonów, funkcja
+%% oceniaj±ca zwraca zawsze 0, wiêc ruszaj± siê one losowo. Faktycznie zaczynaj± one wyliczaæ najlepszy ruch dopiero
+%% po postawieniu ¿etonów, gdy mo¿e byæ za pó¼no. Istnieje zatem szansa, ¿e losowy algorytm je pokona.
 
-\begin{tabular}{|r|c|c|c|c|c|c|c|}
-\hline
-nr & 0 & 1 & 2 & 3 & 4 & 5 & 6 \\
-\hline
-0 & 2 & 1 & 1 & 1 & 0 & 0 & 0 \\
-\hline
-1 & 4 & 3 & 2 & 3 & 0 & 0 & 0 \\
-\hline
-2 & 5 & 2 & 2 & 1 & 0 & 0 & 0 \\
-\hline
-3 & 4 & 4 & 1 & 2 & 0 & 0 & 0 \\
-\hline
-4 & 5 & 5 & 5 & 5 & 3 & 2 & 0 \\
-\hline
-5 & 5 & 5 & 5 & 4 & 3 & 3 & 0 \\
-\hline
-6 & 5 & 5 & 5 & 5 & 3 & 3 & 2 \\
-\hline
-\end{tabular}
+%% Techniki monte carlo nie maj± tego problemu. S± ca³kowicie niezale¿ne od heurystyk i poradzi³y sobie znakomicie
+%% zarówno z randomem jak i z technikami opartymi o funkcjê oceniaj±c±.
 
-Wszystkie algorytmy poradzi³y sobie dosyæ dobrze z randomem. Jedynie minimaksowi i alfabetom zdarzy³o siê nie wygraæ do 0.
-Prawdopodobnie wynika to z faktu, ¿e algorytmy te w fazie budowania planszy, gdy nie ma jeszcze ¿etonów, funkcja
-oceniaj±ca zwraca zawsze 0, wiêc ruszaj± siê one losowo. Faktycznie zaczynaj± one wyliczaæ najlepszy ruch dopiero
-po postawieniu ¿etonów, gdy mo¿e byæ za pó¼no. Istnieje zatem szansa, ¿e losowy algorytm je pokona.
-
-Techniki monte carlo nie maj± tego problemu. S± ca³kowicie niezale¿ne od heurystyk i poradzi³y sobie znakomicie
-zarówno z randomem jak i z technikami opartymi o funkcjê oceniaj±c±.
-
-\section{Alfabeta}
+\section{Algorytmy z funkcj± oceniaj±c±}
 
 Przyjrzymy siê teraz przyspieszeniu jakie daje mo¿liwo¶æ dokonywania odciêæ przez alfabetê oraz sprawdzania tablicy transpozycji.
 Wszystkie algorytmy $\texttt{minimax}$, $\texttt{alphabeta}$ oraz $\texttt{alphabeta\_with\_transposition\_table}$ ustawione
@@ -586,14 +661,7 @@ momentu w fazie przek³adania ¿etonów i uruchamia wszystkie 3 algorytmy na g³êbok
 warto¶ci drzewa przedstawiono w tabeli.
 
 \begin {tabular}{|c|c|}
-\hline
-Algorytm & Czas [ms] \\
-\hline
-minimax & 22291 \\
-\hline
-alfabeta & 21982 \\
-\hline
-alfabeta z tablic± transpozycji & 19454 \\
+
 \hline
 \end{tabular}
 

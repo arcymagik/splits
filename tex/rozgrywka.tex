@@ -1,0 +1,731 @@
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  %% \node (n4) at (n3.corner 5) {4 W};
+  %% \node (n5) at (n2.corner 5) {10 W};
+  %% \node (n6) at (n4.corner 5) {};
+  %% \node (n7) at (n5.corner 5) {};
+
+  %% \node (n8) at (n3.corner 1) {};
+  %% \node (n9) at (n8.corner 1) {};
+  %% \node (i0) [draw=none] at (n1.corner 1) {};
+  %% \node (n10) at (i0.corner 1) {};
+  %% \node (n11) at (n10.corner 1) {};
+
+  %% \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  %% \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  %% \node (n14) at (n12.corner 5) {12 B};
+  %% \node (n15) at (n13.corner 5) {2 B};
+
+  %% \node (n16) at (n7.corner 5) {};
+  %% \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  %% \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  %% \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  %% \node (o1) [fill=black] at (n8.corner 5) {};
+  %% \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  %% \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  %% \node (n22) at (n21.corner 5) {};
+  %% \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  %% \node (n24) at (n14.corner 1) {};
+  %% \node (n25) at (n24.corner 1) {};
+  %% \node (n26) at (n24.corner 5) {};
+  %% \node (n27) at (n25.corner 5) {};
+
+  %% \node (n28) at (n14.corner 5) {};
+  %% \node (n29) at (n28.corner 5) {};
+  %% \node (n30) at (n15.corner 5) {};
+  %% \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Budowanie planszy zaczyna siê od jednej p³ytki}
+%\label{fig:example_game_situation}
+\end{figure}
+
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+v  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {};
+  \node (n5) at (n2.corner 5) {};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  %% \node (n8) at (n3.corner 1) {};
+  %% \node (n9) at (n8.corner 1) {};
+  %% \node (i0) [draw=none] at (n1.corner 1) {};
+  %% \node (n10) at (i0.corner 1) {};
+  %% \node (n11) at (n10.corner 1) {};
+
+  %% \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  %% \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  %% \node (n14) at (n12.corner 5) {12 B};
+  %% \node (n15) at (n13.corner 5) {2 B};
+
+  %% \node (n16) at (n7.corner 5) {};
+  %% \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  %% \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  %% \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  %% \node (o1) [fill=black] at (n8.corner 5) {};
+  %% \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  %% \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  %% \node (n22) at (n21.corner 5) {};
+  %% \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  %% \node (n24) at (n14.corner 1) {};
+  %% \node (n25) at (n24.corner 1) {};
+  %% \node (n26) at (n24.corner 5) {};
+  %% \node (n27) at (n25.corner 5) {};
+
+  %% \node (n28) at (n14.corner 5) {};
+  %% \node (n29) at (n28.corner 5) {};
+  %% \node (n30) at (n15.corner 5) {};
+  %% \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Gracze na zmianê dok³adaj± kolejne p³ytki}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {};
+  \node (n5) at (n2.corner 5) {};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {};
+  \node (n15) at (n13.corner 5) {};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Budowanie koñczy siê, gdy na planszy znajdzie siê osiem p³ytek
+}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {};
+  \node (n5) at (n2.corner 5) {16 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {};
+  \node (n15) at (n13.corner 5) {};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Gracz bia³y stawia swoje ¿etony na wybranym polu}
+%\label{fig:example_game_situation}
+\end{figure}
+
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {};
+  \node (n5) at (n2.corner 5) {16 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {};
+  \node (n15) at (n13.corner 5) {16 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Gracz czarny próbuje zablokowaæ pó³wysep po prawej stronie planszy}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {6 W};
+  \node (n5) at (n2.corner 5) {10 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {};
+  \node (n15) at (n13.corner 5) {16 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Gracz bia³y grozi wej¶ciem na stronê czanrego, a jednocze¶nie czê¶ciowo blokuje dostêp do górnej czê¶ci planszy}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {4 W};
+  \node (n5) at (n2.corner 5) {10 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {12 B};
+  \node (n15) at (n13.corner 5) {4 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Gracz czarny zablokowa³ dla siebie pó³wysep. Ma tam 8 pól, na których tylko on mo¿e postawiæ ¿etony}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {2 W};
+  \node (n5) at (n2.corner 5) {10 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {12 B};
+  \node (n15) at (n13.corner 5) {4 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Mimo, ¿e czarny zaj±³ sobie ca³y pó³wysep, to znajduje siê w s³abej sutuacji - bia³y mo¿e go ³atwo zagrodziæ}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {2 W};
+  \node (n5) at (n2.corner 5) {10 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {6 B};
+  \node (n15) at (n13.corner 5) {4 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {6 B};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{Czarny rozpaczliwie ucieka...}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {1 W};
+  \node (n5) at (n2.corner 5) {10 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (n14) at (n12.corner 5) {6 B};
+  \node (n15) at (n13.corner 5) {4 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {6 B};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{...ale nic nie da siê ju¿ zrobiæ}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {1 W};
+  \node (n5) at (n2.corner 5) {10 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {5 B};
+  \node (n14) at (n12.corner 5) {6 B};
+  \node (n15) at (n13.corner 5) {4 B};
+
+  \node (n16) at (n7.corner 5) {};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {1 B};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {};
+  \node (n1) at (n0.corner 1) {};
+  \node (n2) at (n0.corner 5) {};
+  \node (n3) at (n1.corner 5) {};
+
+  \node (n4) at (n3.corner 5) {1 W};
+  \node (n5) at (n2.corner 5) {9 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (n7) at (n5.corner 5) {};
+
+  \node (n8) at (n3.corner 1) {};
+  \node (n9) at (n8.corner 1) {};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {};
+  \node (n11) at (n10.corner 1) {};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {5 B};
+  \node (n14) at (n12.corner 5) {6 B};
+  \node (n15) at (n13.corner 5) {4 B};
+
+  \node (n16) at (n7.corner 5) {1 W};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {1 B};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {};
+  \node (n25) at (n24.corner 1) {};
+  \node (n26) at (n24.corner 5) {};
+  \node (n27) at (n25.corner 5) {};
+
+  \node (n28) at (n14.corner 5) {};
+  \node (n29) at (n28.corner 5) {};
+  \node (n30) at (n15.corner 5) {};
+  \node (n31) at (n30.corner 5) {};
+\end{tikzpicture}
+\end{center}
+\caption{W tym momencie ¿etony obydwu graczy zosta³y od siebie oddzielone i nie bêdzie ju¿ ¿adnych mo¿liwo¶ci blokowania.
+Czarny gracz powinien siê poddaæ...}
+%\label{fig:example_game_situation}
+\end{figure}
+
+\begin{figure}[!htbp]
+\begin{center}
+\begin{tikzpicture}
+  [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
+    every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
+      font=\fontsize{3}{3.5}\selectfont,
+      minimum width=1cm,
+      outer sep=0}
+  ]
+  \node (n0) {1W};
+  \node (n1) at (n0.corner 1) {1W};
+  \node (n2) at (n0.corner 5) {1W};
+  \node (n3) at (n1.corner 5) {1W};
+
+  \node (n4) at (n3.corner 5) {1 W};
+  \node (n5) at (n2.corner 5) {1 W};
+  \node (n6) at (n4.corner 5) {3 W};
+  \node (n7) at (n5.corner 5) {1 W};
+
+  \node (n8) at (n3.corner 1) {1 W};
+  \node (n9) at (n8.corner 1) {1 W};
+  \node (i0) [draw=none] at (n1.corner 1) {};
+  \node (n10) at (i0.corner 1) {1 W};
+  \node (n11) at (n10.corner 1) {1 W};
+
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {1 B};
+  \node (n14) at (n12.corner 5) {1 B};
+  \node (n15) at (n13.corner 5) {1 B};
+
+  \node (n16) at (n7.corner 5) {1 W};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {4 B};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {1 B};
+
+  \node (o1) [fill=black] at (n8.corner 5) {};
+  \node (n20) at ($(n12.corner 3)+(0,866)$) {};
+  \node (n21) at ($(n20.corner 3)+(0,866)$) {};
+  \node (n22) at (n21.corner 5) {};
+  \node (n23) at ($(n22.corner 3)+(0,866)$) {};
+
+  \node (n24) at (n14.corner 1) {1 B};
+  \node (n25) at (n24.corner 1) {1 B};
+  \node (n26) at (n24.corner 5) {1 B};
+  \node (n27) at (n25.corner 5) {1 B};
+
+  \node (n28) at (n14.corner 5) {1 B};
+  \node (n29) at (n28.corner 5) {1 B};
+  \node (n30) at (n15.corner 5) {1 B};
+  \node (n31) at (n30.corner 5) {1 B};
+\end{tikzpicture}
+\end{center}
+\caption{...bo inaczej rozgrywka skoñczy siê jego przegran± - przy wype³nianiu pozosta³ych pól w koñcu zabraknie mu mo¿liwo¶ci ruchu}
+%\label{fig:example_game_situation}
+\end{figure}
