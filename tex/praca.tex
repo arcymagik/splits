@@ -872,7 +872,31 @@ W tej pracy zaprezentowano przegl±d klasycznych algorytmów sztucznej inteligencj
 dla gry planszowej Splits oraz eksperymenty sprawdzaj±ce ich efektywno¶æ w grze. Przebadano algorytmy minimax, alfabetê
 oraz Monte Carlo wraz z ró¿nymi ulepszeniami.
 
-Okaza³o siê, ¿e najlepiej radzi sobie algorytm MCTS.
+Okaza³o siê, ¿e najlepiej radzi sobie algorytm MCTS. Wygl±da na to, ¿e w Splits mo¿na stawiaæ ruchy, których
+si³a jest nie jest wystarczaj±co dobrze rozpoznawana przez prost± funkcjê oceniaj±c±.
+
+W czasie implementacji zasad gry okaza³o siê, ¿e s± one istotnym czynnikiem sk³adaj±cym siê na czas obliczeñ.
+Zasady s± dosyæ skomplikowane - szczególnie w czasie budowania planszy skonstruowanie listy wszystkich ruchów
+zajmowa³o dosyæ du¿o czasu. Jednym z niezrealizowanych pomys³ów jest zauwa¿enie wielu symetrii, szczególnie
+podczas budowania planszy - wiele sytuacji jest rozpoznawanych jako ró¿ne, podczas gdy mo¿na by³oby zauwa¿aæ,
+¿e ró¿ni± siê jedynie przesuniêciem lub obrotem. Wydaje siê, ¿e unikniêcie przeszukiwania wielu ga³êzi
+mog³oby znacz±co poprawiæ wydajno¶æ algorytmów.
+
+W trakcie pisania poszczególnych algorytmów natkniêto siê na wiele sytuacji, w których ³atwo pope³niæ b³±d.
+Niektóre napotkane problemy by³y szczególnie subtelne. W algorytmie alfabeta (Algorytm \ref{alg:alfabeta})
+chocia¿by je¿eli na najwy¿szym poziomie nie bêdziemy wybieraæ losowego z najlepszych synów, a tylko zawsze pierwszego
+z nich, to bêdziemy uzale¿nieni od implementacji zasad, w której zwracana kolejno¶æ mo¿liwych ruchów wcale nie jest
+najlepsza.
+
+Chocia¿ zaprezentowane badania si³y algorytmów wskazuj± jednoznacznie na MCTS jako na lidera, nie wiadomo czy zastosowanie
+lepszej funkcji oceniaj±cej w alfabecie nie zmieni³oby tego. Zauwa¿my, ¿e w przyk³adowej grze opisanej w pracy gracz czarny
+próbowa³ zabraæ dla siebie pó³wysep (rysunek \ref{fig:black_peninsula}). Prawdopodobnie funkcja oceniaj±ca wiele
+by zyska³a na uwzglêdnianiu pól, do których tylko jeden z graczy ma dostêp. Jest to jednak kwestia znalezienia
+kompromisu miêdzy si³± funkcji, a g³êboko¶ci±, na któr± chcemy zej¶æ w algorytmie, poniewa¿ ewaluacja bardziej
+skomplikowanej funkcji oceniaj±cej zajmie wiêcej czasu.
+
+Podsumowuj±c, gra Splits wci±¿ pozostawia sporo miejsca na badanie si³y algorytmów i kwestia wyboru najlepszego
+algorytmu pozostaje otwarta.
 
 
 \begin{thebibliography}{99}
