@@ -103,10 +103,13 @@
 
 %tu idzie streszczenie na strone poczatkowa
 \begin{abstract}
-  W pracy zaimplementowano oraz przetestowano metody sztucznej inteligencji w grach na przyk³adzie gry planszowej Splits.
+  W pracy opisano, zaimplementowano oraz przetestowano
+  wybór kilku ró¿nych
+  metod sztucznej inteligencji w grach na przyk³adzie gry planszowej Splits.
   W¶ród zbadanych metod znajduj± siê miêdzy innymi alfabeta, monte carlo i mcts wraz z ulepszeniami takimi jak
-  tablica transpozycji. Ró¿nice w efektywno¶ci poszczególnych algorytmów zosta³y zbadane, a ich analiza mo¿e
-  pomóc zdecydowaæ o charakterze gry Splits (strategiczny lub kombinacyjny).
+  tablica transpozycji czy wybieranie najpierw najlepszego syna.
+  Ró¿nice w efektywno¶ci poszczególnych algorytmów zosta³y zbadane, a ich analiza mo¿e
+  pomóc lepiej zrozumieæ charakter gry Splits.
 \end{abstract}
 
 \tableofcontents
@@ -116,7 +119,8 @@
 \chapter*{Wprowadzenie}
 \addcontentsline{toc}{chapter}{Wprowadzenie}
 
-Gry towarzysz± cz³owiekowi od pocz±tków cywilizacji. S³u¿a nie tylko rozrywce, ale równie¿ samorozwojowi.
+Gry towarzysz± cz³owiekowi od pocz±tków cywilizacji. S³u¿± nie tylko rozrywce, ale równie¿ samorozwojowi, poniewa¿
+zmuszaj± do my¶lenia i przewidywania.
 Za pomoc± gier mo¿na równie¿ modelowaæ wiele zjawisk.
 Teoria gier znajduje zastosowanie
  w dziedzinach ekonomii, matematyki i informatyki.
@@ -124,7 +128,7 @@ Teoria gier znajduje zastosowanie
 Nie dziwi± zatem próby tworzenia programów komputerowych graj±cych w gry. Techniki sztucznej inteligencji w grach
 to dziedzina obecna informatyce od pocz±tków istnienia komputerów. Szczególnie czêsto próbowano dokonaæ sukcesów
 w grze w szachy i faktycznie osi±gniêto ca³kiem sporo. W 1997 komputer Deep Blue jako pierwsza maszyna na ¶wiecie
-zwyciê¿y³a z mistrzem ¶wiata Garry'm Kasparovem.
+zwyciê¿y³ z mistrzem ¶wiata Garry'm Kasparovem.
 
 Istnieje bardzo wiele gier. Ró¿ni± siê one miêdzy sob± czasami bardzo diametralnie i techniki zastosowane przy szachach
 niekoniecznie musz± sprawdzaæ siê w go i na odwrót. Wspó³cze¶nie wci±¿ wymy¶lane s± nowe gry planszowe. Wiele
@@ -141,19 +145,19 @@ daj± szerokie pole dla badania efektywno¶ci algorytmów.
 
 Praca sk³ada siê z czterech rozdzia³ów. W rozdziale 1 wprowadzono zasady gry Splits i pojêcia u¿ywane pó¼niej. Opis
 u¿ytych technik sztucznej inteligencji zawarto w rozdziale 2. Opisano w nim algorytm minimax i jego pochodn± - alfabetê
-oraz techniki monte carlo.
+oraz techniki Monte Carlo.
 Rozdzia³ 3 przedstawia wyniki eksperymentów, w¶ród których
 znalaz³y siê bezpo¶rednie rozgrywki miêdzy ró¿nymi algorytmami oraz testy usprawnieñ pokazuj±ce faktyczny zysk z danego
-ulepszenia. W ostatnim rozdziale zawarto podsumowanie oraz przemy¶lenia na temat charakteru gry.
+ulepszenia. W ostatnim rozdziale zawarto podsumowanie oraz wnioski z badañ.
 
 \chapter{Gra Splits}
 
-``Splits'' to gra planszowa zaprojektowana przez w³oskiego projektanta gier Francesco Rotta, wydana w 2010 roku. 
+``Splits'' to dwuosobowa gra planszowa zaprojektowana przez w³oskiego projektanta gier Francesco Rotta, wydana w 2010 roku. 
 Znana jest równie¿ pod tytu³ami ``Voll Shaft'' oraz ``Battle Sheep''.
 Gra
 szybko zdoby³a popularno¶æ dziêki ciekawym zasadom i ma³ej powtarzalno¶ci rozgrywki. W 2014 roku zdoby³a nawet rekomendacjê
 jury ``Spiel des Jahres'' - uznanej niemieckiej nagrody dla najlepszych gier planszowych na niemieckojêzycznym
-rynku.
+rynku. Formalnie jest to skoñczona gra deterministyczna o sumie zerowej, tak jak szachy lub go.
 
 \section{Zasady}
 
@@ -182,8 +186,8 @@ Na pocz±tku gry umieszcza siê jedn± z p³ytek na ¶rodku sto³u. Nastêpnie gracze d
 w ten sposób planszê (zaczynaj±c od gracza 0). P³ytkê mo¿na umie¶ciæ na stole, je¿eli nie zachodzi na poprzednio
 u³o¿one p³ytki oraz styka siê przynajmniej jedn± krawêdzi± heksa z heksem p³ytki ju¿ po³o¿onej na stole.
 
-Gdy skoñcz± siê p³ytki, plansza jest zbudowana. Sk³ada siê z 32 heksów stanowi±cych spójny podzbiór zbioru heksów
-pokrywaj±cych p³aszczyznê. Gracz 1 wybiera teraz heks, który znajduje siê przy zewnêtrznej krawêdzi planszy - to znaczy
+Gdy skoñcz± siê p³ytki, plansza jest zbudowana. Sk³ada siê z 32 heksów tworz±cych spójn± strukturê na p³aszczy¼nie.
+Gracz 1 wybiera teraz heks, który znajduje siê przy zewnêtrznej krawêdzi planszy - to znaczy
 taki, który przynajmniej jedn± krawêdzi± nie s±siaduje z innym heksem i ta pusta przestrzeñ nie jest ograniczona - nie mo¿e to
 byæ ``dziura'' w ¶rodku planszy. Gracz 1 k³adzie na tym polu wszystkie swoje 16 ¿etonów. Gracz 0 postêpuje podobnie - nie mo¿e
 ju¿ jednak wybraæ tego samego pola, co gracz 1.
@@ -253,7 +257,7 @@ Na rysunku \ref{fig:example_game_situation} przedstawiono przyk³adow± sytuacjê w
 \end{tikzpicture}
 \end{center}
 \caption{Przyk³adowa sytuacja w grze Splits (B i W oznaczaj± kolory ¿etonów - odpowiednio czarne i bia³e, a numer - ich ilo¶æ. Czarny
-hex nie nale¿y do planszy)}
+hex nie nale¿y do planszy - jest ``dziur±''.)}
 \label{fig:example_game_situation}
 \end{figure}
 
@@ -271,9 +275,11 @@ pocz±tkowe stosy. Rozwa¿my teraz nastêpuj±c± liczbê $x$ zale¿n± od sytuacji w gr
 ruchu $x$ zwiêksza siê dok³adnie o 1. Zauwa¿my te¿, ¿e je¶li ilo¶æ stosów wynosi dok³adnie 32, to wszystkie one maj± wielko¶æ 1
 i wszystkie pola na planszy s± zajête. Nie mo¿na wtedy zatem wykonaæ wiêcej ruchów. Zatem maksymalna ilo¶æ wszystkich ruchów
 to $9+30 = 39$ ruchów. Oczywi¶cie spora czê¶æ rozgrywek bêdzie znacznie krótsza, poniewa¿ mo¿e siê zdarzyæ, ¿e jaki¶ stos
-wiêkszy od 1 ¿etonu zostanie wcze¶niej zablokowany.
+wiêkszy od 1 ¿etonu zostanie wcze¶niej zablokowany, tak jak sta³o siê to w przyk³adowej rozgrywce (rysunek
+\ref{fig:example_game_end}).
 
-$39$ nie jest d³ug± rozgrywk± w porównaniu do klasycznych gier takich jak szachy (przeciêtnie 60 - 100 ruchów) czy go (ponad 200),
+Rozgrywka maj±ca $39$ ruchów nie jest d³ug± rozgrywk± w porównaniu do klasycznych gier takich jak
+szachy (przeciêtnie 60 - 100 ruchów) czy go (ponad 200),
 ale nadrabia to dosyæ du¿ym rozga³êzieniem drzewa gry. Szczególnie w trakcie budowania planszy jest ona bardzo du¿a - czasami
 mo¿na wykonaæ nawet ponad 100 ró¿nych ruchów. Tak¿e w ostatniej fazie - podczas dzielenia stosów czynnik ten pozostaje wysoki
 i wynosi 30 - 60 mo¿liwych ruchów w danym momencie.
@@ -288,16 +294,21 @@ w danym stanie. Aby przeprowadziæ rozgrywkê u¿ywaj±c sztucznej inteligencji, nal
 podawaæ warto¶æ tej funkcji, zazwyczaj obliczon± z pomoc± komputera.
 
 W tym rozdziale zaprezentowano algorytmy sztucznej inteligencji zaimplementowane i zbadane w trakcie pisania pracy. Na pocz±tku
-opisano klasyczny algorytm minimax oraz pochodz±c± od niego alfabetê.
+opisano klasyczny algorytm minimax oraz pochodz±c± od niego alfabetê wraz z usprawnieniami, czyli tablic± transpozycji,
+iteracyjnym pog³êbianiem
+oraz wybieraniem najpierw najlepszego syna. Nastêpnie opisano techniki Monte Carlo, od prostego wykonywania symulacji
+z wierzcho³ka do przeszukiwania drzewa Monte Carlo oraz technikê granicy ufno¶ci - usprawnienie powy¿szych.
 
 \section{Minimax}
 
 Gdyby¶my dysponowali moc± obliczeniow± i pamiêci± zdoln± w krótkim czasie obliczyæ pe³ne drzewo gry, wiadomo by³oby które
 pozycje s± wygrywaj±ce, a które przegrywaj±ce i wystarczy³oby znajduj±c siê w sytuacji wygrywaj±cej wykonaæ ruch
-do przegrywaj±cej. Niezale¿nie od strategii przeciwnika zagwarantuje nam to zwyciêstwo.
+do przegrywaj±cej. Niezale¿nie od strategii przeciwnika zagwarantuje nam to zwyciêstwo, je¿eli nasza pozycja startowa
+by³a wygrywaj±ca przeciwnik pope³ni³ b³±d i ustawi³ nas w takiej.
 
 Niestety dysponujemy ograniczonymi ¶rodkami i nawet zbudowanie pe³nego drzewa do g³êboko¶ci 4 stanowi w Splits ju¿
-dosyæ spory problem. To w³a¶nie stara siê zrobiæ algorytm Minimaks. Posiadaj±c jaki¶ sposób oceny sytuacji w grze, który
+dosyæ spory problem obliczeniowy.
+To w³a¶nie stara siê zrobiæ algorytm Minimaks. Posiadaj±c jaki¶ sposób oceny sytuacji w grze, który
 nazywaæ bêdziemy funkcj± oceniaj±c±, mo¿emy zbadaæ drzewo gry do pewnej ustalonej g³êboko¶ci i zdecydowaæ, który ruch
 najbardziej siê nam op³aci, zak³adaj±c, ¿e przeciwnik bêdzie siê stara³ graæ tak, ¿eby wynik by³ jak najgorszy dla nas.
 
@@ -469,7 +480,7 @@ g³êboko¶æ, na jak± zamierzamy przeprowadziæ przeszukiwanie. Pocz±tkowo ustalamy 
 w rekurencyjnym wywo³aniu. Li¶ciem drzewa przeszukiwañ jest wtedy wêze³, do którego weszli¶my z g³êboko¶ci± $0$ lub faktyczny
 stan koñcowy gry.
 
-Zauwa¿my, ¿e przeszukiwanie z g³êboko¶ci± zaledwie o jeden wiêksz± jest o ca³y rz±d wielko¶ci d³u¿sze, zatem je¿eli
+Zauwa¿my, ¿e przeszukiwanie z g³êboko¶ci± zaledwie o jeden wiêksz± jest zazwyczaj o ca³y rz±d wielko¶ci d³u¿sze, zatem je¿eli
 dysponujemy ograniczonym czasem na ruch, mo¿emy zacz±æ od pewnej ustalonej niewielkiej g³êboko¶ci - na przyk³ad $1$, a nastêpnie
 przeszukiwaæ na coraz wiêksze g³êboko¶ci, a¿ zabraknie nam czasu. Wynikiem iteracyjnego pog³êbiania jest wynik ostatniego
 pe³nego przeszukania. Czas wykonania ca³o¶ci bêdzie tego samego rzêdu, co wykonanie tylko ostatniego poziomu.
@@ -516,7 +527,7 @@ na wykonywaniu du¿ej liczby losowych symulacji i wyci±ganiu wniosków z wyników.
 
 W przpadku gry symulacj± jest losowa rozgrywka, a wynikiem - numer gracza zwyciêskiego. Je¿eli z danej sytuacji
 przprowadzimy du¿o losowych rozgrywek i wiêkszo¶æ z nich wygra³ gracz 0, to mo¿emy wnioskowaæ, ¿e jest to stosunkowo dobra sytuacja
-dla tego gracza. Algorytm, który realizuje ten pomys³ zosta³ w projekcie nazwany po prostu ``monte carlo''.
+dla tego gracza. Algorytm, który realizuje ten pomys³ zosta³ w projekcie nazwany po prostu ``Monte Carlo''.
 
 Wiêcej o technikach Monte Carlo mo¿na znale¼æ w pracy \cite{mcts12}.
 
@@ -545,10 +556,10 @@ z tym samym prawdopodobieñstwem. Byæ mo¿e jednak lepiej by³oby zrezygnowaæ z czê
 na wyj±tkowo s³aby ruch, aby móc przeznaczyæ wiêcej w celu rozró¿nienia pomiêdzy dobrymi ruchami.
 
 U¶ci¶leniem tego pomys³u jest pojêcie granicy ufno¶ci. Uzasadnienie wykorzystania w³a¶nie takich warto¶ci mo¿na
-znale¼æ w \cite{mcts12}. Tutaj przedstawiono pseudokod w Algorithm~\ref{alg:mc}.
+znale¼æ w \cite{mcts12}. Tutaj przedstawiono pseudokod w Algorytmie~\ref{alg:mc}.
 
 \begin{algorithm}
-  \caption{Monte Carlo with confidency bound}
+  \caption{Monte Carlo z granic± ufno¶ci}
   \label{alg:mc}
   \begin{algorithmic}
     \Function {ConfidencyBound} {node, son}
@@ -568,7 +579,8 @@ znale¼æ w \cite{mcts12}. Tutaj przedstawiono pseudokod w Algorithm~\ref{alg:mc}.
 \section{Przeszukiwanie drzewa Monte Carlo}
 
 Algorytm przeszukiwania drzewa Monte Carlo to jeden z najsilniejszych znanych algorytmów sztucznej inteligencji w grach.
-By³ on z sukcesem stosowany w grach takich jak go czy szachy. Szczególnie go jest ¶wietnym przyk³adem wysokiej jako¶ci
+By³ on z sukcesem stosowany w grach takich jak go czy szachy. Szczególnie go jest ¶wietnym przyk³adem
+zastosowania
 algorytmu. Przed u¿ywaniem tej techniki nie by³o ¿adnych programów mog±cych sprostaæ cz³owiekowi.
 Stanowi on naturalne rozwiniêcie podstawowej techniki
 Monte Carlo. Zauwa¿my, ¿e poprzednio decydowali¶my, który ruch wybraæ na podstawie wyników symulacji przeprowadzanych
@@ -578,10 +590,11 @@ z li¶ci wybranego poddrzewa. Nie chcemy jednak traciæ zysków z wykorzystania gra
 zawsze dochodziæ do pe³nej g³êboko¶ci jak w minimaksie, bêdziemy powoli rozbudowywaæ drzewo tam, gdzie wydaje siê to
 op³acalne. Pe³ny opis ró¿nych podej¶æ do przeszukiwania drzewa Monte Carlo mo¿na znale¼æ w \cite{mcts12}.
 
-Poni¿ej zaprezentowano najbardziej klasyczne podej¶cie.
+Poni¿ej, w Algorytmie \ref{alg:mcts} zaprezentowano najbardziej klasyczne podej¶cie.
 
 \begin{algorithm}
   \caption{Monte Carlo Tree Search}
+  \label{alg:mcts}
   \begin{algorithmic}
     \Function {findBestMove} {node}
     \State $\texttt{utwórz korzeñ drzewa ze stanem \textit{node}}$
@@ -614,13 +627,18 @@ Poni¿ej zaprezentowano najbardziej klasyczne podej¶cie.
   \end{algorithmic}
 \end{algorithm}
 
-W powy¿szym algorytmie stwierdzenie ``przeprowadzono wystarczaj±co du¿o rozgrywek'' mo¿na zrealizowaæ na ró¿ne sposoby.
-Najprostszym jest ustalenie pewnej ustalonej liczby rozgrywek, po przekroczeniu której nale¿y rozwijaæ wêze³.
+W tym algorytmie stwierdzenie ``przeprowadzono wystarczaj±co du¿o rozgrywek'' mo¿na zrealizowaæ na ró¿ne sposoby.
+Najprostszym jest ustalenie pewnej ustalonej liczby rozgrywek - tak zwanej sta³ej ekspansji lub sta³ej eksploracji,
+po przekroczeniu której nale¿y rozwijaæ wêze³.
 
 Zauwa¿my pewn± dodatkow± w³asno¶æ algorytmu. Statystyki liczby wygranych z poszczególnych wêz³ów s± tak samo dobre
 teraz, jak i po faktycznym wykonaniu ruchów. Warto je zatem zachowaæ. Mo¿emy przechowaæ drzewo i gdy otrzymamy
 informacjê, ¿e wykonano ruch, zamiast budowaæ drzewo od pocz±tku, mo¿emy po prostu przesun±æ wska¼nik korzenia
 na odpowiedniego z synów.
+
+Techniki Monte Carlo maj± ogromn± przewagê nad innymi podej¶ciami. Ich implementacja jest zupe³nie niezale¿na od zasad
+gry. Potrzebuj± one jedynie zewnêtrznego modu³u zajmuj±cego siê zasadami, ale zupe³nie nie wnikaj± w nie,
+w przeciwieñstwie do stosowania funkcji oceniaj±cej.
 
 \chapter{Wyniki ekperymentów}
 
@@ -708,8 +726,14 @@ meczów pomiêdzy algorytmami.
 \subsection{Szybko¶æ przeszukiwania}
 
 Przyjrzymy siê teraz przyspieszeniu jakie daje mo¿liwo¶æ dokonywania odciêæ przez alfabetê oraz sprawdzania tablicy transpozycji.
-Poni¿ej w tabeli \ref{fig:ab_speeds} zaprezentowano czasy potrzebne na ca³kowite przej¶cie drzewa gry do g³êboko¶ci 5,
-zaczynaj±c od pewnej typowej sytuacji po zbudowaniu planszy.
+W tabeli \ref{fig:ab_speeds} zaprezentowano czasy potrzebne na ca³kowite przej¶cie drzewa gry do g³êboko¶ci 5,
+zaczynaj±c od pewnej typowej sytuacji po zbudowaniu planszy. Wyniki te otrzymano z pomoc± programu wywo³anego przez komendê:
+
+\begin{algorithm}
+\begin{algorithmic}
+  \State $\texttt{./alphabeta\_speeds}$
+\end{algorithmic}
+\end{algorithm}
 
 \begin{figure}
 \caption{Czas potrzebny na znalezienie warto¶ci minimax drzewa o g³êboko¶ci 5}
@@ -749,7 +773,7 @@ i wybieranie najlepszego syna jest niewiele lepsze ni¿ wybieranie losowego.
 Rzuca siê w oczy równie¿ znaczne spowolnienie wywo³ane przez u¿ycie drugiej funkcji oceniaj±cej. Przyczyna tego jest bardzo prosta.
 Pierwsza funkcja nie rozró¿nia³a ruchów wystarczaj±co, a taka sama warto¶æ funkcji ju¿ powoduje wykonanie ciêcia, dlatego
 przy u¿yciu pierwszej funkcji wykonuje siê du¿o wiêkszej liczby ciêæ.
-Pamiêtajmy jednak, ¿e sam szybko¶æ nie przes±dza o jako¶ci funkcji oceniaj±cej. W koñcu zyskujemy lepsz± ocenê sytuacji.
+Pamiêtajmy jednak, ¿e sama szybko¶æ nie przes±dza o jako¶ci funkcji oceniaj±cej. W koñcu zyskujemy lepsz± ocenê sytuacji.
 
 \subsection{Turniej}
 
@@ -759,6 +783,13 @@ losowe ruchy.
 Turniej
 rozegrano metod± ``ka¿dy z ka¿dym'' po 10 meczów z sekund± na ruch zmieniaj±c zaczynaj±cego gracza co mecz. Ka¿dy algorytm rozegra³
 w sumie 80 meczów. W tabeli podano ilo¶æ meczów zwyciê¿onych przez dany algorytm.
+Sam turniej mo¿na uruchomiæ wykonuj±c komendê:
+
+\begin{algorithm}
+\begin{algorithmic}
+  \State $\texttt{./ab\_tournament}$
+\end{algorithmic}
+\end{algorithm}
 
 \begin{figure}
 \caption{Wyniki turnieju algorytmów z funkcj± oceniaj±c±}
@@ -796,21 +827,20 @@ pokonywa³ on ³atwo alfabetê korzystaj±c± ze s³abszej funkcji.
 
 Poza tym widaæ, ¿e w wiêkszo¶ci przypadków korzystanie z ulepszenia poprawi³o wynik algorytmu, czasami dosyæ znacz±co,
 co oznacza, ¿e faktycznie op³aca siê dodawaæ ró¿ne usprawnienia do algorytmów. Ten turniej pokazuje równie¿,
-jak wielkie znaczenie ma wybór funkcji oceniaj±cej dla tej rodziny algorytmów. Bez dobrze funkcji faktycznie dobrze oddaj±cej
+jak wielkie znaczenie ma wybór funkcji oceniaj±cej dla tej rodziny algorytmów. Bez funkcji faktycznie dobrze oddaj±cej
 si³ê danej sytuacji, algorytmy minimax i alfabeta s± praktycznie bezu¿yteczne.
 
 \section{Przeszukiwanie drzewa Monte Carlo}
 
 W przypadku technik Monte Carlo algorytm z drzewem zdecydowanie górowa³ nad ``prostym`` Monte Carlo w czasie
-przeprowadzania testowych rozgrywek, dlatego przejdziemy od razu analizy algorymu MCTS.
+przeprowadzania testowych rozgrywek, dlatego przejdziemy od razu do analizy algorymu MCTS.
 
-
-W algorytmie MCTS zwykle bardzo wa¿nym parametrem jest próg rozwijania wierzcho³ka drzewa, to znaczy ilo¶æ
-symulacji, po których nale¿y rozwijaæ. W tabeli \ref{fig:mc_simple} przedstawiono wyniki turnieju miêdzy algorytmami
+W algorytmie MCTS zwykle bardzo wa¿nym parametrem jest sta³a ekspansji, to znaczy ilo¶æ
+symulacji, po których nale¿y rozwijaæ wierzcho³ek. W tabeli \ref{fig:mc_simple} przedstawiono wyniki turnieju miêdzy algorytmami
 MCTS z ró¿nymi warto¶ciami sta³ej rozwijania. Jest to ilo¶æ symulacji z danego wêz³a, po których nale¿y go rozwin±æ.
 Tym razem turniej przeprowadzono rozgrywaj±c 20 gier na parê i dano 2 sekundy na ruch.
 
-\begin{figure}
+\begin{figure}[!htbp]
 \caption{Turniej MCTS}
 \label{fig:mc_simple}
 \begin{center}
@@ -835,7 +865,7 @@ Próbowanie ró¿nych sta³ych nie da³o zbyt dobrych reultatów - wyniki algorytmów w
 Dopiero u¿ycie ekstremalnie wysokich sta³ych spowodowa³o pogorszenie jako¶ci algorytmu, co prezentuje tabela \ref{fig:mc_adv}.
 Ten turniej równie¿ przeprowadzono graj±c 20 gier w parze i daj±c 2 sekundy na ruch.
 
-\begin{figure}
+\begin{figure}[!htbp]
 \caption{Turniej MCTS II}
 \label{fig:mc_adv}
 \begin{center}
@@ -883,7 +913,7 @@ podczas budowania planszy - wiele sytuacji jest rozpoznawanych jako ró¿ne, podcz
 mog³oby znacz±co poprawiæ wydajno¶æ algorytmów.
 
 W trakcie pisania poszczególnych algorytmów natkniêto siê na wiele sytuacji, w których ³atwo pope³niæ b³±d.
-Niektóre napotkane problemy by³y szczególnie subtelne. W algorytmie alfabeta (Algorytm \ref{alg:alfabeta})
+Niektóre napotkane problemy by³y szczególnie subtelne. W algorytmie alfabeta (Algorytm \ref{alg:alphabeta})
 chocia¿by je¿eli na najwy¿szym poziomie nie bêdziemy wybieraæ losowego z najlepszych synów, a tylko zawsze pierwszego
 z nich, to bêdziemy uzale¿nieni od implementacji zasad, w której zwracana kolejno¶æ mo¿liwych ruchów wcale nie jest
 najlepsza.
