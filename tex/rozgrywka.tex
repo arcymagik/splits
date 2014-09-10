@@ -3,7 +3,7 @@
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -60,11 +60,11 @@
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
-v  \node (n0) {};
+  \node (n0) {};
   \node (n1) at (n0.corner 1) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
@@ -116,7 +116,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -173,7 +173,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -183,7 +183,8 @@ v  \node (n0) {};
   \node (n3) at (n1.corner 5) {};
 
   \node (n4) at (n3.corner 5) {};
-  \node (n5) at (n2.corner 5) {16 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {16 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -230,7 +231,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -240,7 +241,8 @@ v  \node (n0) {};
   \node (n3) at (n1.corner 5) {};
 
   \node (n4) at (n3.corner 5) {};
-  \node (n5) at (n2.corner 5) {16 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {16 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -253,7 +255,8 @@ v  \node (n0) {};
   \node (n12) at ($(n6.corner 5)+(0,0)$) {};
   \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
   \node (n14) at (n12.corner 5) {};
-  \node (n15) at (n13.corner 5) {16 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at($ (n13.corner 5)+(-150,0)$) {16 B};
 
   \node (n16) at (n7.corner 5) {};
   \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
@@ -286,7 +289,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -295,8 +298,10 @@ v  \node (n0) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
 
-  \node (n4) at (n3.corner 5) {6 W};
-  \node (n5) at (n2.corner 5) {10 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {6 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {10 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -309,7 +314,8 @@ v  \node (n0) {};
   \node (n12) at ($(n6.corner 5)+(0,0)$) {};
   \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
   \node (n14) at (n12.corner 5) {};
-  \node (n15) at (n13.corner 5) {16 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15)[draw=none]  at($ (n13.corner 5)+(-150,0)$) {16 B};
 
   \node (n16) at (n7.corner 5) {};
   \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
@@ -342,7 +348,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -351,8 +357,10 @@ v  \node (n0) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
 
-  \node (n4) at (n3.corner 5) {4 W};
-  \node (n5) at (n2.corner 5) {10 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {4 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {10 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -364,8 +372,10 @@ v  \node (n0) {};
 
   \node (n12) at ($(n6.corner 5)+(0,0)$) {};
   \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
-  \node (n14) at (n12.corner 5) {12 B};
-  \node (n15) at (n13.corner 5) {4 B};
+  \node (n14) at (n12.corner 5) {};
+  \node (l14) [draw=none] at ($(n12.corner 5)+(-150,0)$) {12 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at ($(n13.corner 5)+(-80,0)$) {4 B};
 
   \node (n16) at (n7.corner 5) {};
   \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
@@ -398,7 +408,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -407,8 +417,10 @@ v  \node (n0) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
 
-  \node (n4) at (n3.corner 5) {2 W};
-  \node (n5) at (n2.corner 5) {10 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {2 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {10 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -418,10 +430,13 @@ v  \node (n0) {};
   \node (n10) at (i0.corner 1) {};
   \node (n11) at (n10.corner 1) {};
 
-  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (l12) [draw=none] at ($(n6.corner 5)+(-80,0)$) {2 W};
   \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
-  \node (n14) at (n12.corner 5) {12 B};
-  \node (n15) at (n13.corner 5) {4 B};
+  \node (n14) at (n12.corner 5) {};
+  \node (l14)[draw=none]  at($ (n12.corner 5)+(-150,0)$) {12 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at ($(n13.corner 5)+(-80,0)$) {4 B};
 
   \node (n16) at (n7.corner 5) {};
   \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
@@ -454,7 +469,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -463,8 +478,10 @@ v  \node (n0) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
 
-  \node (n4) at (n3.corner 5) {2 W};
-  \node (n5) at (n2.corner 5) {10 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {2 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {10 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -474,15 +491,19 @@ v  \node (n0) {};
   \node (n10) at (i0.corner 1) {};
   \node (n11) at (n10.corner 1) {};
 
-  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (l12) [draw=none] at ($(n6.corner 5)+(-80,0)$) {2 W};
   \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
-  \node (n14) at (n12.corner 5) {6 B};
-  \node (n15) at (n13.corner 5) {4 B};
+  \node (n14) at (n12.corner 5) {};
+  \node (l14) [draw=none] at ($(n12.corner 5)+(-80,0)$) {6 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at ($(n13.corner 5)+(-80,0)$) {4 B};
 
   \node (n16) at (n7.corner 5) {};
   \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
   \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
-  \node (n19) at ($(n17.corner 3)+(0,-866)$) {6 B};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+  \node (l19) [draw=none] at ($(n17.corner 3)+(-80,-866)$) {6 B};
 
   \node (o1) [fill=black] at (n8.corner 5) {};
   \node (n20) at ($(n12.corner 3)+(0,866)$) {};
@@ -510,7 +531,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -519,8 +540,10 @@ v  \node (n0) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
 
-  \node (n4) at (n3.corner 5) {1 W};
-  \node (n5) at (n2.corner 5) {10 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {1 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {10 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -530,15 +553,20 @@ v  \node (n0) {};
   \node (n10) at (i0.corner 1) {};
   \node (n11) at (n10.corner 1) {};
 
-  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (l12) [draw=none] at ($(n6.corner 5)+(-80,0)$) {2 W};
   \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
-  \node (n14) at (n12.corner 5) {6 B};
-  \node (n15) at (n13.corner 5) {4 B};
+  \node (n14) at (n12.corner 5) {};
+  \node (l14) [draw=none] at ($(n12.corner 5)+(-80,0)$) {6 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at ($(n13.corner 5)+(-80,0)$) {4 B};
 
   \node (n16) at (n7.corner 5) {};
-  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (l17) [draw=none] at ($(n7.corner 3)+(-80,-866)$) {1 W};
   \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
-  \node (n19) at ($(n17.corner 3)+(0,-866)$) {6 B};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+  \node (l19) [draw=none] at ($(n17.corner 3)+(-80,-866)$) {6 B};
 
   \node (o1) [fill=black] at (n8.corner 5) {};
   \node (n20) at ($(n12.corner 3)+(0,866)$) {};
@@ -557,7 +585,7 @@ v  \node (n0) {};
   \node (n31) at (n30.corner 5) {};
 \end{tikzpicture}
 \end{center}
-\caption{...ale nic nie da siê ju¿ zrobiæ}
+\caption{...ale nic nie da siê ju¿ zrobiæ.}
 %\label{fig:example_game_situation}
 \end{figure}
 
@@ -566,7 +594,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -575,8 +603,10 @@ v  \node (n0) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
 
-  \node (n4) at (n3.corner 5) {1 W};
-  \node (n5) at (n2.corner 5) {10 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {1 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-150,0)$) {10 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -586,15 +616,21 @@ v  \node (n0) {};
   \node (n10) at (i0.corner 1) {};
   \node (n11) at (n10.corner 1) {};
 
-  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
-  \node (n13) at ($(n12.corner 3)+(0,-866)$) {5 B};
-  \node (n14) at (n12.corner 5) {6 B};
-  \node (n15) at (n13.corner 5) {4 B};
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (l12) [draw=none] at ($(n6.corner 5)+(-80,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (l13) [draw=none] at ($(n12.corner 3)+(-80,-866)$) {5 B};
+  \node (n14) at (n12.corner 5) {};
+  \node (l14) [draw=none] at ($(n12.corner 5)+(-80,0)$) {6 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at ($(n13.corner 5)+(-80,0)$) {4 B};
 
   \node (n16) at (n7.corner 5) {};
-  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (l17) [draw=none] at ($(n7.corner 3)+(-80,-866)$) {1 W};
   \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
-  \node (n19) at ($(n17.corner 3)+(0,-866)$) {1 B};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+  \node (l19) [draw=none] at ($(n17.corner 3)+(-80,-866)$) {1 B};
 
   \node (o1) [fill=black] at (n8.corner 5) {};
   \node (n20) at ($(n12.corner 3)+(0,866)$) {};
@@ -613,7 +649,7 @@ v  \node (n0) {};
   \node (n31) at (n30.corner 5) {};
 \end{tikzpicture}
 \end{center}
-\caption{}
+\caption{Po kolejnym ruchu sytuacja stanie siê jasna}
 %\label{fig:example_game_situation}
 \end{figure}
 
@@ -622,7 +658,7 @@ v  \node (n0) {};
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
@@ -631,8 +667,10 @@ v  \node (n0) {};
   \node (n2) at (n0.corner 5) {};
   \node (n3) at (n1.corner 5) {};
 
-  \node (n4) at (n3.corner 5) {1 W};
-  \node (n5) at (n2.corner 5) {9 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {1 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-80,0)$) {9 W};
   \node (n6) at (n4.corner 5) {};
   \node (n7) at (n5.corner 5) {};
 
@@ -642,15 +680,22 @@ v  \node (n0) {};
   \node (n10) at (i0.corner 1) {};
   \node (n11) at (n10.corner 1) {};
 
-  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
-  \node (n13) at ($(n12.corner 3)+(0,-866)$) {5 B};
-  \node (n14) at (n12.corner 5) {6 B};
-  \node (n15) at (n13.corner 5) {4 B};
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (l12) [draw=none] at ($(n6.corner 5)+(-80,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (l13) [draw=none] at ($(n12.corner 3)+(-80,-866)$) {5 B};
+  \node (n14) at (n12.corner 5) {};
+  \node (l14) [draw=none] at ($(n12.corner 5)+(-80,0)$) {6 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at ($(n13.corner 5)+(-80,0)$) {4 B};
 
-  \node (n16) at (n7.corner 5) {1 W};
-  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
+  \node (n16) at (n7.corner 5) {};
+  \node (l16) [draw=none] at ($(n7.corner 5)+(-80,0)$) {1 W};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (l17) [draw=none] at ($(n7.corner 3)+(-80,-866)$) {1 W};
   \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
-  \node (n19) at ($(n17.corner 3)+(0,-866)$) {1 B};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+  \node (l19) [draw=none] at ($(n17.corner 3)+(-80,-866)$) {1 B};
 
   \node (o1) [fill=black] at (n8.corner 5) {};
   \node (n20) at ($(n12.corner 3)+(0,866)$) {};
@@ -679,35 +724,55 @@ Czarny gracz powinien siê poddaæ...}
 \begin{tikzpicture}
   [scale=0.8,auto=center, x=0.0125mm, y=0.0125mm,
     every node/.style={anchor=west,regular polygon, regular polygon sides=6,draw,
-      font=\fontsize{3}{3.5}\selectfont,
+      font=\fontsize{6}{7}\selectfont,
       minimum width=1cm,
       outer sep=0}
   ]
-  \node (n0) {1W};
-  \node (n1) at (n0.corner 1) {1W};
-  \node (n2) at (n0.corner 5) {1W};
-  \node (n3) at (n1.corner 5) {1W};
+  \node (n0) {};
+  \node (l0) [draw=none] at ($(n0.corner 3)+(-80,0)$) {1W};
+  \node (n1) at (n0.corner 1) {};
+  \node (l1) [draw=none] at ($(n0.corner 1)+(-80,0)$) {1W};
+  \node (n2) at (n0.corner 5) {};
+  \node (l2) [draw=none] at ($(n0.corner 5)+(-80,0)$) {1W};
+  \node (n3) at (n1.corner 5) {};
+  \node (l3) [draw=none] at ($(n1.corner 5)+(-80,0)$) {1W};
 
-  \node (n4) at (n3.corner 5) {1 W};
-  \node (n5) at (n2.corner 5) {1 W};
-  \node (n6) at (n4.corner 5) {3 W};
-  \node (n7) at (n5.corner 5) {1 W};
+  \node (n4) at (n3.corner 5) {};
+  \node (l4) [draw=none] at ($(n3.corner 5)+(-80,0)$) {1 W};
+  \node (n5) at (n2.corner 5) {};
+  \node (l5) [draw=none] at ($(n2.corner 5)+(-80,0)$) {1 W};
+  \node (n6) at (n4.corner 5) {};
+  \node (l6) [draw=none] at ($(n4.corner 5)+(-80,0)$) {3 W};
+  \node (n7) at (n5.corner 5) {};
+  \node (l7) [draw=none] at ($(n5.corner 5)+(-80,0)$) {1 W};
 
-  \node (n8) at (n3.corner 1) {1 W};
-  \node (n9) at (n8.corner 1) {1 W};
+  \node (n8) at (n3.corner 1) {};
+  \node (l8) [draw=none] at ($(n3.corner 1)+(-80,0)$) {1 W};
+  \node (n9) at (n8.corner 1) {};
+  \node (l9) [draw=none] at ($(n8.corner 1)+(-80,0)$) {1 W};
   \node (i0) [draw=none] at (n1.corner 1) {};
-  \node (n10) at (i0.corner 1) {1 W};
-  \node (n11) at (n10.corner 1) {1 W};
+  \node (n10) at (i0.corner 1) {};
+  \node (l10) [draw=none] at ($(i0.corner 1)+(-80,0)$) {1 W};
+  \node (n11) at (n10.corner 1) {};
+  \node (l11) [draw=none] at ($(n10.corner 1)+(-80,0)$) {1 W};
 
-  \node (n12) at ($(n6.corner 5)+(0,0)$) {2 W};
-  \node (n13) at ($(n12.corner 3)+(0,-866)$) {1 B};
-  \node (n14) at (n12.corner 5) {1 B};
-  \node (n15) at (n13.corner 5) {1 B};
+  \node (n12) at ($(n6.corner 5)+(0,0)$) {};
+  \node (l12) [draw=none] at ($(n6.corner 5)+(-80,0)$) {2 W};
+  \node (n13) at ($(n12.corner 3)+(0,-866)$) {};
+  \node (l13) [draw=none] at ($(n12.corner 3)+(-80,-866)$) {1 B};
+  \node (n14) at (n12.corner 5) {};
+  \node (l14) [draw=none] at ($(n12.corner 5)+(-80,0)$) {1 B};
+  \node (n15) at (n13.corner 5) {};
+  \node (l15) [draw=none] at ($(n13.corner 5)+(-80,0)$) {1 B};
 
-  \node (n16) at (n7.corner 5) {1 W};
-  \node (n17) at ($(n7.corner 3)+(0,-866)$) {1 W};
-  \node (n18) at ($(n16.corner 3)+(0,-866)$) {4 B};
-  \node (n19) at ($(n17.corner 3)+(0,-866)$) {1 B};
+  \node (n16) at (n7.corner 5) {};
+  \node (l16) [draw=none] at ($(n7.corner 5)+(-80,0)$) {1 W};
+  \node (n17) at ($(n7.corner 3)+(0,-866)$) {};
+  \node (l17) [draw=none] at ($(n7.corner 3)+(-80,-866)$) {1 W};
+  \node (n18) at ($(n16.corner 3)+(0,-866)$) {};
+  \node (l18) [draw=none] at ($(n16.corner 3)+(-80,-866)$) {4 B};
+  \node (n19) at ($(n17.corner 3)+(0,-866)$) {};
+  \node (l19) [draw=none] at ($(n17.corner 3)+(-80,-866)$) {1 B};
 
   \node (o1) [fill=black] at (n8.corner 5) {};
   \node (n20) at ($(n12.corner 3)+(0,866)$) {};
@@ -715,15 +780,23 @@ Czarny gracz powinien siê poddaæ...}
   \node (n22) at (n21.corner 5) {};
   \node (n23) at ($(n22.corner 3)+(0,866)$) {};
 
-  \node (n24) at (n14.corner 1) {1 B};
-  \node (n25) at (n24.corner 1) {1 B};
-  \node (n26) at (n24.corner 5) {1 B};
-  \node (n27) at (n25.corner 5) {1 B};
+  \node (n24) at (n14.corner 1) {};
+  \node (l24) [draw=none] at ($(n14.corner 1)+(-80,0)$) {1 B};
+  \node (n25) at (n24.corner 1) {};
+  \node (l25) [draw=none] at ($(n24.corner 1)+(-80,0)$) {1 B};
+  \node (n26) at (n24.corner 5) {};
+  \node (l26) [draw=none] at ($(n24.corner 5)+(-80,0)$) {1 B};
+  \node (n27) at (n25.corner 5) {};
+  \node (l27) [draw=none] at ($(n25.corner 5)+(-80,0)$) {1 B};
 
-  \node (n28) at (n14.corner 5) {1 B};
-  \node (n29) at (n28.corner 5) {1 B};
-  \node (n30) at (n15.corner 5) {1 B};
-  \node (n31) at (n30.corner 5) {1 B};
+  \node (n28) at (n14.corner 5) {};
+  \node (l28) [draw=none] at ($(n14.corner 5)+(-80,0)$) {1 B};
+  \node (n29) at (n28.corner 5) {};
+  \node (l29) [draw=none] at ($(n28.corner 5)+(-80,0)$) {1 B};
+  \node (n30) at (n15.corner 5) {};
+  \node (l30) [draw=none] at ($(n15.corner 5)+(-80,0)$) {1 B};
+  \node (n31) at (n30.corner 5) {};
+  \node (l31) [draw=none] at ($(n30.corner 5)+(-80,0)$) {1 B};
 \end{tikzpicture}
 \end{center}
 \caption{...bo inaczej rozgrywka skoñczy siê jego przegran± - przy wype³nianiu pozosta³ych pól w koñcu zabraknie mu mo¿liwo¶ci ruchu.}
