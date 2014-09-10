@@ -43,12 +43,14 @@ private:
     bool outsideWindow(int best, int cp, int alpha, int beta);
     int alpha_beta(Move* move, int alpha, int beta, unsigned int height);
     int alpha_beta_opt(unsigned int mindex, int alpha, int beta, unsigned int height);
-    int getHashedValue(unsigned int height, unsigned int* best_last_index);
-    void setHashedValue(int grade, unsigned int height, unsigned int last_best_index);
+    int getHashedValue(unsigned int height, unsigned int* best_last_index, int alpha, int beta);
+    void setHashedValue(int grade, unsigned int height, unsigned int last_best_index, int alpha, int beta);
 
     unsigned int chooseAsFirst();
 
     bool a_bet_is_won(int size);
+
+    static bool valueInBounds(int grade, unsigned int btype, int alpha, int beta);
 };
 
 #endif
