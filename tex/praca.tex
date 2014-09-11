@@ -176,7 +176,7 @@ rynku. Formalnie jest to skoñczona gra deterministyczna o sumie zerowej, tak jak
 \section{Zasady}
 
 P³ytka w~grze do pojedynczy element, z~którego budowana jest plansza. Jest ona podzielona na cztery sze¶ciok±ty foremne --- tak zwane
-heksy. P³ytkê przedstawiono poni¿ej na rysunku \ref{fig:plytka}.
+heksy. P³ytkê przedstawiono poni¿ej na rysunku~\ref{fig:plytka}.
 
 \begin{figure}
 \begin{center}
@@ -215,7 +215,7 @@ zatrzymaæ, gdy tylko trafi siê na przeszkodê --- inny stos lub krawêd¼ planszy. 
 
 Gracz, który nie mo¿e ju¿ wykonaæ ruchu, przegrywa.
 
-Na rysunku \ref{fig:example_game_situation} przedstawiono przyk³adow± sytuacjê w~grze.
+Na rysunku~\ref{fig:example_game_situation} przedstawiono przyk³adow± sytuacjê w~grze.
 
 \begin{figure}
 \begin{center}
@@ -358,7 +358,7 @@ naszego wêz³a jest maksimum (minimum je¶li wêze³ jest typu min) warto¶ci wêz³ów 
 \end{algorithm}
 
 Dok³adny opis algorytmu minimaks mo¿na znale¼æ w~\cite{ap96}. Pseudokod przedstawiono jako
-algorytm \ref{alg:minimaks}.
+algorytm~\ref{alg:minimaks}.
 
 \subsection{Funkcja oceniaj±ca}
 
@@ -382,7 +382,7 @@ gra siê zakoñczy, to wygramy. Jest to pierwsza funkcja oceniaj±ca zbadana w~tej 
 Druga funkcja jest rozwiniêciem pomys³u z~pierwszej. Aby nie dopu¶ciæ do zablokowania ¿etonów na stosie, nale¿y dbaæ, aby
 wysokie stosy mia³y du¿e mo¿liwo¶ci ruchu. Dlatego zamiast po prostu liczyæ ka¿dy niezablokowany ¿eton z~wag± 1, policzmy go
 z ustalon± wag± $N$ (w badaniach u¿yto warto¶ci $N = 10$) powiêkszon± o~ilo¶æ pustych s±siadów stosu,
-w którym siê znajduje, jak na rysunku \ref{fig:focen}. Ta warto¶æ stanowi drug±, ulepszon± funkcjê oceniaj±c±.
+w którym siê znajduje, jak na rysunku~\ref{fig:focen}. Ta warto¶æ stanowi drug±, ulepszon± funkcjê oceniaj±c±.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -409,7 +409,7 @@ w którym siê znajduje, jak na rysunku \ref{fig:focen}. Ta warto¶æ stanowi drug±,
 
 Algorytm minimaks przegl±da wszystkie wêz³y w~ustalonym poddrzewie, ale okazuje siê, ¿e nie jest to potrzebne w~niektórych
 sytuacjach, aby w~dalszym ci±gu umieæ podaæ dok³adn± warto¶æ minimaksow± dla danej sytuacji. Spójrzmy na nastêpuj±c± sytuacjê
-na rysunku \ref{fig:ab_tree},
+na rysunku~\ref{fig:ab_tree},
 gdzie wêze³ $a$ jest typu max, obliczyli¶my ju¿ warto¶ci wêz³ów $b$ i~$d$, które wynosz± odpowiednio $2$ i~$-1$.
 
 \begin{figure}
@@ -448,7 +448,7 @@ przerwaæ obliczenia zwracaj±c tê warto¶æ jako wynik. Analogicznie postêpujemy w~
 jest mniejsza od okna. Takie przerwanie obliczeñ nazywamy ciêciem.
 
 Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimaks nazywa siê algorytmem alfabeta. Wraz z~ró¿nymi usprawnieniami
-zosta³ dok³adnie opisany w~\cite{ap96} oraz \cite{km75}. Tutaj algorytm przedstawiono w~pseudokodzie algorytm \ref{alg:alphabeta}.
+zosta³ dok³adnie opisany w~\cite{ap96} oraz \cite{km75}. Tutaj algorytm przedstawiono w~pseudokodzie algorytm~\ref{alg:alphabeta}.
 
 Alfabeta to klasyczny algorytm sztucznej inteligencji znany i~stosowany od ponad pó³ wieku. Jest szczególnie dobry
 w grach kombinacyjnych, gdzie trzeba zbadaæ dok³adnie rozgrywkê na kilka ruchów do przodu. Sprawdzi³ siê
@@ -583,7 +583,7 @@ Wiêcej o~technikach Monte Carlo w~grach i~nie tylko mo¿na znale¼æ w~pracy \cite{
 \end{algorithmic}
 \end{algorithm}
 
-Aby algorytm \ref{alg:mc_simple} mia³ sens, dla ka¿dego syna wêz³a powinna zostaæ przeprowadzona co najmniej jedna
+Aby algorytm~\ref{alg:mc_simple} mia³ sens, dla ka¿dego syna wêz³a powinna zostaæ przeprowadzona co najmniej jedna
 rozgrywka.
 Funkcja $\textit{chooseSon}$ wybiera po prostu losowego syna, natomiast $\textit{simulate}$
 przeprowadza ca³kowicie losow± rozgrywkê. Te funkcje mo¿na jednak zast±piæ nieco innymi, które prowadz± do ciekawych
@@ -643,7 +643,7 @@ Teraz ka¿dy wierzcho³ek trzyma swoje statystyki wygranych, wiêc po przeprowadzen
 cofn±æ do korzenia, po drodze uaktualniaj±c dane we wszystkich wêz³ach.
 Pe³ny opis ró¿nych podej¶æ do przeszukiwania drzewa Monte Carlo mo¿na znale¼æ w~\cite{mcts12}.
 
-W Algorytmie \ref{alg:mcts} zaprezentowano najbardziej klasyczne podej¶cie.
+W algorytmie~\ref{alg:mcts} zaprezentowano najbardziej klasyczne podej¶cie.
 
 \begin{algorithm}
   \caption{Monte Carlo Tree Search}
@@ -787,7 +787,7 @@ meczów pomiêdzy algorytmami.
 \subsection{Szybko¶æ przeszukiwania}
 
 Przyjrzymy siê teraz przyspieszeniu jakie daje mo¿liwo¶æ dokonywania odciêæ przez alfabetê oraz sprawdzania tablicy transpozycji.
-W tabeli \ref{tab:ab_speeds} zaprezentowano czasy potrzebne na ca³kowite przej¶cie drzewa gry do g³êboko¶ci 5,
+W tabeli~\ref{tab:ab_speeds} zaprezentowano czasy potrzebne na ca³kowite przej¶cie drzewa gry do g³êboko¶ci 5,
 zaczynaj±c od pewnej typowej sytuacji po zbudowaniu planszy. Wyniki te otrzymano z~pomoc± programu wywo³anego przez komendê:
 
 \begin{algorithm}
@@ -844,7 +844,7 @@ Pamiêtajmy jednak, ¿e sama szybko¶æ nie przes±dza o~jako¶ci funkcji oceniaj±cej.
 \subsection{Turniej}
 
 Najlepszym sposobem sprawdzenia si³y algorytmu jest przetestowanie go podczas prawdziwych rozgrywek z~innymi algorytmami.
-W tabeli \ref{tab:ab_tournament} przedstawiono wyniki turnieju miêdzy algorytmami z~funkcj± oceniaj±c± oraz algorytmem wykonuj±cym
+W tabeli~\ref{tab:ab_tournament} przedstawiono wyniki turnieju miêdzy algorytmami z~funkcj± oceniaj±c± oraz algorytmem wykonuj±cym
 losowe ruchy.
 Turniej
 rozegrano metod± ,,ka¿dy z~ka¿dym'' po 10 meczów z~sekund± na ruch zmieniaj±c zaczynaj±cego gracza co mecz. Ka¿dy algorytm rozegra³
@@ -906,7 +906,7 @@ W przypadku technik Monte Carlo algorytm z~drzewem zdecydowanie górowa³ nad ,,pr
 przeprowadzania testowych rozgrywek, dlatego przejdziemy od razu do analizy algorytmu MCTS.
 
 W algorytmie MCTS zwykle bardzo wa¿nym parametrem jest sta³a ekspansji, to znaczy ilo¶æ
-symulacji, po których nale¿y rozwijaæ wierzcho³ek. W tabeli \ref{fig:mc_simple} przedstawiono wyniki turnieju miêdzy algorytmami
+symulacji, po których nale¿y rozwijaæ wierzcho³ek. W tabeli~\ref{fig:mc_simple} przedstawiono wyniki turnieju miêdzy algorytmami
 MCTS z~ró¿nymi warto¶ciami sta³ej rozwijania. Jest to ilo¶æ symulacji z~danego wêz³a, po których nale¿y go rozwin±æ.
 Tym razem turniej przeprowadzono rozgrywaj±c 20 gier na parê i~dano 2 sekundy na ruch.
 
@@ -932,7 +932,7 @@ Warto¶æ sta³ej ekspansji & Wynik (zwyciêstwa na 60 gier) \\
 
 Okazuje siê, ¿e sta³a rozwijania nie ma wcale a¿ takiego znaczenia. Wszystkie algorytmy prezentuj± zbli¿ony poziom.
 Próbowanie ró¿nych sta³ych nie da³o zbyt dobrych rezultatów --- wyniki algorytmów wci±¿ by³y bardzo zbli¿one.
-Dopiero u¿ycie ekstremalnie wysokich sta³ych spowodowa³o pogorszenie jako¶ci algorytmu, co prezentuje tabela \ref{fig:mc_adv}.
+Dopiero u¿ycie ekstremalnie wysokich sta³ych spowodowa³o pogorszenie jako¶ci algorytmu, co prezentuje tabela~\ref{fig:mc_adv}.
 Ten turniej równie¿ przeprowadzono graj±c 20 gier w~parze i~daj±c 2 sekundy na ruch.
 
 \begin{table}[!htbp]
@@ -993,14 +993,14 @@ podczas budowania planszy --- wiele sytuacji jest rozpoznawanych jako ró¿ne, pod
 mog³oby znacz±co poprawiæ wydajno¶æ algorytmów.
 
 W trakcie pisania poszczególnych algorytmów natkniêto siê na wiele sytuacji, w~których ³atwo pope³niæ b³±d.
-Niektóre napotkane problemy by³y szczególnie subtelne. W algorytmie alfabeta (Algorytm \ref{alg:alphabeta})
+Niektóre napotkane problemy by³y szczególnie subtelne. W algorytmie alfabeta (algorytm~\ref{alg:alphabeta})
 chocia¿by je¿eli na najwy¿szym poziomie nie bêdziemy wybieraæ losowego z~najlepszych synów, a~tylko zawsze pierwszego
 z nich, to bêdziemy uzale¿nieni od implementacji zasad, w~której zwracana kolejno¶æ mo¿liwych ruchów wcale nie jest
 najlepsza.
 
 Chocia¿ zaprezentowane badania si³y algorytmów wskazuj± jednoznacznie na MCTS jako na lidera, nie wiadomo czy zastosowanie
 lepszej funkcji oceniaj±cej w~alfabecie nie zmieni³oby tego. Zauwa¿my, ¿e w~przyk³adowej grze opisanej w~pracy gracz czarny
-próbowa³ zabraæ dla siebie pó³wysep (rysunek \ref{fig:black_peninsula}). Prawdopodobnie funkcja oceniaj±ca wiele
+próbowa³ zabraæ dla siebie pó³wysep (rysunek~\ref{fig:black_peninsula}). Prawdopodobnie funkcja oceniaj±ca wiele
 by zyska³a na uwzglêdnianiu pól, do których tylko jeden z~graczy ma dostêp. Jest to jednak kwestia znalezienia
 kompromisu miêdzy si³± funkcji, a~g³êboko¶ci±, na któr± chcemy zej¶æ w~algorytmie, poniewa¿ ewaluacja bardziej
 skomplikowanej funkcji oceniaj±cej zajmie wiêcej czasu. Równie¿ algorytm MCTS mo¿na ulepszaæ, testuj±c ró¿ne
