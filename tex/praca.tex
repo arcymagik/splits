@@ -133,7 +133,7 @@ to dziedzina obecna informatyce od pocz±tków istnienia komputerów. Szczególnie c
 w grze w~szachy i~faktycznie osi±gniêto ca³kiem sporo. W~1997 komputer Deep Blue jako pierwsza maszyna na ¶wiecie
 zwyciê¿y³ z~mistrzem ¶wiata Garry'm Kasparovem (\cite{hsu}). Kilka lat temu uda³o siê komputerom doj¶æ do
 poziomu pierwszych danów w~go, dziêki wykorzystaniu techniki przeszukiwania drzewa Monte Carlo, która okaza³a siê
-prze³omem w~dziedzinie (\cite{rc08}). Wcze¶niej nie istnia³y ¿adne znane algorytmy pozwalaj±ce kopmuterem zbli¿yæ
+prze³omem w~dziedzinie (\cite{rc08}). Wcze¶niej nie istnia³y ¿adne znane algorytmy pozwalaj±ce komputerom zbli¿yæ
 siê do profesjonalnego poziomu w~go.
 
 Istnieje bardzo wiele gier. Ró¿ni± siê one miêdzy sob± czasami bardzo diametralnie i~techniki zastosowane przy szachach
@@ -175,8 +175,8 @@ rynku. Formalnie jest to skoñczona gra deterministyczna o sumie zerowej, tak jak
 
 \section{Zasady}
 
-P³ytka w~grze do pojedyczny element, z~którego budowana jest plansza. Jest ona podzielona na cztery sze¶ciok±ty foremne - tak zwane
-heksy. P³ytkê przdstawiono poni¿ej na rysunku \ref{fig:plytka}.
+P³ytka w~grze do pojedynczy element, z~którego budowana jest plansza. Jest ona podzielona na cztery sze¶ciok±ty foremne - tak zwane
+heksy. P³ytkê przedstawiono poni¿ej na rysunku \ref{fig:plytka}.
 
 \begin{figure}
 \begin{center}
@@ -447,7 +447,7 @@ Gdy przeprowadzamy obliczenia dla wierzcho³ka max i~jeden z~synów ma warto¶æ wiê
 przerwaæ obliczenia zwracaj±c tê warto¶æ jako wynik. Analogicznie postêpujemy w~wêz³ach typu min, dy warto¶æ syna
 jest mniejsza od okna. Takie przerwanie obliczeñ nazywamy ciêciem.
 
-Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimaks nazywa siê algorytmem Alfabeta. Wraz z~ró¿nymi usprawnieniami
+Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimaks nazywa siê algorytmem alfabeta. Wraz z~ró¿nymi usprawnieniami
 zosta³ dok³adnie opisany w~\cite{ap96} oraz \cite{km75}. Tutaj algorytm przedstawiono w~pseudokodzie algorytm \ref{alg:alphabeta}.
 
 Alfabeta to klasyczny algorytm sztucznej inteligencji znany i~stosowany od ponad pó³ wieku. Jest szczególnie dobry
@@ -504,7 +504,7 @@ mo¿na skorzystaæ tylko je¿eli g³êboko¶æ jest taka sama jak ta, dla której poszuk
 jest tylko ograniczeniem, to znajduje siê poza oknem aktualnego wykonania.
 %% Jest to tablica haszuj±ca, w~której trzymamy warto¶ci minimaksowe sytuacji.
 
-Pocz±tkowo trzymamy w~tablicy jakie¶ umowne warto¶ci oznaczaj±ce niezainicjalizowany stan, a~gdy uda nam siê obliczyæ warto¶æ
+Pocz±tkowo trzymamy w~tablicy jakie¶ umowne warto¶ci oznaczaj±ce niezainicjowany stan, a~gdy uda nam siê obliczyæ warto¶æ
 minimaks wêz³a, wpisujemy j± do tablicy. Zawsze gdy chcemy obliczyæ warto¶æ jakiego¶ wêz³a, sprawdzamy najpierw, czy nie znajduje
 siê on ju¿ w~tablicy.
 
@@ -559,11 +559,11 @@ mo¿liwe ruchy) stosujemy heurystyczny wybór.
 \section{Monte Carlo}
 
 Techniki Monte Carlo to w³a¶ciwie nie jeden algorytm, ale ca³a ich rodzina. Zastosowania metod Monte Carlo znajduj± siê nie tylko
-w grach, ale równie¿ w~statystyce czy rachunku ró¿niczkowym (zob. \cite{la87}). Najpro¶ciesz rzecz ujmuj±c, metoda ta polega
+w grach, ale równie¿ w~statystyce czy rachunku ró¿niczkowym (zob. \cite{la87}). Najpro¶ciej rzecz ujmuj±c, metoda ta polega
 na wykonywaniu du¿ej liczby losowych symulacji i~wyci±ganiu wniosków z~wyników.
 
-W przpadku gry symulacj± jest losowa rozgrywka, a~wynikiem - numer gracza zwyciêskiego. Je¿eli z~danej sytuacji
-przprowadzimy du¿o losowych rozgrywek i~wiêkszo¶æ z~nich wygra³ gracz 0, to mo¿emy wnioskowaæ, ¿e jest to stosunkowo dobra sytuacja
+W przypadku gry symulacj± jest losowa rozgrywka, a~wynikiem - numer gracza zwyciêskiego. Je¿eli z~danej sytuacji
+przeprowadzimy du¿o losowych rozgrywek i~wiêkszo¶æ z~nich wygra³ gracz 0, to mo¿emy wnioskowaæ, ¿e jest to stosunkowo dobra sytuacja
 dla tego gracza. Algorytm, który realizuje ten pomys³ zosta³ w~projekcie nazwany po prostu ``Monte Carlo''.
 
 Wiêcej o~technikach Monte Carlo w~grach i~nie tylko mo¿na znale¼æ w~pracy \cite{mcts12}.
@@ -635,7 +635,7 @@ zawsze dochodziæ do pe³nej g³êboko¶ci jak w~minimaksie, bêdziemy powoli rozbudow
 op³acalne.
 
 Zaczynamy od korzenia reprezentuj±cego stan gry, z~którego zamierzamy wybraæ ruch. Od razu dokonujemy jego
-ekspansji, czyli dodajemy jego synów, którzy bêd± na razie li¶cmi drzewa. Maj±c jakie¶ drzewo przeprowadzamy
+ekspansji, czyli dodajemy jego synów, którzy bêd± na razie li¶æmi drzewa. Maj±c jakie¶ drzewo przeprowadzamy
 symulacjê w~sposób nieco bardziej skomplikowany ni¿ w~prostym Monte Carlo. Je¿eli znajdujemy siê w~wê¼le
 nie bêd±cym li¶ciem, wchodzimy do syna wybranego na przyk³ad metod± granicy ufno¶ci. Dochodz±c do li¶cia
 mo¿emy dokonaæ jego ekspansji, czyli dodaæ synów, lub przeprowadziæ losow± rozgrywkê do koñca, jak w~prostym Monte Carlo.
@@ -843,7 +843,7 @@ Pamiêtajmy jednak, ¿e sama szybko¶æ nie przes±dza o~jako¶ci funkcji oceniaj±cej.
 
 \subsection{Turniej}
 
-Najlepszym sposobem sprawdzenia si³y algorytmu jest prztestowanie go podczas prawdziwych rozgrywek z~innymi algorytmami.
+Najlepszym sposobem sprawdzenia si³y algorytmu jest przetestowanie go podczas prawdziwych rozgrywek z~innymi algorytmami.
 W tabeli \ref{tab:ab_tournament} przedstawiono wyniki turnieju miêdzy algorytmami z~funkcj± oceniaj±c± oraz algorytmem wykonuj±cym
 losowe ruchy.
 Turniej
@@ -891,7 +891,7 @@ i wybieraniem najlepszego syna (II funkcja) & \\
 \end{center}
 \end{table}
 
-Zodnie z~przewidywaniami algorytm losowy nie odniós³ wielkiego sukcesu. Widoczna jest du¿a przewaga u¿ycia lepszej
+Zgodnie z~przewidywaniami algorytm losowy nie odniós³ wielkiego sukcesu. Widoczna jest du¿a przewaga u¿ycia lepszej
 funkcji oceniaj±cej. Nawet pomimo du¿o mniejszej szybko¶ci przeszukania drzewa przez podstawowy algorytm minimaks,
 pokonywa³ on ³atwo alfabetê korzystaj±c± ze s³abszej funkcji.
 
@@ -903,7 +903,7 @@ si³ê danej sytuacji, algorytmy minimaks i~alfabeta s± praktycznie bezu¿yteczne.
 \section{Przeszukiwanie drzewa Monte Carlo}
 
 W przypadku technik Monte Carlo algorytm z~drzewem zdecydowanie górowa³ nad ``prostym`` Monte Carlo w~czasie
-przeprowadzania testowych rozgrywek, dlatego przejdziemy od razu do analizy algorymu MCTS.
+przeprowadzania testowych rozgrywek, dlatego przejdziemy od razu do analizy algorytmu MCTS.
 
 W algorytmie MCTS zwykle bardzo wa¿nym parametrem jest sta³a ekspansji, to znaczy ilo¶æ
 symulacji, po których nale¿y rozwijaæ wierzcho³ek. W tabeli \ref{fig:mc_simple} przedstawiono wyniki turnieju miêdzy algorytmami
@@ -931,7 +931,7 @@ Warto¶æ sta³ej ekspansji & Wynik (zwyciêstwa na 60 gier) \\
 \end{table}
 
 Okazuje siê, ¿e sta³a rozwijania nie ma wcale a¿ takiego znaczenia. Wszystkie algorytmy prezentuj± zbli¿ony poziom.
-Próbowanie ró¿nych sta³ych nie da³o zbyt dobrych reultatów - wyniki algorytmów wci±¿ by³y bardzo zbli¿one.
+Próbowanie ró¿nych sta³ych nie da³o zbyt dobrych rezultatów - wyniki algorytmów wci±¿ by³y bardzo zbli¿one.
 Dopiero u¿ycie ekstremalnie wysokich sta³ych spowodowa³o pogorszenie jako¶ci algorytmu, co prezentuje tabela \ref{fig:mc_adv}.
 Ten turniej równie¿ przeprowadzono graj±c 20 gier w~parze i~daj±c 2 sekundy na ruch.
 
@@ -974,7 +974,7 @@ Mo¿na siê o~tym przekonaæ uruchamiaj±c programy:
 \end{algorithm}
 
 Byæ mo¿e dobór lepszej funkcji oceniaj±cej lub jakie¶ inne dobre usprawnienie polepszy³oby sytuacjê alfabety, ale jak
-na razie okaza³o siê, ¿e MCTS jest zdecydowanie najlepszym algorytmem grajacym w~Splits.
+na razie okaza³o siê, ¿e MCTS jest zdecydowanie najlepszym algorytmem graj±cym w~Splits.
 
 \chapter{Podsumowanie}
 
