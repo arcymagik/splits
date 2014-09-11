@@ -499,9 +499,17 @@ pomagaj±cym w~osi±gniêciu
 tego celu jest tablica transpozycji.
 
 \emph{Tablica transpozycji} jest s³ownikiem indeksowanym stanami gry o~warto¶ciach bêd±cych
-krotkami zawieraj±cymi obliczon± poprzednim razem
-warto¶æ minimaksow±, informacj± czy jest~to~dok³adna warto¶æ, czy tylko ograniczenie górne lub dolne oraz g³êboko¶æ
-przeszukiwania, z~którego pochodzi warto¶æ oraz ewentualnie jakie¶ dodatkowe przydatne dane. z~warto¶ci w~tablicy
+krotkami zawieraj±cymi:
+\begin{itemize}
+\item obliczon± poprzednim razem warto¶æ minimaksow±,
+\item informacj± czy jest~to~dok³adna warto¶æ, czy tylko ograniczenie górne lub dolne,
+\item g³êboko¶æ przeszukiwania, z~którego pochodzi warto¶æ,
+\item ewentualnie jakie¶ dodatkowe przydatne dane.
+\end{itemize}
+%%  obliczon± poprzednim razem
+%% warto¶æ minimaksow±, informacj± czy jest~to~dok³adna warto¶æ, czy tylko ograniczenie górne lub dolne oraz g³êboko¶æ
+%% przeszukiwania, z~którego pochodzi warto¶æ oraz ewentualnie jakie¶ dodatkowe przydatne dane.
+Z~warto¶ci w~tablicy
 mo¿na skorzystaæ tylko je¿eli g³êboko¶æ jest taka sama jak ta, dla której poszukujemy warto¶ci teraz oraz je¿eli
 jest tylko ograniczeniem, to znajduje siê poza oknem aktualnego wykonania.
 %% Jest to tablica haszuj±ca, w~której trzymamy warto¶ci minimaksowe sytuacji.
@@ -576,7 +584,7 @@ Wiêcej o~technikach Monte Carlo w~grach i~nie tylko mo¿na znale¼æ w~pracy \cite{
 \begin{algorithmic}[1]
   \Function{monteCarlo} {\textit{node}}
   \While {$\texttt{wci±¿ jest czas}$}
-  \State $\textit{son} \gets \Call{chooseSon}{node}$
+  \State $\textit{son} \gets \Call{chooseSon}{\textit{node}}$
   \State $\Call{simulate}{son}$
   \EndWhile
   \Return $\texttt{syn maksymalizuj±cy warto¶æ} $ $\frac{\texttt{ilo¶æ zwyciêstw}}{\texttt{ilo¶æ wszystkich gier}}$
@@ -615,7 +623,7 @@ znale¼æ w~\cite{mcts12}. Tutaj przedstawiono pseudokod w~algorytmie~\ref{alg:mc}
     \EndIf
     \EndFunction
 
-    \Function {chooseSon} {node}
+    \Function {chooseSon} {\textit{node}}
     {}\Return $\texttt{syn $s$ stanu node optymalizuj±cy warto¶æ }  \Call{ConfidencyBound}{node, s}$
     \EndFunction
   \end{algorithmic}
