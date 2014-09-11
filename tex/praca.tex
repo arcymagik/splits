@@ -910,7 +910,7 @@ symulacji, po których nale¿y rozwijaæ wierzcho³ek. W tabeli \ref{fig:mc_simple} 
 MCTS z ró¿nymi warto¶ciami sta³ej rozwijania. Jest to ilo¶æ symulacji z danego wêz³a, po których nale¿y go rozwin±æ.
 Tym razem turniej przeprowadzono rozgrywaj±c 20 gier na parê i dano 2 sekundy na ruch.
 
-\begin{figure}[!htbp]
+\begin{table}[!htbp]
 \caption{Turniej MCTS}
 \label{fig:mc_simple}
 \begin{center}
@@ -928,14 +928,14 @@ Warto¶æ sta³ej ekspansji & Wynik (zwyciêstwa na 60 gier) \\
 \hline
 \end{tabular}
 \end{center}
-\end{figure}
+\end{table}
 
 Okazuje siê, ¿e sta³a rozwijania nie ma wcale a¿ takiego znaczenia. Wszystkie algorytmy prezentuj± zbli¿ony poziom.
 Próbowanie ró¿nych sta³ych nie da³o zbyt dobrych reultatów - wyniki algorytmów wci±¿ by³y bardzo zbli¿one.
 Dopiero u¿ycie ekstremalnie wysokich sta³ych spowodowa³o pogorszenie jako¶ci algorytmu, co prezentuje tabela \ref{fig:mc_adv}.
 Ten turniej równie¿ przeprowadzono graj±c 20 gier w parze i daj±c 2 sekundy na ruch.
 
-\begin{figure}[!htbp]
+\begin{table}[!htbp]
 \caption{Turniej MCTS II}
 \label{fig:mc_adv}
 \begin{center}
@@ -951,7 +951,7 @@ Warto¶æ sta³ej ekspansji & Wynik (zwyciêstwa na 40 gier) \\
 \hline
 \end{tabular}
 \end{center}
-\end{figure}
+\end{table}
 
 Przy tak du¿ej sta³ej drzewo nie rozwinê³o siê prawie wcale i algorytm MCTS praktycznie zdegenerowa³ siê do prostego
 Monte Carlo z u¿yciem granicy ufno¶ci.
