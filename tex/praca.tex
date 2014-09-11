@@ -109,7 +109,7 @@
   wybór kilku ró¿nych
   metod sztucznej inteligencji w~grach na przyk³adzie gry planszowej Splits.
   W¶ród zbadanych metod znajduj± siê miêdzy innymi alfabeta, monte carlo i~MCTS wraz z~ulepszeniami takimi jak
-  tablica transpozycji czy wybieranie najpierw najlepszego syna.
+  tablica transpozycji czy rozpatrywanie najpierw najbardziej obiecuj±cego syna.
   Ró¿nice w~efektywno¶ci poszczególnych algorytmów zosta³y zbadane, a~ich analiza mo¿e
   pomóc lepiej zrozumieæ charakter gry Splits i~wyznaczyæ kierunek przysz³ym twórcom sztucznej
   inteligencji do tej gry.
@@ -157,7 +157,7 @@ Praca sk³ada siê z~czterech rozdzia³ów. W~rozdziale 1 wprowadzono zasady gry Spl
 u¿ytych technik sztucznej inteligencji zawarto w~rozdziale 2. Opisano w~nim algorytm minimaks i~jego pochodn± --- alfabetê
 oraz techniki Monte Carlo, w~tym MCTS.
 Rozdzia³ 3 przedstawia wyniki eksperymentów przeprowadzonych w~czasie tworzenia tej pracy, z~u¿yciem w³asnych
-implementacji stworzonych w~specjalnie w~tym celu. Kod wszystkich wykorzystanych programów znajduje siê
+implementacji stworzonych specjalnie w~tym celu. Kod wszystkich wykorzystanych programów znajduje siê
 na p³ycie do³±czonej do pracy.
 W¶ród eksperymentów
 znalaz³y siê bezpo¶rednie rozgrywki miêdzy ró¿nymi algorytmami oraz testy usprawnieñ pokazuj±ce faktyczny zysk z~danego
@@ -170,13 +170,13 @@ najbardziej obiecuj±cy kierunek dalszego rozwoju sztucznej inteligencji w~grze S
 Znana jest równie¿ pod tytu³ami ,,Voll Shaft'' oraz ,,Battle Sheep''.
 Gra
 szybko zdoby³a popularno¶æ dziêki ciekawym zasadom i~ma³ej powtarzalno¶ci rozgrywki. W~2014 roku zdoby³a nawet rekomendacjê
-jury ,,Spiel des Jahres'' --- uznanej niemieckiej nagrody dla najlepszych gier planszowych na niemieckojêzycznym
+jury ,,Spiel des Jahres'' --- uznanej niemieckiej nagrody dla~najlepszych gier planszowych na niemieckojêzycznym
 rynku. Formalnie jest to skoñczona gra deterministyczna o sumie zerowej, tak jak szachy lub go.
 
 \section{Zasady}
 
-P³ytka w~grze do pojedynczy element, z~którego budowana jest plansza. Jest ona podzielona na cztery sze¶ciok±ty foremne --- tak zwane
-heksy. P³ytkê przedstawiono poni¿ej na rysunku~\ref{fig:plytka}.
+\emph{P³ytka} w~grze do pojedynczy element, z~którego budowana jest plansza. Jest ona podzielona na cztery sze¶ciok±ty foremne --- tak zwane
+\emph{heksy}. P³ytkê przedstawiono poni¿ej na rysunku~\ref{fig:plytka}.
 
 \begin{figure}
 \begin{center}
@@ -193,7 +193,7 @@ heksy. P³ytkê przedstawiono poni¿ej na rysunku~\ref{fig:plytka}.
 \label{fig:plytka}
 \end{figure}
 
-¯etony to ma³e obiekty, których stos mo¿na umie¶ciæ na heksie.
+\emph{¯etony} to ma³e obiekty, których stos mo¿na umie¶ciæ na heksie.
 W grze jest 16 ¿etonów czarnych (dla gracza 0) oraz 16 ¿etonów bia³ych
 (dla gracza 1).
 
@@ -205,7 +205,7 @@ Gdy skoñcz± siê p³ytki, plansza jest zbudowana. Sk³ada siê z~32 heksów tworz±cyc
 Gracz 1 wybiera teraz heks, który znajduje siê przy zewnêtrznej krawêdzi planszy --- to znaczy
 taki, który przynajmniej jedn± krawêdzi± nie s±siaduje z~innym heksem i~ta pusta przestrzeñ nie jest ograniczona --- nie mo¿e to
 byæ ,,dziura'' w~¶rodku planszy. Gracz 1 k³adzie na tym polu wszystkie swoje 16 ¿etonów. Gracz 0 postêpuje podobnie --- nie mo¿e
-ju¿ jednak wybraæ tego samego pola, co gracz 1.
+ju¿ jednak wybraæ tego samego pola co gracz 1.
 
 W tym momencie zaczyna siê w³a¶ciwa rozgrywka. Zaczyna j± gracz 1, a~potem ruchy wykonuje siê na zmianê, a¿ wykonanie ruchu
 stanie siê niemo¿liwe. Gracz wykonuj±cy ruch wybiera dowolny stos ¿etonów na planszy i~rozdziela go dowolnie na 2 nowe stosy.
@@ -316,7 +316,8 @@ podawaæ warto¶æ tej funkcji, zazwyczaj obliczon± z~pomoc± komputera.
 W tym rozdziale zaprezentowano algorytmy sztucznej inteligencji zaimplementowane i~zbadane w~trakcie pisania pracy. Na pocz±tku
 opisano klasyczny algorytm minimaks oraz pochodz±c± od niego alfabetê wraz z~usprawnieniami, czyli tablic± transpozycji,
 iteracyjnym pog³êbianiem
-oraz wybieraniem najpierw najlepszego syna. Nastêpnie opisano techniki Monte Carlo, od prostego wykonywania symulacji
+oraz rozpatrywanie najpierw najbardziej obiecuj±cego syna.
+Nastêpnie opisano techniki Monte Carlo, od prostego wykonywania symulacji
 z wierzcho³ka do przeszukiwania drzewa Monte Carlo oraz technikê granicy ufno¶ci --- usprawnienie powy¿szych.
 
 \section{Minimaks}
@@ -328,12 +329,12 @@ by³a wygrywaj±ca, lub gdy przeciwnik pope³ni³ b³±d i~ustawi³ nas w~takiej.
 
 Niestety dysponujemy ograniczonymi ¶rodkami i~nawet zbudowanie pe³nego drzewa do g³êboko¶ci 4 stanowi w~Splits ju¿
 dosyæ spory problem obliczeniowy.
-To w³a¶nie stara siê zrobiæ algorytm Minimaks. Posiadaj±c jaki¶ sposób oceny sytuacji w~grze, który
-nazywaæ bêdziemy funkcj± oceniaj±c±, mo¿emy zbadaæ drzewo gry do pewnej ustalonej g³êboko¶ci i~zdecydowaæ, który ruch
+To w³a¶nie stara siê zrobiæ algorytm minimaks. Posiadaj±c jaki¶ sposób oceny sytuacji w~grze, który
+nazywaæ bêdziemy \emph{funkcj± oceniaj±c±}, mo¿emy zbadaæ drzewo gry do pewnej ustalonej g³êboko¶ci i~zdecydowaæ, który ruch
 najbardziej siê nam op³aci, zak³adaj±c, ¿e przeciwnik bêdzie siê stara³ graæ tak, ¿eby wynik by³ jak najgorszy dla nas.
 
-Sytuacje, czyli inaczej wêz³y w~drzewie gry nazywamy typu max, je¿eli maksymalizujemy w~nich warto¶ci funkcji oceniaj±cej
-potomków (czyli s± to pozycje, w~których ,,my'' wykonujemy ruch), a~te w~których minimalizujemy, nazywamy typu min (rusza siê
+Sytuacje, czyli inaczej wêz³y w~drzewie gry nazywamy \emph{typu max}, je¿eli maksymalizujemy w~nich warto¶ci funkcji oceniaj±cej
+potomków (czyli s± to pozycje, w~których ,,my'' wykonujemy ruch), a~te w~których minimalizujemy, nazywamy \emph{typu min} (rusza siê
 przeciwnik).
 
 Dla g³êboko¶ci 1 jest to trywialne. Wystarczy wybraæ ruch prowadz±cy do sytuacji o~najlepszej warto¶ci funkcji oceniaj±cej (lub
@@ -346,11 +347,11 @@ naszego wêz³a jest maksimum (minimum je¶li wêze³ jest typu min) warto¶ci wêz³ów 
 \label{alg:minimaks}
 \begin{algorithmic}[1]
 
-  \Function{Minimaks}{node}
-  \If {node jest li¶ciem} \Return \Call{Ocena}{node}
+  \Function{Minimaks}{\textit{node}}
+  \If {\texttt{$node$ jest li¶ciem}} \Return \Call{Ocena}{\textit{node}}
   \EndIf
-  \If {node jest typu max} \Return max(\Call{Minimaks}{son} | son jest synem node)
-  \Else {} \Return min(\Call{Minimaks}{son} | son jest synem node)
+  \If {\texttt{$node$ jest typu max}} \Return $\max$(\Call{Minimaks}{\textit{son}} | \texttt{$son$ jest synem $node$})
+  \Else {} \Return $\min$(\Call{Minimaks}{\textit{son}} | \texttt{$son$ jest synem $node$})
   \EndIf
   \EndFunction
 
@@ -438,17 +439,17 @@ $b$, która wynosi $2$. Zatem warto¶æ wêz³a $a$ to $2$. Nie musimy wyliczaæ warto
 
 To spostrze¿enie mo¿na uogólniæ wprowadzaj±c pojêcie okna wywo³ania. Jak ju¿ zauwa¿yli¶my, w~momencie, gdy wchodzimy
 do wêz³a, nie interesuje nas dok³adna warto¶æ funkcji oceniaj±cej, je¿eli tylko wiemy, ¿e jest ona bardzo du¿a lub bardzo ma³a,
-to znaczy znajduje siê poza pewnym przedzia³em. Ten przedzia³ nazywa siê oknem wywo³ania. Bêdziemy ¿±daæ, aby
-algorytm zwraca³ dok³adn± warto¶æ dla wierzcho³ka je¿eli jest ona w~oknie wywo³ania, a~je¿eli jest poza oknem, to dowoln±
+to znaczy znajduje siê poza pewnym przedzia³em. Ten przedzia³ nazywa siê \emph{oknem wywo³ania}. Bêdziemy ¿±daæ, aby
+algorytm zwraca³ dok³adn± warto¶æ dla wierzcho³ka, je¿eli jest ona w~oknie wywo³ania, a~je¿eli jest poza oknem, to dowoln±
 warto¶æ poza oknem z~tej samej strony (to znaczy wiêksz± od okna, je¿eli warto¶æ minimaksowa jest wiêksza i~mniejsz±,
 je¿eli warto¶æ minimaksowa jest mniejsza).
 
 Gdy przeprowadzamy obliczenia dla wierzcho³ka max i~jeden z~synów ma warto¶æ wiêksz± od okna wywo³ania, to mo¿emy
-przerwaæ obliczenia zwracaj±c tê warto¶æ jako wynik. Analogicznie postêpujemy w~wêz³ach typu min, dy warto¶æ syna
-jest mniejsza od okna. Takie przerwanie obliczeñ nazywamy ciêciem.
+przerwaæ obliczenia zwracaj±c tê warto¶æ jako wynik. Analogicznie postêpujemy w~wêz³ach typu min, gdy warto¶æ syna
+jest mniejsza od okna. Takie przerwanie obliczeñ nazywamy \emph{ciêciem}.
 
-Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimaks nazywa siê algorytmem alfabeta. Wraz z~ró¿nymi usprawnieniami
-zosta³ dok³adnie opisany w~\cite{ap96} oraz \cite{km75}. Tutaj algorytm przedstawiono w~pseudokodzie algorytm~\ref{alg:alphabeta}.
+Wprowadzenie oszczêdno¶ci tego typu do algorytmu minimaks nazywa siê algorytmem \emph{alfabeta}. Wraz z~ró¿nymi usprawnieniami
+zosta³ dok³adnie opisany w~\cite{ap96} oraz \cite{km75}. Tutaj pseudokod przedstawiono w~algorytmie~\ref{alg:alphabeta}.
 
 Alfabeta to klasyczny algorytm sztucznej inteligencji znany i~stosowany od ponad pó³ wieku. Jest szczególnie dobry
 w grach kombinacyjnych, gdzie trzeba zbadaæ dok³adnie rozgrywkê na kilka ruchów do przodu. Sprawdzi³ siê
@@ -459,24 +460,24 @@ wielokrotnie chocia¿by w~szachach.
 \label{alg:alphabeta}
 \begin{algorithmic}
   \Function {Alphabeta} {node, $\alpha$, $\beta$}
-  \If {$\texttt{\textit{node} jest li¶ciem}$}
-  \Return \Call{Ocena}{node}
+  \If {$\texttt{$node$ jest li¶ciem}$}
+  \Return \Call{Ocena}{\textit{node}}
   \EndIf
 
-  \If {$\texttt{\textit{node} jest typu max}$}
+  \If {$\texttt{$node$ jest typu max}$}
   \State $\textit{result} \gets -\infty$
-  \ForAll {$\texttt{\textit{s} - syn \textit{node}}$}
-  \State $\textit{tmp} \gets \textproc{Alphabeta} (\textit{s}, \Call{max}{\textit{result}, \alpha}, \beta)$
+  \ForAll {$\texttt{$s$ - syn $node$}$}
+  \State $\textit{tmp} \gets \textproc{Alphabeta} (\textit{s}, \max(\textit{result}, \alpha), \beta)$
   \If {$\textit{tmp} \geq \beta$} \Return $\textit{tmp}$ \EndIf
-  \State $\textit{result} \gets \Call{max}{\textit{result}, \textit{tmp}}$
+  \State $\textit{result} \gets \max(\textit{result}, \textit{tmp})$
   \EndFor
 
   \Else
   \State $\textit{result} \gets +\infty$
-  \ForAll {$\texttt{\textit{s} - syn \textit{node}}$}
-  \State $\textit{tmp} \gets \textproc{Alphabeta}(\textit{s}, \alpha, \Call{min}{\textit{result}, \beta})$
+  \ForAll {$\texttt{$s$ - syn $node$}$}
+  \State $\textit{tmp} \gets \textproc{Alphabeta}(\textit{s}, \alpha, \min(\textit{result}, \beta))$
   \If {$\textit{tmp} \leq \alpha$} \Return $\textit{tmp}$ \EndIf
-  \State $\textit{result} \gets \Call{min}{\textit{result}, \textit{tmp}}$
+  \State $\textit{result} \gets \min(\textit{result}, \textit{tmp})$
   \EndFor
   \EndIf
   \Return $\textit{result}$
@@ -491,14 +492,15 @@ grafem skierowanym acyklicznym.
 Oznacza to, ¿e niektóre pary wêz³ów w~drzewie odpowiadaj± tym samym sytuacjom. £atwo zauwa¿yæ, ¿e w~grze Splits
 musz± siê wtedy one
 znajdowaæ na tej samej g³êboko¶ci, poniewa¿ na przyk³ad ilo¶æ stosów ¿etonów w~grze odpowiada bijektywnie g³êboko¶ci
-w drzewie. W~takim razie warto¶æ minimaksowa obydwu wêz³ów musi byæ taka sama.
+w drzewie. W~takim razie warto¶æ minimaksowa obydwu wêz³ów musi byæ taka sama. Tak± parê sytuacji nazywamy \emph{transpozycj±}.
 
 Naturalnym wydaje siê pomys³ wykorzystania tego faktu i~unikniêcia powtórnego obliczania tej warto¶ci. Dobrym narzêdziem
 pomagaj±cym w~osi±gniêciu
 tego celu jest tablica transpozycji.
 
-Tablica ta jest s³ownikiem indeksowanym stanami gry o~warto¶ciach bêd±cych krotkami zawieraj±cymi obliczon± poprzednim razem
-warto¶æ minimaksow±, informacj± czy jest to dok³adna warto¶æ, czy tylko ograniczenie górne lub dolne oraz g³êboko¶æ
+\emph{Tablica transpozycji} jest s³ownikiem indeksowanym stanami gry o~warto¶ciach bêd±cych
+krotkami zawieraj±cymi obliczon± poprzednim razem
+warto¶æ minimaksow±, informacj± czy jest~to~dok³adna warto¶æ, czy tylko ograniczenie górne lub dolne oraz g³êboko¶æ
 przeszukiwania, z~którego pochodzi warto¶æ oraz ewentualnie jakie¶ dodatkowe przydatne dane. z~warto¶ci w~tablicy
 mo¿na skorzystaæ tylko je¿eli g³êboko¶æ jest taka sama jak ta, dla której poszukujemy warto¶ci teraz oraz je¿eli
 jest tylko ograniczeniem, to znajduje siê poza oknem aktualnego wykonania.
@@ -529,18 +531,18 @@ bardzo szybko ro¶nie podczas budowania planszy, a~potem spada w~czasie w³a¶ciwej
 \begin{algorithm}
 \caption{Iteracyjne pog³êbianie}
 \begin{algorithmic}[1]
-  \Function{Iterative alphabeta} {node}
+  \Function{Iterative alphabeta} {\textit{node}}
   \State $\textit{depth} \gets 1$
   \While {$\texttt{wci±¿ jest czas}$}
   \State $\textit{result} \gets \Call{Alphabeta}{node, depth, -\infty, +\infty}$
   \State $\textit{depth} \gets \textit{depth} + 1$
   \EndWhile
-  \Return result
+  \Return $\textit{result}$
   \EndFunction
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Wybieranie najpierw najlepszego syna}
+\subsection{Rozpatrywanie najpierw najbardziej obiecuj±cego syna}
 
 Zauwa¿my, ¿e ilo¶æ czasu oszczêdzonego czasu, który zyskujemy u¿ywaj±c alfabety w~stosunku do minimaksa, zale¿y od ilo¶ci
 ciêæ oraz tego, jak wysoko w~drzewie zosta³y one u¿yte. W~du¿ej mierze jest ono efektem kolejno¶ci wyboru synów podczas
@@ -572,12 +574,12 @@ Wiêcej o~technikach Monte Carlo w~grach i~nie tylko mo¿na znale¼æ w~pracy \cite{
 \caption{Monte Carlo}
 \label{alg:mc_simple}
 \begin{algorithmic}[1]
-  \Function{monteCarlo} {node}
+  \Function{monteCarlo} {\textit{node}}
   \While {$\texttt{wci±¿ jest czas}$}
-  \State $\textit{son} \gets \textit{chooseSon}(node)$
-  \State $\textit{simulate}(son)$
+  \State $\textit{son} \gets \Call{chooseSon}{node}$
+  \State $\Call{simulate}{son}$
   \EndWhile
-  \Return $\texttt{syn z~maksymalizuj±cy warto¶æ} \frac{\texttt{ilo¶æ zwyciêstw}}{\texttt{ilo¶æ wszystkich gier}}$
+  \Return $\texttt{syn maksymalizuj±cy warto¶æ} $ $\frac{\texttt{ilo¶æ zwyciêstw}}{\texttt{ilo¶æ wszystkich gier}}$
   %\Comment {ka¿dy syn powinien mieæ przynajmniej jedn± rozegran± grê}
   \EndFunction
 \end{algorithmic}
@@ -585,7 +587,7 @@ Wiêcej o~technikach Monte Carlo w~grach i~nie tylko mo¿na znale¼æ w~pracy \cite{
 
 Aby algorytm~\ref{alg:mc_simple} mia³ sens, dla ka¿dego syna wêz³a powinna zostaæ przeprowadzona co najmniej jedna
 rozgrywka.
-Funkcja $\textit{chooseSon}$ wybiera po prostu losowego syna, natomiast $\textit{simulate}$
+Funkcja $\Call{chooseSon}$ wybiera po prostu losowego syna, natomiast $\Call{simulate}$
 przeprowadza ca³kowicie losow± rozgrywkê. Te funkcje mo¿na jednak zast±piæ nieco innymi, które prowadz± do ciekawych
 odmian techniki Monte Carlo. Jedn± z~nich jest wykorzystanie pojêcia granicy ufno¶ci.
 
@@ -605,16 +607,16 @@ znale¼æ w~\cite{mcts12}. Tutaj przedstawiono pseudokod w~algorytmie~\ref{alg:mc}
   \caption{Monte Carlo z~granic± ufno¶ci}
   \label{alg:mc}
   \begin{algorithmic}
-    \Function {ConfidencyBound} {node, son}
-    \State $\textit{estimated} \gets \frac{\texttt{wygrane z~son}}{\texttt{wszystkie rozgrywki son}}$
-    \State $\sigma \gets \sqrt{\frac{\log({\texttt{wszystkie rozgrywki node}})}{\texttt{wszystkie rozgrywki son}}}$
-    \If {\texttt{node is of type max}} \Return $\textit{estimated} + \sigma$
+    \Function {ConfidencyBound} {\textit{node}, \textit{son}}
+    \State $\textit{estimated} \gets \frac{\texttt{wygrane z}~\textit{son}}{\texttt{wszystkie rozgrywki } \textit{son}}$
+    \State $\sigma \gets \sqrt{\frac{\log({\texttt{wszystkie rozgrywki } \textit{node}})}{\texttt{wszystkie rozgrywki } \textit{son}}}$
+    \If {\textit{node} \texttt{ jest typu max}} \Return $\textit{estimated} + \sigma$
     \Else {} \Return $\textit{estimated} - \sigma$
     \EndIf
     \EndFunction
 
     \Function {chooseSon} {node}
-    {}\Return $\texttt{syn s stanu node optymalizuj±cy warto¶æ}$  \Call{ConfidencyBound}{node, s}
+    {}\Return $\texttt{syn $s$ stanu node optymalizuj±cy warto¶æ }  \Call{ConfidencyBound}{node, s}$
     \EndFunction
   \end{algorithmic}
 \end{algorithm}
@@ -623,7 +625,9 @@ znale¼æ w~\cite{mcts12}. Tutaj przedstawiono pseudokod w~algorytmie~\ref{alg:mc}
 
 Algorytm przeszukiwania drzewa Monte Carlo (w skrócie nazywany od angielskiej nazwy MCTS)
 to jeden z~najsilniejszych znanych algorytmów sztucznej inteligencji w~grach.
-By³ on z~sukcesem stosowany w~grach takich jak go czy szachy. Szczególnie go jest ¶wietnym przyk³adem
+By³ on z~sukcesem stosowany w~grach takich jak go, o czym mo¿na przeczytaæ w \cite{rc08}, ale równie¿
+wielu innych jak na przyk³ad poker, skat, amazons, czy gry czasu rzeczywistego \cite{mcts12}.
+Szczególnie go jest ¶wietnym przyk³adem
 zastosowania
 algorytmu. Przed u¿ywaniem tej techniki nie by³o ¿adnych programów mog±cych sprostaæ cz³owiekowi.
 Stanowi on naturalne rozwiniêcie podstawowej techniki
@@ -635,9 +639,9 @@ zawsze dochodziæ do pe³nej g³êboko¶ci jak w~minimaksie, bêdziemy powoli rozbudow
 op³acalne.
 
 Zaczynamy od korzenia reprezentuj±cego stan gry, z~którego zamierzamy wybraæ ruch. Od razu dokonujemy jego
-ekspansji, czyli dodajemy jego synów, którzy bêd± na razie li¶æmi drzewa. Maj±c jakie¶ drzewo przeprowadzamy
+\emph{rozwiniêcia}, czyli dodajemy jego synów, którzy bêd± na razie li¶æmi drzewa. Maj±c jakie¶ drzewo przeprowadzamy
 symulacjê w~sposób nieco bardziej skomplikowany ni¿ w~prostym Monte Carlo. Je¿eli znajdujemy siê w~wê¼le
-nie bêd±cym li¶ciem, wchodzimy do syna wybranego na przyk³ad metod± granicy ufno¶ci. Dochodz±c do li¶cia
+nie bêd±cym li¶ciem, wchodzimy do syna wybranego metod± granicy ufno¶ci. Dochodz±c do li¶cia
 mo¿emy dokonaæ jego ekspansji, czyli dodaæ synów, lub przeprowadziæ losow± rozgrywkê do koñca, jak w~prostym Monte Carlo.
 Teraz ka¿dy wierzcho³ek trzyma swoje statystyki wygranych, wiêc po przeprowadzeniu symulacji, musimy siê
 cofn±æ do korzenia, po drodze uaktualniaj±c dane we wszystkich wêz³ach.
@@ -649,21 +653,21 @@ W algorytmie~\ref{alg:mcts} zaprezentowano najbardziej klasyczne podej¶cie.
   \caption{Monte Carlo Tree Search}
   \label{alg:mcts}
   \begin{algorithmic}
-    \Function {findBestMove} {node}
-    \State $\texttt{utwórz korzeñ drzewa ze stanem \textit{node}}$
-    \State $\texttt{rozwiñ drzewo w textit{node}}$
+    \Function {findBestMove} {\textit{node}}
+    \State $\texttt{utwórz korzeñ drzewa ze stanem $node$}$
+    \State $\texttt{rozwiñ drzewo w $node$}$
     \While {$\texttt{wci±¿ jest czas}$}
     \State $\Call{play}{node}$
     \EndWhile
-    \Return $\texttt{syn s wêz³a \textit{node} optymalizuj±cy warto¶æ} \frac{\texttt{wygrane z s}}{\texttt{rozgrywki z s}}$
+    \Return $\texttt{syn $s$ wêz³a $node$ optymalizuj±cy warto¶æ } \frac{\texttt{wygrane z }\textit{s}}{\texttt{rozgrywki z }\textit{s}}$
     \EndFunction
 
 
     \Function {play} {node}
-    \If {$\texttt{\textit{node} jest li¶ciem}$}
+    \If {$\texttt{$node$ jest li¶ciem}$}
 
-    \If {$\texttt{przeprowadzono wystarczaj±co du¿o rozgrywek z \textit{node}}$}
-    \State $\texttt{rozwiñ \textit{node}}$
+    \If {$\texttt{przeprowadzono wystarczaj±co du¿o rozgrywek z $node$}$}
+    \State $\texttt{rozwiñ $node$}$
     \State $\textit{result} \gets \textproc{play}(\Call{chooseSon}{node})$
     \Else
     \State $\texttt{przeprowad¼ losow± rozgrywkê}$
@@ -685,8 +689,8 @@ Najprostszym jest ustalenie pewnej ustalonej liczby rozgrywek --- tak zwanej sta
 po przekroczeniu której nale¿y rozwijaæ wêze³.
 
 MCTS pokonuje powa¿ny problem jaki mia³o proste Monte Carlo bez drzewa. Je¿eli który¶ z~synów w~drzewie ma
-wielu kiepskich synów, ale jednego dobrego, to zostanie przez Monte Carlo uznane za kiepskiego syna, poniewa¿
-w losowej rozgrywce czê¶ciej bêdzie wybierany które¶ z~gorszych posuniêæ. Je¿eli ju¿ jednak rozwiniemy ten wêze³,
+wielu s³abych synów, ale jednego dobrego, to zostanie przez Monte Carlo uznane za s³abego syna, poniewa¿
+w losowej rozgrywce czê¶ciej bêdzie wybierane które¶ z~gorszych posuniêæ. Je¿eli ju¿ jednak rozwiniemy ten wêze³,
 to MCTS zacznie
 wykorzystywaæ mniej losow± strategiê wyboru synów i~bêdzie czêsto wybiera³ dobre posuniêcie, co
 w efekcie polepszy statystyki tego wêz³a.
@@ -698,7 +702,8 @@ na odpowiedniego z~synów.
 
 Techniki Monte Carlo maj± ogromn± przewagê nad innymi podej¶ciami. Ich implementacja jest zupe³nie niezale¿na od zasad
 gry. Potrzebuj± one jedynie zewnêtrznego modu³u zajmuj±cego siê zasadami, ale zupe³nie nie wnikaj± w~nie,
-w przeciwieñstwie do stosowania funkcji oceniaj±cej.
+w przeciwieñstwie do stosowania funkcji oceniaj±cej. Jest to równie¿ jeden z prostszych algorytmów, co
+t³umaczy jego rosn±c± popularno¶æ.
 
 \chapter{Wyniki ekperymentów}
 
@@ -810,8 +815,9 @@ alfabeta (I funkcja oceniaj±ca) & 55 \\
 alfabeta z tablic± transpozycji & \multirow{2}{*}{55} \\
 (I funkcja oceniaj±ca) & \\
 \hline
-alfabeta z tablic± transpozycji & \multirow{2}{*}{77} \\
-i wybieraniem najlepszego syna (I funkcja) & \\
+alfabeta z tablic± transpozycji & \multirow{3}{*}{77} \\
+i wybieraniem najpierw najbardziej & \\
+obiecuj±cego syna (I funkcja) & \\
 \hline
 minimaks (II funkcja oceniaj±ca) & 33774 \\
 \hline
@@ -820,8 +826,9 @@ alfabeta (II funkcja oceniaj±ca) & 977 \\
 alfabeta z tablic± transpozycji & \multirow{2}{*}{1075} \\
 (II funkcja oceniaj±ca) & \\
 \hline
-alfabeta z tablic± transpozycji & \multirow{2}{*}{217} \\
-i wybieraniem najlepszego syna (II funkcja) & \\
+alfabeta z tablic± transpozycji & \multirow{3}{*}{217} \\
+i wybieraniem najpierw najbardziej & \\
+obiecuj±cego syna (II funkcja) & \\
 \hline
 \end{tabular}
 \end{center}
@@ -830,10 +837,10 @@ i wybieraniem najlepszego syna (II funkcja) & \\
 
 Mo¿na zaobserwowaæ przede wszystkim niesamowity skok wydajno¶ci przez ulepszenie do alfabety --- jest przyspieszenie
 o kilka rzêdów wielko¶ci. Tablica transpozycji nie da³a a¿ tak dobrych rezultatów, co jest nieco zaskakuj±ce bior±c pod uwagê
-ilo¶æ transpozycji, jakie wystêpuj± w~Splits. Wybieranie najpierw najlepszego syna okazuje siê bardzo dobrym pomys³em,
+ilo¶æ transpozycji, jakie wystêpuj± w~Splits. Rozpatrywanie najpierw najbardziej obiecuj±cego syna okazuje siê bardzo dobrym pomys³em,
 ale tylko w~przypadku drugiej funkcji oceniaj±cej. Nie jest to niespodziank±, poniewa¿ pierwsza funkcja oceniaj±ca
 zbyt ma³o rozró¿nia ruchy. Zwykle z~tej samej pozycji synowie maj± bardzo zbli¿one warto¶ci funkcji oceniaj±cej
-i wybieranie najlepszego syna jest niewiele lepsze ni¿ wybieranie losowego.
+i rozpatrywanie najbardziej obiecuj±cego syna najpierw jest niewiele lepsze ni¿ wybieranie losowego.
 
 Bardzo widoczne jest
 równie¿ znaczne spowolnienie wywo³ane przez u¿ycie drugiej funkcji oceniaj±cej. Przyczyna tego jest bardzo prosta.
@@ -848,7 +855,7 @@ W tabeli~\ref{tab:ab_tournament} przedstawiono wyniki turnieju miêdzy algorytmam
 losowe ruchy.
 Turniej
 rozegrano metod± ,,ka¿dy z~ka¿dym'' po 10 meczów z~sekund± na ruch zmieniaj±c zaczynaj±cego gracza co mecz. Ka¿dy algorytm rozegra³
-w sumie 80 meczów. w~tabeli podano ilo¶æ meczów zwyciê¿onych przez dany algorytm.
+w sumie 80 meczów. W~tabeli~\ref{tab:ab_tournament} podano ilo¶æ meczów zwyciê¿onych przez dany algorytm.
 Sam turniej mo¿na uruchomiæ wykonuj±c komendê:
 
 \begin{algorithm}[!htbp]
@@ -874,8 +881,9 @@ alfabeta (I funkcja oceniaj±ca) & 30 \\
 alfabeta z tablic± transpozycji & \multirow{2}{*}{32}  \\
 (I funkcja oceniaj±ca)&\\
 \hline
-alfabeta z tablic± transpozycji & \multirow{2}{*}{36} \\
-i wybieraniem najlepszego syna (I funkcja) &\\
+alfabeta z tablic± transpozycji & \multirow{3}{*}{36} \\
+i rozpatrywaniem najpierw najbardziej & \\
+obiecuj±cego syna (I funkcja) &\\
 \hline
 minimaks (II funkcja oceniaj±ca) & 42 \\
 \hline
@@ -884,8 +892,9 @@ alfabeta z tablic± transpozycji & \multirow{2}{*}{60} \\
 \hline
 alfabeta (II funkcja oceniaj±ca) & 65 \\
 \hline
-alfabeta z tablic± transpozycji & \multirow{2}{*}{65} \\
-i wybieraniem najlepszego syna (II funkcja) & \\
+alfabeta z tablic± transpozycji & \multirow{3}{*}{65} \\
+i rozpatrywaniem najpierw najbardziej & \\
+obiecuj±cego syna (II funkcja) & \\
 \hline
 \end{tabular}
 \end{center}
@@ -962,7 +971,8 @@ W tym punkcie nie prezentujemy zbiorczego wyniku turnieju, ani wyników meczy w~t
 techniki Monte Carlo kompletnie zdeklasowa³y pozosta³ych przeciwników. W przeciwieñstwie do alfabety, której zdarza³o
 siê przegrywaæ z~algorytmem losowym, wszystkie testowane algorytmy oparte na metodzie Monte Carlo poradzi³y sobie
 znakomicie. Równie¿ w~starciu z~alfabet± nie mia³y ¿adnych problemów. MCTS wygra³ wszystkie spo¶ród 10 meczy
-z najlepszym wariantem alfabety --- z~II funkcj± oceniaj±c±, tablic± transpozycji i~wybieraniem najpierw najlepszego
+z~najlepszym wariantem alfabety --- z~II funkcj± oceniaj±c±, tablic± transpozycji i~rozpatrywaniem najpierw najbardziej
+obiecuj±cego
 syna.
 Mo¿na siê o~tym przekonaæ uruchamiaj±c programy:
 
@@ -983,7 +993,7 @@ dla gry planszowej Splits oraz eksperymenty sprawdzaj±ce ich efektywno¶æ w~grze.
 oraz Monte Carlo wraz z~ró¿nymi ulepszeniami.
 
 Okaza³o siê, ¿e najlepiej radzi sobie algorytm MCTS. Wygl±da na to, ¿e w~Splits mo¿na stawiaæ ruchy, których
-si³a jest nie jest wystarczaj±co dobrze rozpoznawana przez prost± funkcjê oceniaj±c±.
+si³a nie jest wystarczaj±co dobrze rozpoznawana przez prost± funkcjê oceniaj±c±.
 
 W czasie implementacji zasad gry okaza³o siê, ¿e s± one istotnym czynnikiem sk³adaj±cym siê na czas obliczeñ.
 Zasady s± dosyæ skomplikowane --- szczególnie w czasie budowania planszy skonstruowanie listy wszystkich ruchów
@@ -994,7 +1004,7 @@ mog³oby znacz±co poprawiæ wydajno¶æ algorytmów.
 
 W trakcie pisania poszczególnych algorytmów natkniêto siê na wiele sytuacji, w~których ³atwo pope³niæ b³±d.
 Niektóre napotkane problemy by³y szczególnie subtelne. W algorytmie alfabeta (algorytm~\ref{alg:alphabeta})
-chocia¿by je¿eli na najwy¿szym poziomie nie bêdziemy wybieraæ losowego z~najlepszych synów, a~tylko zawsze pierwszego
+chocia¿by, je¿eli na najwy¿szym poziomie nie bêdziemy wybieraæ losowego z~najlepszych synów, a~tylko zawsze pierwszego
 z nich, to bêdziemy uzale¿nieni od implementacji zasad, w~której zwracana kolejno¶æ mo¿liwych ruchów wcale nie jest
 najlepsza.
 
